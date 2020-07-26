@@ -1,5 +1,4 @@
-﻿using System;
-namespace bankOfMumAndDad.Responses
+﻿namespace bankOfMumAndDad.Responses
 {
     public class ApiResponse
     {
