@@ -57,6 +57,7 @@ namespace bankOfMumAndDad.Controllers
         [HttpPut]
         public ApiResponse PutTransaction()
         {
+            this.HttpContext.Response.StatusCode = 405;
             return new ApiResponse(false, "Action not supported", new List<Object>());
         }
 
@@ -92,7 +93,7 @@ namespace bankOfMumAndDad.Controllers
                 }
                 else
                 {
-                    return new ApiResponse(false, "Transaction type error.", new List<Object>());
+                    return BadRequest(new ApiResponse(false, "Transaction type error.", new List<Object>()));
                 }
 
                 await _context.SaveChangesAsync();
@@ -110,6 +111,7 @@ namespace bankOfMumAndDad.Controllers
         [HttpDelete]
         public ApiResponse DeleteTransaction()
         {
+            this.HttpContext.Response.StatusCode = 405;
             return new ApiResponse(false, "Action not supported", new List<Object>());
         }
 
