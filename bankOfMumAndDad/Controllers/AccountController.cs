@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using bankOfMumAndDad.Entities;
-using bankOfMumAndDad.Source;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
+using bankOfMumAndDad.Source;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace bankOfMumAndDad.Controllers
 {
@@ -162,7 +161,6 @@ namespace bankOfMumAndDad.Controllers
                     }
                 }
                 
-
                 account.Deleted = true;
 
                 await _context.SaveChangesAsync();
