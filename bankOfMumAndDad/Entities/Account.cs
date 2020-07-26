@@ -8,8 +8,9 @@ namespace bankOfMumAndDad.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public decimal OpeningBalance { get; set; }
+        public decimal CurrentBalance { get; set; }
         public bool Deleted { get; set; }
 
-        public List<Deposit> Deposits { get; set; }
+        public List<Transaction> Transactions { get; set; }
     }
 }

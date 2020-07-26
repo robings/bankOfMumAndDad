@@ -8,58 +8,59 @@ using Microsoft.EntityFrameworkCore;
 using bankOfMumAndDad.Entities;
 using bankOfMumAndDad.Source;
 using bankOfMumAndDad.Requests;
+using bankOfMumAndDad.Responses;
 
 namespace bankOfMumAndDad.Controllers
 {
-    [Route("api/Deposit")]
+    [Route("api/Transaction")]
     [ApiController]
-    public class DepositController : ControllerBase
+    public class TransactionController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public DepositController(DataContext context)
+        public TransactionController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Deposit
+        // GET: api/Transaction
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Deposit>>> GetDeposits([FromBody] IdOnlyRequest getByAccountIdRequest)
+        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactionsByAccountId([FromBody] IdOnlyRequest getByAccountIdRequest)
         {
-            return await _context.Deposits.Where(d => d.AccountId == getByAccountIdRequest.Id).ToListAsync();
+            return await _context.Transactions.Where(d => d.AccountId == getByAccountIdRequest.Id).ToListAsync();
         }
 
-        // PUT: api/Deposit/
+        // PUT: api/Transaction
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut]
-        public ContentResult PutDeposit()
+        public ContentResult PutTransaction()
         {
             return Content("Action not supported");
         }
 
-        // POST: api/Deposit
+        // POST: api/Transaction
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Deposit>> PostDeposit(Deposit deposit)
+        public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
         {
-            _context.Deposits.Add(deposit);
+            _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
-        // DELETE: api/Deposit/
+        // DELETE: api/Transaction
         [HttpDelete]
-        public ContentResult DeleteDeposit()
+        public ApiResponse DeleteTransaction()
         {
-            return Content("Action not supported");
+            return new ApiResponse(false, "Action not supported", new List<Object>());
         }
 
-        private bool DepositExists(long id)
+        private bool TransactionExists(long id)
         {
-            return _context.Deposits.Any(e => e.Id == id);
+            return _context.Transactions.Any(e => e.Id == id);
         }
     }
 }

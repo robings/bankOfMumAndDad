@@ -1,5 +1,4 @@
-﻿using System;
-using bankOfMumAndDad.Entities;
+﻿using bankOfMumAndDad.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace bankOfMumAndDad.Source
@@ -13,16 +12,16 @@ namespace bankOfMumAndDad.Source
 
         public DbSet<Account> Accounts { get; set; }
 
-        public DbSet<Deposit> Deposits { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()
                 .HasKey(a => a.Id);
 
-            modelBuilder.Entity<Deposit>()
-                .HasOne(d => d.Account)
-                .WithMany(a => a.Deposits)
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Account)
+                .WithMany(a => a.Transactions)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
