@@ -66,6 +66,11 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostTransaction(Transaction transaction)
         {
+            if (!Validation.ValidateString(transaction.Comments))
+            {
+                return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
+            }
+
             _context.Transactions.Add(transaction);
             var account = new Account();
 
