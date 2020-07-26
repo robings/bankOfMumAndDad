@@ -36,11 +36,13 @@ namespace bankOfMumAndDad.Controllers
                     response.Success = false;
                     response.Message = "No accounts found";
                     response.Data = result;
+                    return NotFound(response);
                 } else
                 {
                     response.Success = true;
                     response.Message = "Accounts retrieved.";
                     response.Data = result;
+                    return Ok(response);
                 }
             }
             catch (Exception ex)
@@ -48,9 +50,9 @@ namespace bankOfMumAndDad.Controllers
                 response.Success = false;
                 response.Message = ex.Message;
                 response.Data = new List<Object>();
+                this.HttpContext.Response.StatusCode = 500;
+                return response;
             }
-
-            return response;
         }
 
         // GET: api/Account
