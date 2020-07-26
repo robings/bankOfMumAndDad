@@ -142,9 +142,9 @@ namespace bankOfMumAndDad.Controllers
             {
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
-                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account).Value;
                 response.Success = true;
-                response.Message = "Succesfully created account.";
+                response.Message = "Successfully created account.";
                 response.Data = result;
                 return Ok(response);
             }
