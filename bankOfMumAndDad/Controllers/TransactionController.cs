@@ -29,7 +29,7 @@ namespace bankOfMumAndDad.Controllers
         {
             try
             {
-                if (!_context.Accounts.Any(e => e.Id == getByAccountIdRequest.Id))
+                if (!_context.Accounts.Any(e => e.Id == getByAccountIdRequest.Id || e.Deleted == true))
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
@@ -73,7 +73,7 @@ namespace bankOfMumAndDad.Controllers
             try
             {
                 account = await _context.Accounts.FindAsync(transaction.AccountId);
-                if (account == null)
+                if (account == null || account.Deleted == true)
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
