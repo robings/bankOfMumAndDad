@@ -68,7 +68,6 @@ namespace bankOfMumAndDad.Controllers
                 this.HttpContext.Response.StatusCode = 500;
                 return new ApiResponse(false, ex.Message, new List<Object>());
             }
-            
         }
 
         // PUT: api/Account/
