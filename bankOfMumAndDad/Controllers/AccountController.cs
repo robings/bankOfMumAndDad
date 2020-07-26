@@ -27,112 +27,142 @@ namespace bankOfMumAndDad.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<ApiResponse>> GetAccounts()
         {
-            var response = new ApiResponse();
             try
             {
                 var result = await _context.Accounts.ToListAsync();
                 if (!result.Any())
                 {
-                    response.Success = false;
-                    response.Message = "No accounts found";
-                    response.Data = result;
-                } else
+                    return NotFound(new ApiResponse(false, "No accounts found", result));
+                }
+                else
                 {
-                    response.Success = true;
-                    response.Message = "Accounts retrieved.";
-                    response.Data = result;
+                    return Ok(new ApiResponse(true, "Accounts retrieved.", result));
                 }
             }
             catch (Exception ex)
             {
-                response.Success = false;
-                response.Message = ex.Message;
-                response.Data = new List<Object>();
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
             }
-
-            return response;
         }
 
         // GET: api/Account
         [HttpGet]
-        public async Task<ActionResult<Account>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
+        public async Task<ActionResult<ApiResponse>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
         {
-            var account = await _context.Accounts.FindAsync(getByIdRequest.Id);
-
-            if (account == null)
+            try
             {
-                return NotFound();
-            }
+                var account = await _context.Accounts.FindAsync(getByIdRequest.Id);
 
-            return account;
+                if (account == null)
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+                else
+                {
+                    return Ok(new ApiResponse(true, "Account details returned.", account));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+            
         }
 
         // PUT: api/Account/
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut]
-        public async Task<IActionResult> PutAccount([FromBody] PutRequest putRequest)
+        public async Task<ActionResult<ApiResponse>> PutAccount([FromBody] PutRequest putRequest)
         {
             var id = putRequest.Id;
-            var account = await _context.Accounts.FindAsync(id);
-            if (account == null)
+            var account = new Account();
+
+            try
             {
-                return NotFound();
+                account = await _context.Accounts.FindAsync(id);
+                if (account == null)
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+
+                account.FirstName = putRequest.FirstName ?? account.FirstName;
+
+                account.LastName = putRequest.LastName ?? account.LastName;
+
+                _context.Entry(account).State = EntityState.Modified;
             }
-
-            account.FirstName = putRequest.FirstName ?? account.FirstName;
-
-            account.LastName = putRequest.LastName ?? account.LastName;
-
-            _context.Entry(account).State = EntityState.Modified;
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+            
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok(new ApiResponse(true, "Account details updated.", account));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
                 if (!AccountExists(putRequest.Id))
                 {
-                    return NotFound();
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
                 else
                 {
-                    throw;
+                    this.HttpContext.Response.StatusCode = 500;
+                    return new ApiResponse(false, ex.Message, new List<Object>());
                 }
             }
-
-            return Ok("Account updated");
         }
 
         // POST: api/Account
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Account>> PostAccount(Account account)
+        public async Task<ActionResult<ApiResponse>> PostAccount(Account account)
         {
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
-
-            // return CreatedAtAction("GetAccount", new { id = account.Id }, account);
-            return CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+            try
+            {
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
+                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account).Value;
+                return Ok(new ApiResponse(true, "Successfully created account.", result));
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
         }
 
         // DELETE: api/Account
         [HttpDelete]
-        public async Task<ActionResult<Account>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
+        public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
             var id = deleteRequest.Id;
-            var account = await _context.Accounts.FindAsync(id);
-            if (account == null)
+
+            try
             {
-                return NotFound();
+                var account = await _context.Accounts.FindAsync(id);
+                if (account == null)
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+
+                _context.Accounts.Remove(account);
+                await _context.SaveChangesAsync();
+                return Ok(new ApiResponse(true, "Account successfully deleted.", account));
             }
-
-            _context.Accounts.Remove(account);
-            await _context.SaveChangesAsync();
-
-            return account;
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
         }
 
         private bool AccountExists(long id)
