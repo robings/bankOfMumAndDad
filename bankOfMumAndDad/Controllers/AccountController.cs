@@ -92,6 +92,8 @@ namespace bankOfMumAndDad.Controllers
 
                 account.LastName = putRequest.LastName ?? account.LastName;
 
+                account.CurrentBalance = putRequest.CurrentBalance ?? account.CurrentBalance;
+
                 _context.Entry(account).State = EntityState.Modified;
             }
             catch (Exception ex)
