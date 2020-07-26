@@ -1,5 +1,4 @@
-﻿using System;
-namespace bankOfMumAndDad.Requests
+﻿namespace bankOfMumAndDad.Requests
 {
     public class PutRequest
     {
