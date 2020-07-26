@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using bankOfMumAndDad.Entities;
-using bankOfMumAndDad.Source;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
+using bankOfMumAndDad.Source;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace bankOfMumAndDad.Controllers
 {
@@ -29,7 +28,7 @@ namespace bankOfMumAndDad.Controllers
         {
             try
             {
-                var result = await _context.Accounts.ToListAsync();
+                var result = await _context.Accounts.Where(a => a.Deleted != true).ToListAsync();
                 if (!result.Any())
                 {
                     return NotFound(new ApiResponse(false, "No accounts found", result));
@@ -52,9 +51,9 @@ namespace bankOfMumAndDad.Controllers
         {
             try
             {
-                var account = await _context.Accounts.FindAsync(getByIdRequest.Id);
+                var account = await _context.Accounts.Where(a => a.Id == getByIdRequest.Id && a.Deleted != true).ToListAsync();
 
-                if (account == null)
+                if (!account.Any())
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
@@ -68,7 +67,6 @@ namespace bankOfMumAndDad.Controllers
                 this.HttpContext.Response.StatusCode = 500;
                 return new ApiResponse(false, ex.Message, new List<Object>());
             }
-            
         }
 
         // PUT: api/Account/
@@ -91,6 +89,8 @@ namespace bankOfMumAndDad.Controllers
                 account.FirstName = putRequest.FirstName ?? account.FirstName;
 
                 account.LastName = putRequest.LastName ?? account.LastName;
+
+                account.CurrentBalance = putRequest.CurrentBalance ?? account.CurrentBalance;
 
                 _context.Entry(account).State = EntityState.Modified;
             }
@@ -140,9 +140,42 @@ namespace bankOfMumAndDad.Controllers
             }
         }
 
-        // DELETE: api/Account
+        // SOFT DELETE: api/Account/
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
+        {
+            try
+            {
+                var account = await _context.Accounts.FindAsync(deleteRequest.Id);
+                if (account == null || account.Deleted == true)
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+
+                var transactions = _context.Transactions.Where(t => t.AccountId == deleteRequest.Id);
+                if(transactions != null)
+                {
+                    foreach (var transaction in transactions)
+                    {
+                        transaction.Deleted = true;
+                    }
+                }
+                
+                account.Deleted = true;
+
+                await _context.SaveChangesAsync();
+                return Ok(new ApiResponse(true, "Account successfully deleted.", new List<Object>()));
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+        }
+
+        // HARD DELETE: api/Account/delete
+        [HttpDelete("delete")]
+        public async Task<ActionResult<ApiResponse>> HardDeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
             var id = deleteRequest.Id;
 
