@@ -37,7 +37,8 @@ namespace bankOfMumAndDad.Controllers
                     response.Message = "No accounts found";
                     response.Data = result;
                     return NotFound(response);
-                } else
+                }
+                else
                 {
                     response.Success = true;
                     response.Message = "Accounts retrieved.";
@@ -57,16 +58,38 @@ namespace bankOfMumAndDad.Controllers
 
         // GET: api/Account
         [HttpGet]
-        public async Task<ActionResult<Account>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
+        public async Task<ActionResult<ApiResponse>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
         {
-            var account = await _context.Accounts.FindAsync(getByIdRequest.Id);
+            var response = new ApiResponse();
 
-            if (account == null)
+            try
             {
-                return NotFound();
-            }
+                var account = await _context.Accounts.FindAsync(getByIdRequest.Id);
 
-            return account;
+                if (account == null)
+                {
+                    response.Success = false;
+                    response.Message = "Account not found.";
+                    response.Data = new List<Object>();
+                    return NotFound(response);
+                }
+                else
+                {
+                    response.Success = true;
+                    response.Message = "Account details returned.";
+                    response.Data = account;
+                    return Ok(response);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Data = new List<Object>();
+                this.HttpContext.Response.StatusCode = 500;
+                return response;
+            }
+            
         }
 
         // PUT: api/Account/
@@ -111,13 +134,28 @@ namespace bankOfMumAndDad.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Account>> PostAccount(Account account)
+        public async Task<ActionResult<ApiResponse>> PostAccount(Account account)
         {
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
+            var response = new ApiResponse();
 
-            // return CreatedAtAction("GetAccount", new { id = account.Id }, account);
-            return CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+            try
+            {
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
+                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account);
+                response.Success = true;
+                response.Message = "Succesfully created account.";
+                response.Data = result;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Data = new List<Object>();
+                this.HttpContext.Response.StatusCode = 500;
+                return response;
+            }
         }
 
         // DELETE: api/Account
