@@ -86,9 +86,25 @@ namespace bankOfMumAndDad.Controllers
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                account.FirstName = putRequest.FirstName ?? account.FirstName;
+                if (putRequest.FirstName != null)
+                {
+                    if (!Validation.ValidateString(putRequest.FirstName))
+                    {
+                        return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
+                    }
 
-                account.LastName = putRequest.LastName ?? account.LastName;
+                    account.FirstName = putRequest.FirstName;
+                }
+
+                if (putRequest.LastName != null)
+                {
+                    if (!Validation.ValidateString(putRequest.LastName))
+                    {
+                        return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
+                    }
+
+                    account.LastName = putRequest.LastName;
+                }
 
                 account.CurrentBalance = putRequest.CurrentBalance ?? account.CurrentBalance;
 
@@ -126,6 +142,12 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostAccount(Account account)
         {
+            if (!Validation.ValidateString(account.FirstName) ||
+                !Validation.ValidateString(account.LastName))
+            {
+                return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
+            }
+
             try
             {
                 _context.Accounts.Add(account);
