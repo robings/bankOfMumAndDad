@@ -1,3 +1,6 @@
+# Bank Of Mum And Dad
+A front end for this programming exercise to create a simple money management app.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
