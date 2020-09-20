@@ -3,46 +3,86 @@ import Loader from '../Loader/Loader';
 import './transactions.css';
 
 
-function Transactions() {
-    const [data, setData] = useState([]);
+function Transactions(props) {
+    const [accountId] = useState(props.accountData.id)
+    const [firstName] = useState(props.accountData.firstName);
+    const [lastName] = useState(props.accountData.lastName);
+    const [startBalance] = useState(props.accountData.openingBalance);
+    const [currentBalance] = useState(props.accountData.currentBalance);
+    const [dataToDisplay, setDataToDisplay] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    async function getTransactions(accountId) {
-        const url = `http://localhost:55741/api/Transaction/${accountId}`
+    async function getTransactions(acId) {
+        const url = `http://localhost:55741/api/Transaction/${acId.toString()}`
         const response = await fetch(url);
         const json = await response.json();
+        const processedData = await processData(json.data);
 
-        setData(json.data);
+        setDataToDisplay(processedData);
         setLoading(false);
     }
 
-    useEffect(() => {
-        getTransactions('10024');
-    }, []);
+    function mount() {
+        getTransactions(accountId);
+    }
+
+    function processData(dataToConvert) {
+        let runningTotal = startBalance;
+        let convertedData = dataToConvert;
+        convertedData.forEach(transaction => {
+            transaction.balance = transaction.type === 0 ? runningTotal + transaction.amount : runningTotal - transaction.amount;
+            runningTotal = transaction.balance;
+        })
+        return convertedData;
+    }
+
+    useEffect(mount, []);
 
     return (
-        <main>
-            <h2>Transactions</h2>
-            <h3>Name</h3>
-            {loading ? (<Loader />) :
-                <table>
-                    <thead>
-                        <tr><th>Date</th><th>Type</th><th>Amount</th><th>New Balance</th></tr>
-                        {data.map(({ id, amount, date, type }) =>
-                            <tr className='data' key={id}>
-                                <td>{date}</td>
-                                <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
-                                <td>£{amount}</td>
-                                <td></td>
-                            </tr>
-                        )}
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            }
-        </main>
+      <main>
+        <h2>Transactions</h2>
+        <h3>Name: {firstName} {lastName} </h3>
+        {loading ? (
+          <Loader />
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance</th>
+                <th>Comments</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Start Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td>£{startBalance}</td>
+                    <td></td>
+                </tr>
+                {dataToDisplay.map(({ id, amount, date, type, comments, balance }) => (
+                    <tr key={id}>
+                    <td>{date}</td>
+                    <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
+                    <td>£{amount}</td>
+                    <td>£{balance}</td>
+                    <td>{comments}</td>
+                    </tr>
+                ))}
+                <tr>
+                    <td>End Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td>£{currentBalance}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+          </table>
+        )}
+      </main>
     );
 }
 
