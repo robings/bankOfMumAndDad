@@ -23,17 +23,17 @@ namespace bankOfMumAndDad.Controllers
         }
 
         // GET: api/Transaction
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId([FromBody] IdOnlyRequest getByAccountIdRequest)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId(int id)
         {
             try
             {
-                if (!_context.Accounts.Any(e => e.Id == getByAccountIdRequest.Id || e.Deleted == true))
+                if (!_context.Accounts.Any(e => e.Id == id || e.Deleted == true))
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                var transactions = await _context.Transactions.Where(d => d.AccountId == getByAccountIdRequest.Id).ToListAsync();
+                var transactions = await _context.Transactions.Where(d => d.AccountId == id).ToListAsync();
 
                 if (transactions == null)
                 {

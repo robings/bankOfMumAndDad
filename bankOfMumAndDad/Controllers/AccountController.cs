@@ -46,12 +46,12 @@ namespace bankOfMumAndDad.Controllers
         }
 
         // GET: api/Account
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse>> GetAccount(int id)
         {
             try
             {
-                var account = await _context.Accounts.Where(a => a.Id == getByIdRequest.Id && a.Deleted != true).ToListAsync();
+                var account = await _context.Accounts.Where(a => a.Id == id && a.Deleted != true).ToListAsync();
 
                 if (!account.Any())
                 {

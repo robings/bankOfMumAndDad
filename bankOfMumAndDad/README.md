@@ -4,7 +4,7 @@
 
 ### GET
 
-**/api/Account**
+**/api/Account/{id}**
 
 - Gets an account by Id
 - Required:
@@ -12,7 +12,7 @@
 - Optional:
   - None
 - Sends:
-  - `{ "id": long }`
+  - None
 - Returns:
   - if successful:
     - `status 200`
@@ -116,7 +116,7 @@
 
 ### GET
 
-**/api/Transaction**
+**/api/Transaction/{id}**
 
 - Gets transactions by account Id
 - Required:
@@ -124,7 +124,7 @@
 - Optional:
   - None
 - Sends:
-  - `{ "id": long }`
+  - None
 - Returns:
   - if successful:
     - `status 200`
