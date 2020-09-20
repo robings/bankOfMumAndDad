@@ -4,4 +4,35 @@ main {
 
 h2 {
     color: #0000FF;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+table {
+    margin: 0;
+    padding: 5px;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid #000000;
+}
+
+th, td {
+    padding: 5px;
+}
+
+th {
+    background-color: #ADD8E6;
+    color: #FF0000;
+}
+
+td {
+    color: #000000;
+}
+
+tr.data:hover {
+    background-color: #FF0000;
+
 }
