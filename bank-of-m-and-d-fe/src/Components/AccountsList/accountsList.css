@@ -15,8 +15,16 @@ table {
     width: 100%;
 }
 
-table, th, td {
-    border: 1px solid #000000;
+th, td {
+    border-bottom: 1px solid #000000;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr.data:hover {
+    background-color: #FF0000;
 }
 
 th, td {
@@ -26,13 +34,13 @@ th, td {
 th {
     background-color: #ADD8E6;
     color: #FF0000;
+    text-align: left;
 }
 
 td {
     color: #000000;
 }
 
-tr.data:hover {
-    background-color: #FF0000;
-
+p {
+    color: hotpink;
 }
