@@ -2,13 +2,14 @@ header {
   width: 100%;
   padding: 10px;
   color: #00FF00;
-  border-bottom: 1px solid #FFFFFF;
+  border-bottom: 1px solid #999999;
   overflow: auto;
 }
 
 img {
   width: 50px;
   border-radius: 50%;
+  border: 1px solid #999999;
   float: left;
   margin-right: 10px;
 }

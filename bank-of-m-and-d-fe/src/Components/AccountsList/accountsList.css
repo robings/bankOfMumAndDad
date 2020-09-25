@@ -4,23 +4,23 @@ main {
 
 h2 {
     color: #0000FF;
-    border-bottom: 1px solid #FFFFFF;
+    border-bottom: 1px solid #999999;
 }
 
 table {
     margin: 0;
     padding: 5px;
-    border-collapse: collapse;
-    background-color: #FFFFFF;
     width: 100%;
+    border: 1px solid #999999;
+    border-collapse: collapse;
 }
 
 th, td {
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid #999999;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #F2F2F2;
 }
 
 tr.data:hover {
@@ -32,15 +32,11 @@ th, td {
 }
 
 th {
-    background-color: #ADD8E6;
-    color: #FF0000;
+    background-color: #0000FF;
+    color: #F2F2F2;
     text-align: left;
 }
 
 td {
     color: #000000;
-}
-
-p {
-    color: hotpink;
 }
