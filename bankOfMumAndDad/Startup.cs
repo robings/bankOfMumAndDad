@@ -37,10 +37,12 @@ namespace bankOfMumAndDad
 
             app.UseCors(builder =>
             {
-                builder.AllowAnyOrigin();
+                builder.WithOrigins(Configuration.GetValue<string>("AllowedOrigins"));
                 builder.AllowAnyHeader();
                 builder.AllowAnyMethod();
             });
+
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

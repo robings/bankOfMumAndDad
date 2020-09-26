@@ -8,7 +8,7 @@ function AccountsList() {
     const [loading, setLoading] = useState(true);
 
     async function getAllAccounts() {
-        const response = await fetch('http://localhost:55741/api/Account/all');
+        const response = await fetch('https://localhost:55741/api/Account/all');
         const json = await response.json();
 
         setData(json.data);
