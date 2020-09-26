@@ -13,7 +13,7 @@ function Transactions(props) {
     const [loading, setLoading] = useState(true);
 
     async function getTransactions(acId) {
-        const url = `http://localhost:55741/api/Transaction/${acId.toString()}`
+      const url = `https://localhost:55741/api/Transaction/${acId.toString()}`
         const response = await fetch(url);
         const json = await response.json();
         const processedData = await processData(json.data);
