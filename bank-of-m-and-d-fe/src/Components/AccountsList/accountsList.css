@@ -24,7 +24,7 @@ tr:nth-child(even) {
 }
 
 tr.data:hover {
-    background-color: #FF0000;
+    background-color: #00FF00;
 }
 
 th, td {
