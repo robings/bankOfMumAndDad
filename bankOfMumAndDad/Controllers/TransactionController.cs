@@ -28,14 +28,14 @@ namespace bankOfMumAndDad.Controllers
         {
             try
             {
-                if (!_context.Accounts.Any(e => e.Id == id || e.Deleted == true))
+                if ((!_context.Accounts.Any(e => e.Id == id)) || (_context.Accounts.Any(e => e.Id == id && e.Deleted == true)))
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
                 var transactions = await _context.Transactions.Where(d => d.AccountId == id).ToListAsync();
 
-                if (transactions == null)
+                if (transactions.Count() == 0)
                 {
                     return NotFound(new ApiResponse(false, "No transactions found for account.", new List<Object>()));
                 }
@@ -44,10 +44,10 @@ namespace bankOfMumAndDad.Controllers
                     return Ok(new ApiResponse(true, "Transaction details returned.", transactions));
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.HttpContext.Response.StatusCode = 500;
-                return new ApiResponse(false, ex.Message, new List<Object>());
+                return new ApiResponse(false, "Server Error", new List<Object>());
             }
         }
 
