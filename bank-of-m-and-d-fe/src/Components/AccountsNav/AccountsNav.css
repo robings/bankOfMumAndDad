@@ -1,0 +1,12 @@
+.subNav {
+    width: 100%;
+    padding: 10px;
+    overflow: auto;
+}
+
+.subNavButton {
+    background-color: #0000FF;
+    border: 1px solid #999999;
+    color: #FFFFFF;
+    float: right;
+}
