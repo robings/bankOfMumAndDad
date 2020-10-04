@@ -2,3 +2,14 @@ h1 {
     color: blue;
     text-align: center;
 }
+
+form div {
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+input {
+    margin: 5px;
+    padding: 5px 10px;
+    border: 1px solid #999999;
+}
