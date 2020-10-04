@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './accountsList.css';
 
 
@@ -19,6 +21,31 @@ function AccountsList() {
         setLoading(false);
     }
 
+    async function handleDelete(e) {
+      var data = {
+        id: e.currentTarget.dataset.id,
+      };
+
+      const response = await fetch("https://localhost:55741/api/Account", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const json = await response.json();
+
+      if (json.success === true) {
+        toast.success("Account Deleted");
+      } else {
+        toast.error(json.message);
+      }
+    }
+
+    function handleViewTransactions(e) {
+      alert(`View transactions for id ${e.currentTarget.dataset.id}`);
+    }
+
     useEffect(() => {
         getAllAccounts();
     }, []);
@@ -35,6 +62,7 @@ function AccountsList() {
                 <th>Last Name</th>
                 <th>FirstName</th>
                 <th>Current Balance</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -43,12 +71,41 @@ function AccountsList() {
                   <td>{lastName}</td>
                   <td>{firstName}</td>
                   <td>£{currentBalance}</td>
+                  <td>
+                    <button data-id={id} onClick={handleViewTransactions}>
+                      
+                      
+                      View Transactions
+                    
+                    
+                    </button>
+                    <button
+                     
+                     
+                      className="deleteButton"
+                     
+                     
+                      data-id={id}
+
+
+                                                                onClick={handleDelete}
+                    
+                    
+                    >
+                      
+                      
+                      Delete
+                    
+                    
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
         {error ? <div className="error">Opps {error}</div> : <div></div>}
+        <ToastContainer />
       </main>
     );
 }

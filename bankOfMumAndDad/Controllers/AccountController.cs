@@ -173,15 +173,17 @@ namespace bankOfMumAndDad.Controllers
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
+            var accountId = Convert.ToInt64(deleteRequest.Id);
+
             try
             {
-                var account = await _context.Accounts.FindAsync(deleteRequest.Id);
+                var account = await _context.Accounts.FindAsync(accountId);
                 if (account == null || account.Deleted == true)
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                var transactions = _context.Transactions.Where(t => t.AccountId == deleteRequest.Id);
+                var transactions = _context.Transactions.Where(t => t.AccountId == accountId);
                 if(transactions != null)
                 {
                     foreach (var transaction in transactions)

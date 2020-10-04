@@ -26,7 +26,6 @@ button {
 button:hover {
   cursor: pointer;
   border-color: #FF0000;
-  opacity: 75%;
 }
 
 .closeButton {
@@ -36,8 +35,15 @@ button:hover {
   float: right;
 }
 
-.closeButton {
-  opacity: 100%;
+.deleteButton {
+  border-color: #FF0000;
+  color: #FF0000;
+  margin-left: 20px;
+}
+
+.deleteButton:hover {
+  background-color: #FF0000;
+  color: #FFFFFF;
 }
 
 .overlay {

@@ -23,10 +23,6 @@ tr:nth-child(even) {
     background-color: #F2F2F2;
 }
 
-tr.data:hover {
-    background-color: #00FF00;
-}
-
 th, td {
     padding: 5px;
 }
@@ -39,4 +35,8 @@ th {
 
 td {
     color: #000000;
+}
+
+td:last-child {
+    text-align: right;
 }
