@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import Transactions from './Components/Transactions/Transactions';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
+import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm'
 import './AccountsPage.css';
 
 const accountData = {
@@ -14,12 +15,15 @@ const accountData = {
 };
 
 function AccountsPage() {
+  const [newAccountModalVisiblity, setNewAccountModalVisiblity] = useState(false);
+
   return (
     <div className="App">
       <Header />
-      <AccountsNav />
+      <AccountsNav openModal={() => setNewAccountModalVisiblity(true)} />
       <AccountsList />
       <Transactions accountData={accountData} />
+      {newAccountModalVisiblity && <AccountsNewForm newAccountModalVisibility={newAccountModalVisiblity} closeModal={() => setNewAccountModalVisiblity(false)} />}
     </div>
   );
 }

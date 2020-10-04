@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import AccountsNewForm from '../AccountsNewForm/AccountsNewForm'
+import React from 'react';
 import './AccountsNav.css';
 
 function AccountsNav(props) {
-    const [newAccountModalVisiblity, setNewAccountModalVisiblity] = useState(false);
+
 
     return (
         <div className="subNav">
-            <button className="subNavButton" onClick={() => setNewAccountModalVisiblity(true)}>New Account</button>
-            {newAccountModalVisiblity && <AccountsNewForm newAccountModalVisibility={newAccountModalVisiblity} closeModal={() => setNewAccountModalVisiblity(false)} />}
+            <button className="subNavButton" onClick={props.openModal}>New Account</button>
         </div>
     )
 }
