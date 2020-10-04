@@ -140,14 +140,21 @@ namespace bankOfMumAndDad.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> PostAccount(Account account)
+        public async Task<ActionResult<ApiResponse>> PostAccount(AccountDTO postedAccount)
         {
-            if (!Validation.ValidateString(account.FirstName) ||
-                !Validation.ValidateString(account.LastName))
+            if (!Validation.ValidateString(postedAccount.FirstName) ||
+                !Validation.ValidateString(postedAccount.LastName))
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
 
+            var account = new Account {
+                FirstName = postedAccount.FirstName,
+                LastName = postedAccount.LastName,
+                OpeningBalance = Convert.ToDecimal(postedAccount.OpeningBalance),
+                CurrentBalance = Convert.ToDecimal(postedAccount.CurrentBalance),
+            };
+            
             try
             {
                 _context.Accounts.Add(account);
