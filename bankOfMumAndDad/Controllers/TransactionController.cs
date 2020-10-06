@@ -33,7 +33,7 @@ namespace bankOfMumAndDad.Controllers
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                var transactions = await _context.Transactions.Where(d => d.AccountId == id).ToListAsync();
+                var transactions = await _context.Transactions.Where(d => d.AccountId == id).OrderBy(o => o.Date).ToListAsync();
 
                 if (transactions.Count() == 0)
                 {
@@ -65,31 +65,40 @@ namespace bankOfMumAndDad.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> PostTransaction(Transaction transaction)
+        public async Task<ActionResult<ApiResponse>> PostTransaction(TransactionDTO transaction)
         {
             if (!Validation.ValidateString(transaction.Comments))
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
 
-            _context.Transactions.Add(transaction);
+            Transaction transactionToSave = new Transaction
+            {
+                AccountId = Convert.ToInt64(transaction.AccountId),
+                Amount = Convert.ToInt64(transaction.Amount),
+                Date = Convert.ToDateTime(transaction.Date),
+                Comments = transaction.Comments,
+                Type = transaction.Type == "0" ? TransactionTypes.Deposit : TransactionTypes.Withdrawal,               
+            };
+
+            _context.Transactions.Add(transactionToSave);
             var account = new Account();
 
             try
             {
-                account = await _context.Accounts.FindAsync(transaction.AccountId);
+                account = await _context.Accounts.FindAsync(transactionToSave.AccountId);
                 if (account == null || account.Deleted == true)
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                if (transaction.Type == TransactionTypes.Deposit)
+                if (transactionToSave.Type == TransactionTypes.Deposit)
                 {
-                    account.CurrentBalance += transaction.Amount;
+                    account.CurrentBalance += transactionToSave.Amount;
                 }
-                else if (transaction.Type == TransactionTypes.Withdrawal)
+                else if (transactionToSave.Type == TransactionTypes.Withdrawal)
                 {
-                    account.CurrentBalance -= transaction.Amount;
+                    account.CurrentBalance -= transactionToSave.Amount;
                 }
                 else
                 {

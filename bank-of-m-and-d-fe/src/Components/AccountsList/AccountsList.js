@@ -9,7 +9,7 @@ import './accountsList.css';
 function AccountsList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(false);
     const history = useHistory();
 
     async function getAllAccounts() {
@@ -18,7 +18,8 @@ function AccountsList() {
 
         setData(json.data);
         if (json.success === false) {
-          setError(json.message);
+          toast.error(json.message);
+          setError(true);
         }
         setLoading(false);
     }
@@ -39,9 +40,14 @@ function AccountsList() {
 
       if (json.success === true) {
         toast.success("Account Deleted");
+        setTimeout(home, 5000);
       } else {
         toast.error(json.message);
       }
+    }
+
+    function home() {
+      window.location.reload();
     }
 
     function handleViewTransactions(e) {
@@ -91,7 +97,7 @@ function AccountsList() {
             </tbody>
           </table>
         )}
-        {error ? <div className="error">Opps {error}</div> : <div></div>}
+        {error ? <div className="error">An error occured.</div> : <div></div>}
       </main>
     );
 }
