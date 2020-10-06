@@ -1,99 +1,108 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Loader from '../Loader/Loader';
+import { toast } from "react-toastify";
 import './transactions.css';
 
-
 function Transactions(props) {
-    const [accountId] = useState(props.accountData.id)
-    const [firstName] = useState(props.accountData.firstName);
-    const [lastName] = useState(props.accountData.lastName);
-    const [startBalance] = useState(props.accountData.openingBalance);
-    const [currentBalance] = useState(props.accountData.currentBalance);
-    const [dataToDisplay, setDataToDisplay] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const [dataToDisplay, setDataToDisplay] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  function processData(accountDataToConvert, dataToConvert) {
+    let runningTotal = accountDataToConvert.openingBalance;
+    let convertedTransactions = dataToConvert;
+    convertedTransactions.forEach((transaction) => {
+      transaction.balance =
+        transaction.type === 0
+          ? runningTotal + transaction.amount
+          : runningTotal - transaction.amount;
+      runningTotal = transaction.balance;
+      transaction.date = transaction.date.split("T")[0].trim();
+    });
+    let convertedData = {
+      firstName: accountDataToConvert.firstName,
+      lastName: accountDataToConvert.lastName,
+      openingBalance: accountDataToConvert.openingBalance,
+      currentBalance: accountDataToConvert.currentBalance,
+      transactions: convertedTransactions,
+    };;
+    return convertedData;
+  }
 
-    async function getTransactions(acId) {
-      const url = `https://localhost:55741/api/Transaction/${acId.toString()}`
-        const response = await fetch(url);
-        const json = await response.json();
-        const processedData = await processData(json.data);
+  useEffect(() => {
+    async function fetchData(acId) {
+      const accountUrl = `https://localhost:55741/api/Account/${acId.toString()}`;
+      const accountResponse = await fetch(accountUrl);
+      const accountJson = await accountResponse.json();
+  
+      const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
+      const response = await fetch(url);
+      const json = await response.json();
+  
+      const processedData = await processData(accountJson.data[0], json.data);
+  
+      setDataToDisplay(processedData);
+      if (accountJson.success === false || (json.success === false && json.message !== "No transactions found for account.")) {
+        toast.erro("Account information not found");
+      }
 
-        setDataToDisplay(processedData);
-        if (json.success === false) {
-          setError(json.message);
-        }
-        setLoading(false);
+      if (json.success === false && json.message === "No transactions found for account.") {
+        toast.info(json.message);
+      }
+      setLoading(false);
     }
+    fetchData(props.accountId)
+  }, [props.accountId]);
 
-    function mount() {
-        getTransactions(accountId);
-    }
-
-    function processData(dataToConvert) {
-        let runningTotal = startBalance;
-        let convertedData = dataToConvert;
-        convertedData.forEach(transaction => {
-            transaction.balance = transaction.type === 0 ? runningTotal + transaction.amount : runningTotal - transaction.amount;
-            runningTotal = transaction.balance;
-            transaction.date = transaction.date.split("T")[0].trim();
-        })
-        return convertedData;
-    }
-
-    useEffect(mount, []);
-
-    return (
-      <main>
-        <h2>Transactions</h2>
-        <h3>
-          Name: {firstName} {lastName}{" "}
-        </h3>
-        {loading ? (
-          <Loader />
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Balance</th>
-                <th>Comments</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Start Balance</td>
-                <td></td>
-                <td></td>
-                <td>£{startBalance}</td>
-                <td></td>
-              </tr>
-              {dataToDisplay.map(
-                ({ id, amount, date, type, comments, balance }) => (
-                  <tr key={id}>
-                    <td>{date}</td>
-                    <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
-                    <td>£{amount}</td>
-                    <td>£{balance}</td>
-                    <td>{comments}</td>
-                  </tr>
-                )
-              )}
-              <tr>
-                <td>End Balance</td>
-                <td></td>
-                <td></td>
-                <td>£{currentBalance}</td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-        {error ? <div className="error">Opps {error}</div> : <div></div>}
-      </main>
-    );
+  return (
+    <main>
+      <h2>Transactions</h2>
+      <h3>
+        Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
+      </h3>
+      {loading ? (
+        <Loader />
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Start Balance</td>
+              <td></td>
+              <td></td>
+              <td>£{dataToDisplay.openingBalance}</td>
+              <td></td>
+            </tr>
+            {dataToDisplay.transactions.map(
+              ({ id, amount, date, type, comments, balance }) => (
+                <tr key={id}>
+                  <td>{date}</td>
+                  <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
+                  <td>£{amount}</td>
+                  <td>£{balance}</td>
+                  <td>{comments}</td>
+                </tr>
+              )
+            )}
+            <tr>
+              <td>End Balance</td>
+              <td></td>
+              <td></td>
+              <td>£{dataToDisplay.currentBalance}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </main>
+  );
 }
 
 export default Transactions;

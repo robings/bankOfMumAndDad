@@ -3,6 +3,10 @@ h1 {
     text-align: center;
 }
 
+form {
+    margin: 0 auto;
+}
+
 form div {
     padding: 5px;
     margin-bottom: 10px;
