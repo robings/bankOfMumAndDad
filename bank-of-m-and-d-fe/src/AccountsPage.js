@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 import Header from './Components/Header/Header';
-import AccountsList from './Components/AccountsList/AccountsList';
-import Transactions from './Components/Transactions/Transactions';
+import AccountsList from "./Components/AccountsList/AccountsList";
 import AccountsNav from './Components/AccountsNav/AccountsNav';
 import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './AccountsPage.css';
-
-const accountData = {
-  id: 10024,
-  firstName: 'Jemima',
-  lastName: 'Canard',
-  openingBalance: 300,
-  currentBalance: 300,
-};
 
 function AccountsPage() {
   const [newAccountModalVisiblity, setNewAccountModalVisiblity] = useState(false);
@@ -27,13 +20,13 @@ function AccountsPage() {
       <Header />
       <AccountsNav openModal={() => setNewAccountModalVisiblity(true)} />
       <AccountsList />
-      <Transactions accountData={accountData} />
       {newAccountModalVisiblity && (
         <AccountsNewForm
           newAccountModalVisibility={newAccountModalVisiblity}
           closeModal={() => handleCloseModal()}
         />
       )}
+      <ToastContainer />
     </div>
   );
 }

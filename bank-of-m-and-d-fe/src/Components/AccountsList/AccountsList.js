@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import './accountsList.css';
 
@@ -9,6 +10,7 @@ function AccountsList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const history = useHistory();
 
     async function getAllAccounts() {
         const response = await fetch('https://localhost:55741/api/Account/all');
@@ -43,7 +45,8 @@ function AccountsList() {
     }
 
     function handleViewTransactions(e) {
-      alert(`View transactions for id ${e.currentTarget.dataset.id}`);
+      let urlParam = e.currentTarget.dataset.id;
+      history.push(`/transactions/${urlParam}`);
     }
 
     useEffect(() => {
@@ -73,30 +76,14 @@ function AccountsList() {
                   <td>£{currentBalance}</td>
                   <td>
                     <button data-id={id} onClick={handleViewTransactions}>
-                      
-                      
                       View Transactions
-                    
-                    
                     </button>
                     <button
-                     
-                     
                       className="deleteButton"
-                     
-                     
                       data-id={id}
-
-
-                                                                onClick={handleDelete}
-                    
-                    
+                      onClick={handleDelete}
                     >
-                      
-                      
                       Delete
-                    
-                    
                     </button>
                   </td>
                 </tr>
@@ -105,7 +92,6 @@ function AccountsList() {
           </table>
         )}
         {error ? <div className="error">Opps {error}</div> : <div></div>}
-        <ToastContainer />
       </main>
     );
 }
