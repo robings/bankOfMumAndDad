@@ -6,6 +6,7 @@ import './transactions.css';
 function Transactions(props) {
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState(false);
   
   function processData(accountDataToConvert, dataToConvert) {
     let runningTotal = accountDataToConvert.openingBalance;
@@ -33,21 +34,33 @@ function Transactions(props) {
       const accountUrl = `https://localhost:55741/api/Account/${acId.toString()}`;
       const accountResponse = await fetch(accountUrl);
       const accountJson = await accountResponse.json();
-  
+
       const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
       const response = await fetch(url);
       const json = await response.json();
-  
-      const processedData = await processData(accountJson.data[0], json.data);
-  
-      setDataToDisplay(processedData);
-      if (accountJson.success === false || (json.success === false && json.message !== "No transactions found for account.")) {
-        toast.erro("Account information not found");
+
+      if (
+        accountJson.success === false ||
+        (json.success === false &&
+          json.message !== "No transactions found for account.")
+      ) {
+        toast.error("Account information not found");
+        setErrors(true);
       }
 
-      if (json.success === false && json.message === "No transactions found for account.") {
+      if (
+        json.success === false &&
+        json.message === "No transactions found for account."
+      ) {
         toast.info(json.message);
+        setErrors(true)
       }
+
+      if (accountJson.success && json.success) {
+        const processedData = await processData(accountJson.data[0], json.data);
+        setDataToDisplay(processedData);
+      }
+
       setLoading(false);
     }
     fetchData(props.accountId)
@@ -56,50 +69,52 @@ function Transactions(props) {
   return (
     <main>
       <h2>Transactions</h2>
-      <h3>
-        Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
-      </h3>
       {loading ? (
         <Loader />
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Amount</th>
-              <th>Balance</th>
-              <th>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Start Balance</td>
-              <td></td>
-              <td></td>
-              <td>£{dataToDisplay.openingBalance}</td>
-              <td></td>
-            </tr>
-            {dataToDisplay.transactions.map(
-              ({ id, amount, date, type, comments, balance }) => (
-                <tr key={id}>
-                  <td>{date}</td>
-                  <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
-                  <td>£{amount}</td>
-                  <td>£{balance}</td>
-                  <td>{comments}</td>
-                </tr>
-              )
-            )}
-            <tr>
-              <td>End Balance</td>
-              <td></td>
-              <td></td>
-              <td>£{dataToDisplay.currentBalance}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+      ) : errors ? <div>No transactions to display</div> : (
+        <div>
+              <h3>
+                Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
+              </h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance</th>
+                    <th>Comments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Start Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td>£{dataToDisplay.openingBalance}</td>
+                    <td></td>
+                  </tr>
+                  {dataToDisplay.transactions.map(
+                    ({ id, amount, date, type, comments, balance }) => (
+                      <tr key={id}>
+                        <td>{date}</td>
+                        <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
+                        <td>£{amount}</td>
+                        <td>£{balance}</td>
+                        <td>{comments}</td>
+                      </tr>
+                    )
+                  )}
+                  <tr>
+                    <td>End Balance</td>
+                    <td></td>
+                    <td></td>
+                    <td>£{dataToDisplay.currentBalance}</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
       )}
     </main>
   );
