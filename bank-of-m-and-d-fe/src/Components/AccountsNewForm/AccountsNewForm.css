@@ -12,7 +12,7 @@ form div {
     margin-bottom: 10px;
 }
 
-input {
+input, select {
     margin: 5px;
     padding: 5px 10px;
     border: 1px solid #999999;

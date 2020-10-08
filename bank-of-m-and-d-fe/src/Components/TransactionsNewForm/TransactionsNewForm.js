@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import "./transactionsNewForm.css";
 
 function TransactionsNewForm(props) {
-  const [newTransactionFormInput, setNewTransactionFormInput] = useState([{}]);
+  const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: "deposit"} );
 
   const handleInputChange = (e) => {
     if (e.currentTarget.value && e.currentTarget.className === "redBorder") {
@@ -11,6 +11,7 @@ function TransactionsNewForm(props) {
     } else if (e.currentTarget.className === "redBorder") {
       e.currentTarget.style.borderColor = "#FF0000";
     }
+
     setNewTransactionFormInput({
       ...newTransactionFormInput,
       [e.currentTarget.name]: e.currentTarget.value,
@@ -24,7 +25,8 @@ function TransactionsNewForm(props) {
     if (
       !newTransactionFormInput.amount ||
       !newTransactionFormInput.dateOfTransaction ||
-      !newTransactionFormInput.type
+      !newTransactionFormInput.type === "deposit" ||
+      !newTransactionFormInput.type === "withdrawal"
     ) {
       toast.error("Please fill in missing data");
     } else {
@@ -33,10 +35,12 @@ function TransactionsNewForm(props) {
   }
 
   async function submitNewTransaction(newTransactionFormInput) {
+    console.log (newTransactionFormInput.type)
+    
     const data = {
       amount: newTransactionFormInput.amount,
       date: newTransactionFormInput.dateOfTransaction,
-      type: newTransactionFormInput.type,
+      type: newTransactionFormInput.type === "deposit" ? "0" : "1",
       comments: newTransactionFormInput.comments,
       accountId: props.accountId,
     };
@@ -86,12 +90,14 @@ function TransactionsNewForm(props) {
           </div>
           <div>
             <label>Type</label>
-            <input
-              className="redBorder"
-              type="text"
+
+            <select
               name="type"
               onChange={handleInputChange}
-            />
+            >
+              <option value="deposit">Deposit</option>
+              <option value="withdrawal">Withdrawal</option>
+            </select>
           </div>
           <div>
             <label>Comments</label>

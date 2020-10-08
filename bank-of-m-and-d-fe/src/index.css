@@ -25,7 +25,8 @@ button {
 
 button:hover {
   cursor: pointer;
-  border-color: #FF0000;
+  border-color: #009900;
+  background-color: #009900;
 }
 
 .closeButton {
@@ -33,6 +34,11 @@ button:hover {
   color: #FF0000;
   padding: 0;
   float: right;
+}
+
+.closeButton:hover {
+  border-color: #FF0000;
+  background-color: #FFFFFF;
 }
 
 .deleteButton {
@@ -43,6 +49,7 @@ button:hover {
 
 .deleteButton:hover {
   background-color: #FF0000;
+  border-color: #FF0000;
   color: #FFFFFF;
 }
 

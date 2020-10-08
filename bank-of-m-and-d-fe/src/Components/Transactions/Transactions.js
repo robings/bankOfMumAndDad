@@ -59,6 +59,8 @@ function Transactions(props) {
       if (accountJson.success && json.success) {
         const processedData = await processData(accountJson.data[0], json.data);
         setDataToDisplay(processedData);
+      } else if (accountJson.success && !json.success) {
+        setDataToDisplay(accountJson.data[0])
       }
 
       setLoading(false);
@@ -71,17 +73,18 @@ function Transactions(props) {
       <h2>Transactions</h2>
       {loading ? (
         <Loader />
-      ) : errors ? <div>No transactions to display</div> : (
+      ) : 
         <div>
               <h3>
                 Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
               </h3>
+              
               <table>
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Type</th>
-                    <th>Amount</th>
+                    <th>Deposits</th>
+                    <th>Withdrawals</th>
                     <th>Balance</th>
                     <th>Comments</th>
                   </tr>
@@ -91,31 +94,57 @@ function Transactions(props) {
                     <td>Start Balance</td>
                     <td></td>
                     <td></td>
-                    <td>£{dataToDisplay.openingBalance}</td>
+                    {dataToDisplay.openingBalance < 0 ? (
+                    <td style={{ textAlign: "right", color: "#FF0000" }}>
+                      £{dataToDisplay.openingBalance.toFixed(2)}
+                    </td>
+                    ) : (
+                    <td style={{ textAlign: "right", color: "#009900" }}>
+                      £{dataToDisplay.openingBalance.toFixed(2)}
+                    </td>
+                    )}
                     <td></td>
                   </tr>
-                  {dataToDisplay.transactions.map(
+                  {errors ? <tr><td colSpan="5">No transactions to display</td></tr> : (
+                  dataToDisplay.transactions.map(
                     ({ id, amount, date, type, comments, balance }) => (
                       <tr key={id}>
-                        <td>{date}</td>
-                        <td>{type === 0 ? "Deposit" : "Withdrawal"}</td>
-                        <td>£{amount}</td>
-                        <td>£{balance}</td>
-                        <td>{comments}</td>
+                        <td style={{width: "15%"}}>{date}</td>
+                        <td style = {{textAlign: "right", color: "#009900", width: "15%"}}>{type === 0 ? `£${amount.toFixed(2)}` : ""}</td>
+                        <td style = {{textAlign: "right", color: "#FF0000", width: "15%"}}>{type === 0 ? "" : `£${amount.toFixed(2)}`}</td>
+                        {balance < 0 ? (
+                        <td style={{ textAlign: "right", color: "#FF0000", width: "15%" }}>
+                          £{balance.toFixed(2)}
+                        </td>
+                        ) : (
+                        <td style={{ textAlign: "right", color: "#009900", width: "15%" }}>
+                          £{balance.toFixed(2)}
+                        </td>
+                        )}
+                        <td style = {{textAlign: "left"}}>{comments}</td>
                       </tr>
                     )
+                  )
                   )}
                   <tr>
                     <td>End Balance</td>
                     <td></td>
                     <td></td>
-                    <td>£{dataToDisplay.currentBalance}</td>
+                    {dataToDisplay.currentBalance < 0 ? (
+                    <td style={{ textAlign: "right", color: "#FF0000" }}>
+                      £{dataToDisplay.currentBalance.toFixed(2)}
+                    </td>
+                    ) : (
+                    <td style={{ textAlign: "right", color: "#009900" }}>
+                      £{dataToDisplay.currentBalance.toFixed(2)}
+                    </td>
+                    )}
                     <td></td>
                   </tr>
                 </tbody>
               </table>
         </div>
-      )}
+      }
     </main>
   );
 }

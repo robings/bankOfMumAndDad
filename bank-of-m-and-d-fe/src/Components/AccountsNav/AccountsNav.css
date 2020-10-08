@@ -10,3 +10,7 @@
     color: #FFFFFF;
     float: right;
 }
+
+.subNavButton:hover {
+    background-color: #0000FF;
+}
