@@ -79,7 +79,15 @@ function AccountsList() {
                 <tr className="data" key={id}>
                   <td>{lastName}</td>
                   <td>{firstName}</td>
-                  <td>£{currentBalance}</td>
+                  {currentBalance < 0 ? (
+                    <td style={{ textAlign: "right", color: "#FF0000" }}>
+                      £{currentBalance.toFixed(2)}
+                    </td>
+                  ) : (
+                    <td style={{ textAlign: "right", color: "#009900" }}>
+                      £{currentBalance.toFixed(2)}
+                    </td>
+                  )}
                   <td>
                     <button data-id={id} onClick={handleViewTransactions}>
                       View Transactions

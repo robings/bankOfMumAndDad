@@ -75,7 +75,7 @@ namespace bankOfMumAndDad.Controllers
             Transaction transactionToSave = new Transaction
             {
                 AccountId = Convert.ToInt64(transaction.AccountId),
-                Amount = Convert.ToInt64(transaction.Amount),
+                Amount = Convert.ToDecimal(transaction.Amount),
                 Date = Convert.ToDateTime(transaction.Date),
                 Comments = transaction.Comments,
                 Type = transaction.Type == "0" ? TransactionTypes.Deposit : TransactionTypes.Withdrawal,               

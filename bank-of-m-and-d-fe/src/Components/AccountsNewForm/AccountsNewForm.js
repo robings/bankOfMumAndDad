@@ -59,55 +59,62 @@ function AccountsNewForm(props) {
     return (
       <div className="overlay">
         <div className="modal">
-            <button className="closeButton" onClick={props.closeModal}>
+          <button className="closeButton" onClick={props.closeModal}>
             X
-            </button>
-            <h1>New Account</h1>
-            <form>
-                <div>
-                <label>First Name</label>
-                <input
-                    className="redBorder"
-                    type="text"
-                    name="firstName"
-                    onChange={handleInputChange}
-                />
-                </div>
-                <div>
-                <label>Last Name</label>
-                <input
-                    className="redBorder"
-                    type="text"
-                    name="lastName"
-                    onChange={handleInputChange}
-                />
-                </div>
-                <div>
-                <label>Opening Balance £</label>
-                <input
-                    className="redBorder"
-                    type="number"
-                    name="openingBalance"
-                    onChange={handleInputChange}
-                />
-                </div>
-                <div>
-                <label>
-                    Current Balance £
-                </label>
-                <input
-                    type="number"
-                    name="currentBalance"
-                    onChange={handleInputChange}
-                />
-                </div>
-                <label>
-                (if different from opening balance)
-                </label>
-            </form>
-                <button onClick={handleSubmit}>Submit</button>
+          </button>
+          <h1>New Account</h1>
+          <form>
+            <div>
+              <label>First Name</label>
+              <input
+                className="redBorder"
+                type="text"
+                name="firstName"
+                onChange={handleInputChange}
+              />
             </div>
+            <div>
+              <label>Last Name</label>
+              <input
+                className="redBorder"
+                type="text"
+                name="lastName"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label>Opening Balance £</label>
+              <input
+                className="redBorder"
+                type="number"
+                name="openingBalance"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label>Current Balance £</label>
+              <input
+                type="number"
+                name="currentBalance"
+                onChange={handleInputChange}
+              />
+            </div>
+            <label>(if different from opening balance)</label>
+          </form>
+          <button
+         
+         
+                onClick={handleSubmit}
+      
+      
+                      style={{ marginTop: "10px" }}
+          
+          
+          >
+            Submit
+          </button>
         </div>
+      </div>
     );
 }
 
