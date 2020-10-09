@@ -24,7 +24,8 @@ tr:nth-child(even) {
 }
 
 th, td {
-    padding: 5px;
+    padding: 5px 10px;
+    border-right: 1px solid #999999;
 }
 
 th {
