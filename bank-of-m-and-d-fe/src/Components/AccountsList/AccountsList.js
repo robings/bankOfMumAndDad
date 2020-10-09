@@ -69,8 +69,8 @@ function AccountsList() {
             <thead>
               <tr>
                 <th>Last Name</th>
-                <th>FirstName</th>
-                <th>Current Balance</th>
+                <th>First Name</th>
+                <th style={{ width: "150px", textAlign: "center" }}>Current Balance</th>
                 <th></th>
               </tr>
             </thead>
@@ -81,7 +81,7 @@ function AccountsList() {
                   <td>{firstName}</td>
                   {currentBalance < 0 ? (
                     <td style={{ textAlign: "right", color: "#FF0000" }}>
-                      £{currentBalance.toFixed(2)}
+                      -£{(currentBalance*-1).toFixed(2)}
                     </td>
                   ) : (
                     <td style={{ textAlign: "right", color: "#009900" }}>

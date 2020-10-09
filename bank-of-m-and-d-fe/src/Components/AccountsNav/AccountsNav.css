@@ -5,12 +5,14 @@
 }
 
 .subNavButton {
-    background-color: #0000FF;
-    border: 1px solid #999999;
-    color: #FFFFFF;
+    background-color: #FFFFFF;
+    border-color: #0000FF;
+    color: #0000FF;
     float: right;
 }
 
 .subNavButton:hover {
     background-color: #0000FF;
+    border-color: #0000FF;
+    color: #FFFFFF;
 }

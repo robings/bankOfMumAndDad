@@ -17,6 +17,8 @@ button {
     sans-serif;
   font-weight: 700;
   border-radius: 20px;
+  border-color: #009900;
+  color: #009900;
   height: 40px;
   min-width: 40px;
   padding: 0px 20px;
@@ -27,6 +29,7 @@ button:hover {
   cursor: pointer;
   border-color: #009900;
   background-color: #009900;
+  color: #FFFFFF;
 }
 
 .closeButton {
@@ -39,6 +42,7 @@ button:hover {
 .closeButton:hover {
   border-color: #FF0000;
   background-color: #FFFFFF;
+  color: #FF0000;
 }
 
 .deleteButton {
