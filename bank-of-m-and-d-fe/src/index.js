@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import AccountsPage from './AccountsPage';
-import TransactionsPage from "./TransactionsPage";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import TransactionsPage from './TransactionsPage';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>

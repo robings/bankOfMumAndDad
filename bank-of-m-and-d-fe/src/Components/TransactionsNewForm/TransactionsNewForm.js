@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import "./transactionsNewForm.css";
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import './transactionsNewForm.css';
 
 function TransactionsNewForm(props) {
-  const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: "deposit"} );
+  const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: 'deposit'} );
 
   const handleInputChange = (e) => {
-    if (e.currentTarget.value && e.currentTarget.className === "redBorder") {
-      e.currentTarget.style.borderColor = "#999999";
-    } else if (e.currentTarget.className === "redBorder") {
-      e.currentTarget.style.borderColor = "#FF0000";
+    if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
+      e.currentTarget.style.borderColor = '#999999';
+    } else if (e.currentTarget.className === 'redBorder') {
+      e.currentTarget.style.borderColor = '#FF0000';
     }
 
     setNewTransactionFormInput({
@@ -25,10 +25,10 @@ function TransactionsNewForm(props) {
     if (
       !newTransactionFormInput.amount ||
       !newTransactionFormInput.dateOfTransaction ||
-      !newTransactionFormInput.type === "deposit" ||
-      !newTransactionFormInput.type === "withdrawal"
+      !newTransactionFormInput.type === 'deposit' ||
+      !newTransactionFormInput.type === 'withdrawal'
     ) {
-      toast.error("Please fill in missing data");
+      toast.error('Please fill in missing data');
     } else {
       submitNewTransaction(newTransactionFormInput);
     }
@@ -40,22 +40,22 @@ function TransactionsNewForm(props) {
     const data = {
       amount: newTransactionFormInput.amount,
       date: newTransactionFormInput.dateOfTransaction,
-      type: newTransactionFormInput.type === "deposit" ? "0" : "1",
+      type: newTransactionFormInput.type === 'deposit' ? '0' : '1',
       comments: newTransactionFormInput.comments,
       accountId: props.accountId,
     };
 
-    const response = await fetch("https://localhost:55741/api/Transaction", {
-      method: "POST",
+    const response = await fetch('https://localhost:55741/api/Transaction', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
     const json = await response.json();
 
     if (json.success === true) {
-      toast.success("Transaction recorded");
+      toast.success('Transaction recorded');
       setTimeout(props.closeModal, 5000);
     } else {
       toast.error(json.message);

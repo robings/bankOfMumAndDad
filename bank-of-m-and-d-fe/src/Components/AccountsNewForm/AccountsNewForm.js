@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
 
 function AccountsNewForm(props) {
@@ -8,9 +8,9 @@ function AccountsNewForm(props) {
 
     const handleInputChange = (e) => {
         if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
-            e.currentTarget.style.borderColor = "#999999";
+            e.currentTarget.style.borderColor = '#999999';
         } else if (e.currentTarget.className === 'redBorder') {
-            e.currentTarget.style.borderColor = "#FF0000";
+            e.currentTarget.style.borderColor = 'FF0000';
         }
         setNewAccountFormInput({
             ...newAccountFormInput,
@@ -21,22 +21,18 @@ function AccountsNewForm(props) {
     function handleSubmit(event) {
         event.preventDefault();
         if (!newAccountFormInput.firstName || !newAccountFormInput.lastName || !newAccountFormInput.openingBalance) {
-            toast.error("Please fill in missing data");
+            toast.error('Please fill in missing data');
         } else {
             submitNewAccount(newAccountFormInput);
         }
     }
 
     async function submitNewAccount(newAccountFormInput) {
-        if (!newAccountFormInput.currentBalance) {
-            newAccountFormInput.currentBalance = newAccountFormInput.openingBalance;
-        }
-
         const data = {
             'firstName': newAccountFormInput.firstName,
             'lastName' : newAccountFormInput.lastName,
             'openingBalance': newAccountFormInput.openingBalance,
-            'currentBalance': newAccountFormInput.currentBalance
+            'currentBalance': newAccountFormInput.openingBalance
         }
 
         const response = await fetch('https://localhost:55741/api/Account', {
@@ -91,15 +87,6 @@ function AccountsNewForm(props) {
                 onChange={handleInputChange}
               />
             </div>
-            <div>
-              <label>Current Balance £</label>
-              <input
-                type="number"
-                name="currentBalance"
-                onChange={handleInputChange}
-              />
-            </div>
-            <label>(if different from opening balance)</label>
           </form>
           <button
          
