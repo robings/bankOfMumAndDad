@@ -46,12 +46,12 @@ namespace bankOfMumAndDad.Controllers
         }
 
         // GET: api/Account
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetAccount([FromBody] IdOnlyRequest getByIdRequest)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse>> GetAccount(int id)
         {
             try
             {
-                var account = await _context.Accounts.Where(a => a.Id == getByIdRequest.Id && a.Deleted != true).ToListAsync();
+                var account = await _context.Accounts.Where(a => a.Id == id && a.Deleted != true).ToListAsync();
 
                 if (!account.Any())
                 {
@@ -140,14 +140,21 @@ namespace bankOfMumAndDad.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> PostAccount(Account account)
+        public async Task<ActionResult<ApiResponse>> PostAccount(AccountDTO postedAccount)
         {
-            if (!Validation.ValidateString(account.FirstName) ||
-                !Validation.ValidateString(account.LastName))
+            if (!Validation.ValidateString(postedAccount.FirstName) ||
+                !Validation.ValidateString(postedAccount.LastName))
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
 
+            var account = new Account {
+                FirstName = postedAccount.FirstName,
+                LastName = postedAccount.LastName,
+                OpeningBalance = Convert.ToDecimal(postedAccount.OpeningBalance),
+                CurrentBalance = Convert.ToDecimal(postedAccount.CurrentBalance),
+            };
+            
             try
             {
                 _context.Accounts.Add(account);
@@ -166,15 +173,17 @@ namespace bankOfMumAndDad.Controllers
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
+            var accountId = Convert.ToInt64(deleteRequest.Id);
+
             try
             {
-                var account = await _context.Accounts.FindAsync(deleteRequest.Id);
+                var account = await _context.Accounts.FindAsync(accountId);
                 if (account == null || account.Deleted == true)
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                var transactions = _context.Transactions.Where(t => t.AccountId == deleteRequest.Id);
+                var transactions = _context.Transactions.Where(t => t.AccountId == accountId);
                 if(transactions != null)
                 {
                     foreach (var transaction in transactions)
