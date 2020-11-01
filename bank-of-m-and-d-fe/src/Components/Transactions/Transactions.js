@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 import './transactions.css';
 
 function Transactions(props) {
@@ -17,7 +17,7 @@ function Transactions(props) {
           ? runningTotal + transaction.amount
           : runningTotal - transaction.amount;
       runningTotal = transaction.balance;
-      transaction.date = transaction.date.split("T")[0].trim();
+      transaction.date = transaction.date.split('T')[0].trim();
     });
     let convertedData = {
       firstName: accountDataToConvert.firstName,
@@ -42,15 +42,15 @@ function Transactions(props) {
       if (
         accountJson.success === false ||
         (json.success === false &&
-          json.message !== "No transactions found for account.")
+          json.message !== 'No transactions found for account.')
       ) {
-        toast.error("Account information not found");
+        toast.error('Account information not found');
         setErrors(true);
       }
 
       if (
         json.success === false &&
-        json.message === "No transactions found for account."
+        json.message === 'No transactions found for account.'
       ) {
         toast.info(json.message);
         setErrors(true)

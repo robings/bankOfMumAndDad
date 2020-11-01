@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
-import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
 
 
@@ -29,17 +29,17 @@ function AccountsList() {
         id: e.currentTarget.dataset.id,
       };
 
-      const response = await fetch("https://localhost:55741/api/Account", {
-        method: "DELETE",
+      const response = await fetch('https://localhost:55741/api/Account', {
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
       const json = await response.json();
 
       if (json.success === true) {
-        toast.success("Account Deleted");
+        toast.success('Account Deleted');
         setTimeout(home, 5000);
       } else {
         toast.error(json.message);

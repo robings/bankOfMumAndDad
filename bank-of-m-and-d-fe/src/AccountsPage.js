@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Header from './Components/Header/Header';
-import AccountsList from "./Components/AccountsList/AccountsList";
+import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
 import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm'
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './AccountsPage.css';
 
 function AccountsPage() {

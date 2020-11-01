@@ -1,12 +1,12 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
-import "./transactionsNav.css";
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import './transactionsNav.css';
 
 function TransactionsNav(props) {
   const history = useHistory();
 
   function handleHomeButtonClick() {
-    history.push("/");
+    history.push('/');
   }
 
   return (
