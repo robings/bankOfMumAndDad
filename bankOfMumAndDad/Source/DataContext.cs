@@ -24,6 +24,9 @@ namespace bankOfMumAndDad.Source
                 .WithMany(a => a.Transactions)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
         }
     }
 }
