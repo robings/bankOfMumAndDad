@@ -1,0 +1,44 @@
+main {
+    padding: 10px;
+}
+
+h2 {
+    color: #0000FF;
+    border-bottom: 1px solid #999999;
+}
+
+table {
+    margin: 0;
+    padding: 5px;
+    width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #999999;
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid #999999;
+}
+
+tr:nth-child(even) {
+    background-color: #F2F2F2;
+}
+
+th, td {
+    padding: 5px 10px;
+    border-right: 1px solid #999999;
+}
+
+th {
+    background-color: #0000FF;
+    color: #F2F2F2;
+    text-align: left;
+}
+
+td {
+    color: #000000;
+}
+
+td:last-child {
+    text-align: right;
+}

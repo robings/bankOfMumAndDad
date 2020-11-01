@@ -1,0 +1,25 @@
+header {
+  width: 100%;
+  padding: 10px;
+  color: #00FF00;
+  border-bottom: 1px solid #999999;
+  overflow: auto;
+}
+
+img {
+  width: 50px;
+  border-radius: 50%;
+  border: 2px solid #009900;
+  float: left;
+  margin-right: 10px;
+}
+
+h1 {
+  margin: 0 auto;
+  width: fit-content;
+  padding: 0 20px;
+  border: 2px solid #009900;
+  border-radius: 30px;
+  background-color: #FFFFFF;
+}
+  

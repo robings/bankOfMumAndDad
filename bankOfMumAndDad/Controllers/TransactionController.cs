@@ -23,19 +23,19 @@ namespace bankOfMumAndDad.Controllers
         }
 
         // GET: api/Transaction
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId([FromBody] IdOnlyRequest getByAccountIdRequest)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId(int id)
         {
             try
             {
-                if (!_context.Accounts.Any(e => e.Id == getByAccountIdRequest.Id || e.Deleted == true))
+                if ((!_context.Accounts.Any(e => e.Id == id)) || (_context.Accounts.Any(e => e.Id == id && e.Deleted == true)))
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                var transactions = await _context.Transactions.Where(d => d.AccountId == getByAccountIdRequest.Id).ToListAsync();
+                var transactions = await _context.Transactions.Where(d => d.AccountId == id).OrderBy(o => o.Date).ToListAsync();
 
-                if (transactions == null)
+                if (transactions.Count() == 0)
                 {
                     return NotFound(new ApiResponse(false, "No transactions found for account.", new List<Object>()));
                 }
@@ -44,10 +44,10 @@ namespace bankOfMumAndDad.Controllers
                     return Ok(new ApiResponse(true, "Transaction details returned.", transactions));
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.HttpContext.Response.StatusCode = 500;
-                return new ApiResponse(false, ex.Message, new List<Object>());
+                return new ApiResponse(false, "Server Error", new List<Object>());
             }
         }
 
@@ -65,31 +65,40 @@ namespace bankOfMumAndDad.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<ApiResponse>> PostTransaction(Transaction transaction)
+        public async Task<ActionResult<ApiResponse>> PostTransaction(TransactionDTO transaction)
         {
             if (!Validation.ValidateString(transaction.Comments))
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
 
-            _context.Transactions.Add(transaction);
+            Transaction transactionToSave = new Transaction
+            {
+                AccountId = Convert.ToInt64(transaction.AccountId),
+                Amount = Convert.ToDecimal(transaction.Amount),
+                Date = Convert.ToDateTime(transaction.Date),
+                Comments = transaction.Comments,
+                Type = transaction.Type == "0" ? TransactionTypes.Deposit : TransactionTypes.Withdrawal,               
+            };
+
+            _context.Transactions.Add(transactionToSave);
             var account = new Account();
 
             try
             {
-                account = await _context.Accounts.FindAsync(transaction.AccountId);
+                account = await _context.Accounts.FindAsync(transactionToSave.AccountId);
                 if (account == null || account.Deleted == true)
                 {
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
-                if (transaction.Type == TransactionTypes.Deposit)
+                if (transactionToSave.Type == TransactionTypes.Deposit)
                 {
-                    account.CurrentBalance += transaction.Amount;
+                    account.CurrentBalance += transactionToSave.Amount;
                 }
-                else if (transaction.Type == TransactionTypes.Withdrawal)
+                else if (transactionToSave.Type == TransactionTypes.Withdrawal)
                 {
-                    account.CurrentBalance -= transaction.Amount;
+                    account.CurrentBalance -= transactionToSave.Amount;
                 }
                 else
                 {

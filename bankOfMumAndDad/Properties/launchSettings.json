@@ -19,10 +19,10 @@
     },
     "bankOfMumAndDad": {
       "commandName": "Project",
+      "applicationUrl": "https://localhost:55741;http://localhost:55741",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:55741"
+      }
     }
   }
 }

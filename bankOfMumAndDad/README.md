@@ -4,15 +4,14 @@
 
 ### GET
 
-**/api/Account**
+**/api/Account/{id}** - Gets an account by Id
 
-- Gets an account by Id
-- Required:
-  - `id` - The Account Id
-- Optional:
-  - None
-- Sends:
-  - `{ "id": long }`
+- Url Params:
+  - id=[integer]
+- Data Params:
+  - Required: None
+  - Optional: None
+  - Sends: None
 - Returns:
   - if successful:
     - `status 200`
@@ -25,13 +24,13 @@
 
 ### GET
 
-**/api/Account/all**
+**/api/Account/all** - Gets all accounts
 
-- Gets all accounts
-- Required:
-  - None
-- Optional:
-  - None
+- Data Params:
+  - Required:
+    - None
+  - Optional:
+    - None
 - Returns:
   - if successful:
     - `status 200`
@@ -44,16 +43,16 @@
 
 ### POST
 
-**/api/Account**
+**/api/Account** - Adds an account
 
-- Adds an account
-- Required:
-  - `firstName` - updated first name of account holder
-  - `lastName` - updated last name of account holder
-  - `openingBalance` - the opening balance of the account
-  - `currentBalance` - the current balance of the account
-- Optional:
-  - None
+- Data Params:
+  - Required:
+    - `firstName` - updated first name of account holder
+    - `lastName` - updated last name of account holder
+    - `openingBalance` - the opening balance of the account
+    - `currentBalance` - the current balance of the account
+  - Optional:
+    - None
 - Sends:
   - `{ "firstName": "string", "lastName": "string", "openingBalance": decimal, "currentBalance": decimal }`
 - Returns:
@@ -68,15 +67,15 @@
 
 ### PUT
 
-**/api/Account**
+**/api/Account** - Edits an account
 
-- Edits an account
-- Required:
-  - `id` - The Account Id
-- Optional:
-  - `firstName` - updated first name of account holder
-  - `lastName` - updated last name of account holder
-  - `currentBalance` - the current balance of the account
+- Data Params:
+  - Required:
+    - `id` - The Account Id
+  - Optional:
+    - `firstName` - updated first name of account holder
+    - `lastName` - updated last name of account holder
+    - `currentBalance` - the current balance of the account
 - Sends:
   - `{ "id": long, "firstName": "string", "lastName": "string", "currentBalance": decimal }`
 - Returns:
@@ -93,13 +92,13 @@
 
 ### DELETE
 
-**/api/Account**
+**/api/Account** - Soft deletes an account by Id, along with any associated transactions
 
-- Soft deletes an account by Id, along with any associated transactions
-- Required:
-  - `id` - The Account Id
-- Optional:
-  - None
+- Data Params:
+  - Required:
+    - `id` - The Account Id
+  - Optional:
+    - None
 - Sends:
   - `{ "id": "long" }`
 - Returns:
@@ -116,15 +115,17 @@
 
 ### GET
 
-**/api/Transaction**
+**/api/Transaction/{id}** - Gets transactions by account Id
 
-- Gets transactions by account Id
-- Required:
-  - `id` - The Account Id
-- Optional:
-  - None
+- Url Params:
+  - id=[integer]
+- Data Params:
+  - Required:
+    - None
+  - Optional:
+    - None
 - Sends:
-  - `{ "id": long }`
+  - None
 - Returns:
   - if successful:
     - `status 200`
@@ -139,17 +140,17 @@
 
 ### POST
 
-**/api/Transaction**
+**/api/Transaction** - Adds transaction
 
-- Adds transaction
-- Required:
-  - `amount` - the amount of the transaction
-  - `date` - the date of the transaction
-  - `type` - either 0 - a deposit, or 1 a withdrawal
-  - `comments` - string
-  - `accountId` - the account Id
-- Optional:
-  - None
+- Data Params:
+  - Required:
+    - `amount` - the amount of the transaction
+    - `date` - the date of the transaction
+    - `type` - either 0 - a deposit, or 1 a withdrawal
+    - `comments` - string
+    - `accountId` - the account Id
+  - Optional:
+    - None
 - Sends:
   - `{ "amount": decimal, "date": "YYYY-MM-DD", "type": boolean, "comments": "string", "accountId": long }`
 - Returns:
@@ -166,18 +167,14 @@
 
 ### PUT
 
-**/api/Transaction**
-
-- Not supported
+**/api/Transaction** - Not supported
 - Returns:
   - `status 405`
   - `{ "success": false, "message": "Action not supported", "data": [] }`
 
 ### DELETE
 
-**/api/Transaction**
-
-- Not supported
+**/api/Transaction** - Not supported
 - Returns:
   - `status 405`
   - `{ "success": false, "message": "Action not supported", "data": [] }`
