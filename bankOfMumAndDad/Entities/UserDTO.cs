@@ -3,10 +3,10 @@ namespace bankOfMumAndDad.Entities
 {
     public class UserDTO
     {
-        string FirstName { get; set; }
-        string LastName { get; set; }
-        string Username { get; set; }
-        string Password { get; set; }
-        string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
     }
 }
