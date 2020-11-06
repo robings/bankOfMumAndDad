@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,7 @@ namespace bankOfMumAndDad.Controllers
                 var result = await _context.Users.Where(a => a.Deleted != true).ToListAsync();
                 if (!result.Any())
                 {
-                    return NotFound(new ApiResponse(false, "No users found", null));
+                    return NotFound(new ApiResponse(false, "No users found", new List<object>()));
                 }
                 else
                 {
@@ -88,6 +89,31 @@ namespace bankOfMumAndDad.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 return Ok(new ApiResponse(true, "Successfully created account.", new List<Object>()));
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<ApiResponse>> DeleteUser([FromBody] IdOnlyRequest deleteRequest)
+        {
+            var userId = Convert.ToInt64(deleteRequest.Id);
+
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null || user.Deleted == true)
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+
+                user.Deleted = true;
+
+                await _context.SaveChangesAsync();
+                return Ok(new ApiResponse(true, "User successfully deleted.", new List<Object>()));
             }
             catch (Exception ex)
             {

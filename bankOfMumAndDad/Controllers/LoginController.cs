@@ -52,7 +52,7 @@ namespace bankOfMumAndDad.Controllers
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Issuer"],
                 null,
-                expires: DateTime.UtcNow.AddMinutes(1),
+                expires: DateTime.UtcNow.AddMinutes(5),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -60,14 +60,18 @@ namespace bankOfMumAndDad.Controllers
 
         private bool AuthenticateUser(loginDTO login)
         {
-            var userAccount = _context.Users.Where(u => u.Username == login.Username).FirstOrDefault();
+            var userAccount = _context.Users.Where(u => u.Username == login.Username && !u.Deleted).FirstOrDefault();            
 
             var userAuthenticated = false;
-            var userPassword = PasswordHelper.SaltAndHashPassword(login.Password, userAccount.Salt);
 
-            if (login.Username == userAccount.Username && userPassword == userAccount.Password)
+            if (userAccount != null)
             {
-                userAuthenticated = true;
+                var userPassword = PasswordHelper.SaltAndHashPassword(login.Password, userAccount.Salt);
+
+                if (login.Username == userAccount.Username && userPassword == userAccount.Password)
+                {
+                    userAuthenticated = true;
+                }
             }
 
             return userAuthenticated;
