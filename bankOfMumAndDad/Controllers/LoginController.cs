@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +19,13 @@ namespace bankOfMumAndDad.Controllers
     public class LoginController : Controller
     {
         // GET: /<controller>/
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
+        private readonly DataContext _context;
 
-        public LoginController(IConfiguration config)
+        public LoginController(IConfiguration config, DataContext context)
         {
             _config = config;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -55,9 +60,12 @@ namespace bankOfMumAndDad.Controllers
 
         private bool AuthenticateUser(loginDTO login)
         {
-            var userAuthenticated = false;
+            var userAccount = _context.Users.Where(u => u.Username == login.Username).FirstOrDefault();
 
-            if (login.Username == "TestUser" && login.Password == "TestPassword")
+            var userAuthenticated = false;
+            var userPassword = PasswordHelper.SaltAndHashPassword(login.Password, userAccount.Salt);
+
+            if (login.Username == userAccount.Username && userPassword == userAccount.Password)
             {
                 userAuthenticated = true;
             }

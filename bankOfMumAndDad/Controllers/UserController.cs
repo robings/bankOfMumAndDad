@@ -33,11 +33,21 @@ namespace bankOfMumAndDad.Controllers
                 var result = await _context.Users.Where(a => a.Deleted != true).ToListAsync();
                 if (!result.Any())
                 {
-                    return NotFound(new ApiResponse(false, "No users found", result));
+                    return NotFound(new ApiResponse(false, "No users found", null));
                 }
                 else
                 {
-                    return Ok(new ApiResponse(true, "Users retrieved.", result));
+                    var convertedResult = from user in result
+                                          select new UserDTO
+                                          {
+                                              FirstName = user.FirstName,
+                                              LastName = user.LastName,
+                                              Username = user.Username,
+                                              Password = "********",
+                                              Email = user.Email,
+                                          };
+
+                    return Ok(new ApiResponse(true, "Users retrieved.", convertedResult.ToList()));
                 }
             }
             catch (Exception ex)
@@ -61,7 +71,7 @@ namespace bankOfMumAndDad.Controllers
             rng.GetBytes(saltBytes);
             var saltText = Convert.ToBase64String(saltBytes);
 
-            var saltedHashedPassword = SaltAndHashPassword(postedUser.Password, saltText);
+            var saltedHashedPassword = PasswordHelper.SaltAndHashPassword(postedUser.Password, saltText);
 
             var user = new User
             {
@@ -84,14 +94,6 @@ namespace bankOfMumAndDad.Controllers
                 this.HttpContext.Response.StatusCode = 500;
                 return new ApiResponse(false, ex.Message, new List<Object>());
             }
-        }
-
-        private static string SaltAndHashPassword(string password, string salt)
-        {
-            var sha = SHA256.Create();
-            var saltedPassword = password + salt;
-            return Convert.ToBase64String(
-                sha.ComputeHash(Encoding.Unicode.GetBytes(saltedPassword)));
         }
     }
 }
