@@ -5,8 +5,13 @@ function AccountsNav(props) {
 
 
     return (
-        <div className="subNav">
-            <button className="subNavButton" onClick={props.openModal}>New Account</button>
+        <div>
+            <div className="subNav">
+                <button className="subNavButton" onClick={props.openLoginModal}>Login</button>
+            </div>
+            <div className="subNav">
+                <button className="subNavButton" onClick={props.openNewAccountModal}>New Account</button>
+            </div>
         </div>
     )
 }

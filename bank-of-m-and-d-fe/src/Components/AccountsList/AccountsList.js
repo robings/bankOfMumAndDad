@@ -14,6 +14,12 @@ function AccountsList() {
 
     async function getAllAccounts() {
         const response = await fetch('https://localhost:55741/api/Account/all');
+        if (response.status === 401) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
+        
         const json = await response.json();
 
         setData(json.data);
