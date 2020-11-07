@@ -13,7 +13,14 @@ function AccountsList() {
     const history = useHistory();
 
     async function getAllAccounts() {
-        const response = await fetch('https://localhost:55741/api/Account/all');
+        const tokenFromStorage = localStorage.getItem('bearerToken');
+        const token = `Bearer ${tokenFromStorage}`;
+
+        const response = await fetch('https://localhost:55741/api/Account/all', {
+          headers: {
+              'Authorization': token,
+          }
+        });
         if (response.status === 401) {
           setError(true);
           setLoading(false);
@@ -35,10 +42,14 @@ function AccountsList() {
         id: e.currentTarget.dataset.id,
       };
 
+      const tokenFromStorage = localStorage.getItem('bearerToken');
+      const token = `Bearer ${tokenFromStorage}`;
+
       const response = await fetch('https://localhost:55741/api/Account', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': token,
         },
         body: JSON.stringify(data),
       });
