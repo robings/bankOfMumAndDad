@@ -55,6 +55,7 @@ function LoginForm(props) {
 
         if (response.status === 200) {
             const json = await response.json();
+            localStorage.setItem('bearerToken', json.token)
             toast.success('Successful login');
             setTimeout(props.closeModal, 5000);
         } else {
