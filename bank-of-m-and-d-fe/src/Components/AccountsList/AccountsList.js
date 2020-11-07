@@ -53,6 +53,12 @@ function AccountsList() {
         },
         body: JSON.stringify(data),
       });
+
+      if (response.status === 401) {
+        toast.error('You are not logged in.');
+        return;
+      }
+      
       const json = await response.json();
 
       if (json.success === true) {

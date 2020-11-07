@@ -25,6 +25,10 @@ body:after {
   height: 100%;
 }
 
+.modal {
+  color: #0000FF;
+}
+
 button {
   background-color: #FFFFFF;
   font-family: "Comic Sans MS",
@@ -37,6 +41,10 @@ button {
   min-width: 40px;
   padding: 0px 20px;
   outline: none;
+}
+
+.modal button {
+  float: right;
 }
 
 button:hover {
@@ -85,6 +93,7 @@ button:hover {
 
 .modal {
   width: 50%;
+  max-width: 450px;
   border: 2px solid #0000FF;
   border-radius: 7px;
   position: relative;

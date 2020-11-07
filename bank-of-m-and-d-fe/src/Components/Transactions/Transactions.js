@@ -40,6 +40,13 @@ function Transactions(props) {
             'Authorization': token,
         }
       });
+
+      if (accountResponse.status === 401) {
+        toast.error('You are not logged in.');
+        setErrors(true);
+        setLoading(false);
+        return;
+      }
       const accountJson = await accountResponse.json();
 
       const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
@@ -48,6 +55,14 @@ function Transactions(props) {
             'Authorization': token,
         }
       });
+
+      if (response.status === 401) {
+        toast.error('You are not logged in.');
+        setErrors(true);
+        setLoading(false);
+        return;
+      }
+
       const json = await response.json();
 
       if (
@@ -84,7 +99,7 @@ function Transactions(props) {
       <h2>Transactions</h2>
       {loading ? (
         <Loader />
-      ) : 
+      ) : !errors &&
         <div>
               <h3>
                 Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
