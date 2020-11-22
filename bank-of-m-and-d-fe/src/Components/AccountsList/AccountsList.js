@@ -56,6 +56,9 @@ function AccountsList() {
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
+        if (localStorage.getItem('bearerToken') !== null) {
+          localStorage.removeItem('bearerToken');
+        }
         return;
       }
       

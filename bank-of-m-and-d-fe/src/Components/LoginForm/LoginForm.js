@@ -51,6 +51,9 @@ function LoginForm(props) {
 
         if (response.status === 401) {
             toast.error('Incorrect Login Details');
+            if (localStorage.getItem('bearerToken') !== null) {
+              localStorage.removeItem('bearerToken');
+            }
             return;
         }
 
@@ -61,6 +64,9 @@ function LoginForm(props) {
             props.closeModal();
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
+            if (localStorage.getItem('bearerToken') !== null) {
+              localStorage.removeItem('bearerToken');
+            }
             props.closeModal();
         }
     }
