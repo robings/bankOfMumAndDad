@@ -31,8 +31,9 @@ function LoginForm(props) {
 
     async function submitLogin(loginFormInput) {
         if (loginAttempts > 4) {
-            toast.error('Too many login attempts');
-            return;
+          props.setLoginMessage({status: 'error', message: 'Too many login attempts'});
+          props.closeModal();
+          return;
         }
         
         const data = {
@@ -56,10 +57,11 @@ function LoginForm(props) {
         if (response.status === 200) {
             const json = await response.json();
             localStorage.setItem('bearerToken', json.token)
-            toast.success('Successful login');
-            setTimeout(props.closeModal, 5000);
+            props.setLoginMessage({status: 'success', message: 'Successful login'});
+            props.closeModal();
         } else {
-            toast.error(response.statusText)
+            props.setLoginMessage({status: 'error', message: response.statusText});
+            props.closeModal();
         }
     }
 

@@ -48,15 +48,16 @@ function AccountsNewForm(props) {
         });
 
         if (response.status === 401) {
-          toast.error('You are not logged in.');
+          props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
+            props.closeModal();
           return;
         }
         
         const json = await response.json();
 
         if (json.success === true) {
-            toast.success('Account Created');
-            setTimeout(props.closeModal, 5000);
+            props.setAccountsMessage({ status: 'success', message: 'Account Created' });
+            props.closeModal();
         } else {
             toast.error(json.message)
         }

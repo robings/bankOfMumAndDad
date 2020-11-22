@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import LoginForm from '../LoginForm/LoginForm';
 import { toast } from 'react-toastify';
@@ -7,7 +7,20 @@ import logo from './m-d.jpg';
 
 function Header() {
     const [loginModalVisibility, setLoginModalVisibility] = useState(false);
+    const [loginMessage, setLoginMessage] = useState({});
     const history = useHistory();
+
+    useEffect (()=>{
+        if (loginMessage) {
+          if (loginMessage.status === 'success'){
+            toast.success(loginMessage.message);
+            setTimeout(reloadPage, 5000);
+          }
+          else {
+            toast.error(loginMessage.message);
+          }
+        }
+      }, [loginMessage])
 
     function reloadPage() {
         window.location.reload();
@@ -25,7 +38,6 @@ function Header() {
 
     const handleCloseModal = () => {
         setLoginModalVisibility(false);
-        window.location.reload();
       };
 
     const handleHomeButtonClick = () => {
@@ -54,6 +66,7 @@ function Header() {
                     <line x1="7" y1="24" x2="26" y2="24" stroke="currentColor" stroke-width="1" />
                     <path d="M 24 8 L32 19 L24 29 L29 19 K" fill="currentColor" />
                 </svg>
+                <div style={{float: "right", padding: "7px 5px"}}>Logout</div>
             </button>)}
             <button className="subNavButton" onClick={handleLoginClick}>
                 <svg version="1.1" className="svgButton" id="loginButton" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 32 32">
@@ -62,6 +75,7 @@ function Header() {
                     <line x1="10" y1="24" x2="28" y2="24" stroke="currentColor" strokeWidth="1" />
                     <path d="M 14 8 L4 19 L14 29 L7 19 K" fill="currentColor" />
                 </svg>
+                <div style={{float: "right", padding: "7px 5px"}}>Login</div>
             </button>
             <button className="subNavButton" onClick={handleHomeButtonClick}>
                 <svg version="1.1" className="svgButton" id="homeButton" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 32 32">
@@ -71,10 +85,12 @@ function Header() {
                     <rect x="8" y="20" width="6" height="6" stroke="currentColor" fill="transparent" />
                     <rect x="18" y="20" width="6" height="9" stroke="currentColor" fill="transparent" />
                 </svg>
+                <div style={{float: "right", padding: "7px 5px"}}>Home</div>
             </button>
             {loginModalVisibility && (
                 <LoginForm
                 loginModalVisibility={loginModalVisibility}
+                setLoginMessage={setLoginMessage}
                 closeModal={handleCloseModal}
                 />
             )}
