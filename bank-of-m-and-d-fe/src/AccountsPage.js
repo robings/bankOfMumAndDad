@@ -21,6 +21,12 @@ function AccountsPage() {
         toast.success(accountsMessage.message);
         setTimeout(reloadWindow, 5000);
       }
+      else if (accountsMessage.status === 'error' && accountsMessage.message === 'You are not logged in') {
+        if (localStorage.getItem('bearerToken') !== null) {
+          localStorage.removeItem('bearerToken');
+        }
+        toast.error(accountsMessage.message);
+      }
       else {
         toast.error(accountsMessage.message);
       }
