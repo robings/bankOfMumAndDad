@@ -18,8 +18,6 @@ function TransactionsNewForm(props) {
     });
   };
 
-  // const dateNow = new Date().toISOString().substr(0, 10);
-
   function handleSubmit(event) {
     event.preventDefault();
     if (
@@ -35,8 +33,6 @@ function TransactionsNewForm(props) {
   }
 
   async function submitNewTransaction(newTransactionFormInput) {
-    console.log (newTransactionFormInput.type)
-    
     const data = {
       amount: newTransactionFormInput.amount,
       date: newTransactionFormInput.dateOfTransaction,
@@ -45,13 +41,23 @@ function TransactionsNewForm(props) {
       accountId: props.accountId,
     };
 
+    const tokenFromStorage = localStorage.getItem('bearerToken');
+    const token = `Bearer ${tokenFromStorage}`;
+
     const response = await fetch('https://localhost:55741/api/Transaction', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': token,
       },
       body: JSON.stringify(data),
     });
+
+    if (response.status === 401) {
+      toast.error('You are not logged in.');
+      return;
+    }
+
     const json = await response.json();
 
     if (json.success === true) {

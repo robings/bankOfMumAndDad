@@ -2,28 +2,30 @@ import React, { useState } from "react";
 import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
-import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm'
+import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsPage.css';
 
 function AccountsPage() {
-  const [newAccountModalVisiblity, setNewAccountModalVisiblity] = useState(false);
+  const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
 
   const handleCloseModal = () => {
-    setNewAccountModalVisiblity(false);
+    setNewAccountModalVisibility(false);
     window.location.reload();
   };
 
   return (
     <div className="App">
       <Header />
-      <AccountsNav openModal={() => setNewAccountModalVisiblity(true)} />
+      <AccountsNav
+        openNewAccountModal={() => setNewAccountModalVisibility(true)}
+      />
       <AccountsList />
-      {newAccountModalVisiblity && (
+      {newAccountModalVisibility && (
         <AccountsNewForm
-          newAccountModalVisibility={newAccountModalVisiblity}
-          closeModal={() => handleCloseModal()}
+          newAccountModalVisibility={newAccountModalVisibility}
+          closeModal={() => handleCloseModal("AccountsNewForm")}
         />
       )}
       <ToastContainer />
