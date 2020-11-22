@@ -128,7 +128,7 @@ function AccountsList() {
             </tbody>
           </table>
         )}
-        {error ? <div className="error">An error occured.</div> : <div></div>}
+        {error ? <div className="error">Unable to display account details.</div> : <div></div>}
       </main>
     );
 }
