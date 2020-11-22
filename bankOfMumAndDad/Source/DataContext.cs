@@ -14,6 +14,8 @@ namespace bankOfMumAndDad.Source
 
         public DbSet<Transaction> Transactions { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()
@@ -24,6 +26,9 @@ namespace bankOfMumAndDad.Source
                 .WithMany(a => a.Transactions)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.Id);
         }
     }
 }

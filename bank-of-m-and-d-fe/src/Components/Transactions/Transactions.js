@@ -31,12 +31,38 @@ function Transactions(props) {
 
   useEffect(() => {
     async function fetchData(acId) {
+      const tokenFromStorage = localStorage.getItem('bearerToken');
+      const token = `Bearer ${tokenFromStorage}`;
+
       const accountUrl = `https://localhost:55741/api/Account/${acId.toString()}`;
-      const accountResponse = await fetch(accountUrl);
+      const accountResponse = await fetch(accountUrl, {
+        headers: {
+            'Authorization': token,
+        }
+      });
+
+      if (accountResponse.status === 401) {
+        toast.error('You are not logged in.');
+        setErrors(true);
+        setLoading(false);
+        return;
+      }
       const accountJson = await accountResponse.json();
 
       const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+            'Authorization': token,
+        }
+      });
+
+      if (response.status === 401) {
+        toast.error('You are not logged in.');
+        setErrors(true);
+        setLoading(false);
+        return;
+      }
+
       const json = await response.json();
 
       if (
@@ -73,7 +99,7 @@ function Transactions(props) {
       <h2>Transactions</h2>
       {loading ? (
         <Loader />
-      ) : 
+      ) : !errors &&
         <div>
               <h3>
                 Name: {dataToDisplay.firstName} {dataToDisplay.lastName}

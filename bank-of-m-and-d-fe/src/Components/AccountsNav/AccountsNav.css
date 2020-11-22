@@ -4,6 +4,13 @@
     overflow: auto;
 }
 
+.headerButtons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 12px 10px;
+}
+
 .subNavButton {
     background-color: #FFFFFF;
     border-color: #0000FF;
