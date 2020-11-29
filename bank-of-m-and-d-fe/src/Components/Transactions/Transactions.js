@@ -43,6 +43,9 @@ function Transactions(props) {
 
       if (accountResponse.status === 401) {
         toast.error('You are not logged in.');
+        if (localStorage.getItem('bearerToken') !== null) {
+          localStorage.removeItem('bearerToken');
+        }
         setErrors(true);
         setLoading(false);
         return;
@@ -58,6 +61,9 @@ function Transactions(props) {
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
+        if (localStorage.getItem('bearerToken') !== null) {
+          localStorage.removeItem('bearerToken');
+        }
         setErrors(true);
         setLoading(false);
         return;

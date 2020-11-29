@@ -54,15 +54,16 @@ function TransactionsNewForm(props) {
     });
 
     if (response.status === 401) {
-      toast.error('You are not logged in.');
+      props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });
+      props.closeModal();
       return;
     }
 
     const json = await response.json();
 
     if (json.success === true) {
-      toast.success('Transaction recorded');
-      setTimeout(props.closeModal, 5000);
+      props.setTransactionsMessage({ status: 'success', message: 'Transaction recorded' });
+      props.closeModal();
     } else {
       toast.error(json.message);
     }
