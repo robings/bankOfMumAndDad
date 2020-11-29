@@ -59,7 +59,9 @@ function LoginForm(props) {
 
         if (response.status === 200) {
             const json = await response.json();
-            localStorage.setItem('bearerToken', json.token)
+            localStorage.setItem('bearerToken', json.token);
+            const dateNow = new Date();
+            localStorage.setItem('loginTime', `Logged in at: ${dateNow.getHours()}:${dateNow.getMinutes()}`);
             props.setLoginMessage({status: 'success', message: 'Successful login'});
             props.closeModal();
         } else {

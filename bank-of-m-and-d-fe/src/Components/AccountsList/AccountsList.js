@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
+import { GetAllAccounts, DeleteAccount } from '../../ApiService/ApiServiceAccounts';
 
 
 function AccountsList() {
@@ -13,15 +14,12 @@ function AccountsList() {
     const history = useHistory();
 
     async function getAllAccounts() {
-        const tokenFromStorage = localStorage.getItem('bearerToken');
-        const token = `Bearer ${tokenFromStorage}`;
-
-        const response = await fetch('https://localhost:55741/api/Account/all', {
-          headers: {
-              'Authorization': token,
-          }
-        });
+        const response = await GetAllAccounts();
+        
         if (response.status === 401) {
+          if (localStorage.getItem('bearerToken') !== null) {
+            localStorage.removeItem('bearerToken');
+          }
           setError(true);
           setLoading(false);
           return;
@@ -42,17 +40,7 @@ function AccountsList() {
         id: e.currentTarget.dataset.id,
       };
 
-      const tokenFromStorage = localStorage.getItem('bearerToken');
-      const token = `Bearer ${tokenFromStorage}`;
-
-      const response = await fetch('https://localhost:55741/api/Account', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await DeleteAccount(data);
 
       if (response.status === 401) {
         toast.error('You are not logged in.');

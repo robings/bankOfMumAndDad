@@ -96,6 +96,7 @@ function Header() {
                 />
             )}
           </div>
+            <div>{localStorage.getItem('loginTime')}</div>
         </header>
     );
 }

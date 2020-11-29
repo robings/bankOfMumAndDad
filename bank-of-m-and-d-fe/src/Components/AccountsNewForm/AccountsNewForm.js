@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
+import { PostNewAccount } from '../../ApiService/ApiServiceAccounts';
 
 function AccountsNewForm(props) {
     const [newAccountFormInput, setNewAccountFormInput] = useState([{}]);
@@ -35,17 +36,7 @@ function AccountsNewForm(props) {
             'currentBalance': newAccountFormInput.openingBalance
         }
 
-        const tokenFromStorage = localStorage.getItem('bearerToken');
-        const token = `Bearer ${tokenFromStorage}`;
-
-        const response = await fetch('https://localhost:55741/api/Account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token,
-            },
-            body: JSON.stringify(data)
-        });
+        const response = await PostNewAccount(data);
 
         if (response.status === 401) {
           props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
