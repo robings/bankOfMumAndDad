@@ -15,6 +15,12 @@ function AccountsList() {
     const history = useHistory();
 
     async function getAllAccounts() {
+        if (!localStorage.getItem('bearerToken')) {
+          setError(true);
+          setLoading(false);
+          return
+        }
+
         const response = await GetAllAccounts();
         
         if (response.status === 401) {
