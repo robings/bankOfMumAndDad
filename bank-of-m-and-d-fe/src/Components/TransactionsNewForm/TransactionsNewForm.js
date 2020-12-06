@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
 import { RevokeToken } from '../../TokenService/TokenService';
-import './transactionsNewForm.css';
 
 function TransactionsNewForm(props) {
   const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: 'deposit'} );
@@ -69,7 +68,7 @@ function TransactionsNewForm(props) {
           X
         </button>
         <h1>New Transaction</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <label>Amount £</label>
             <input
@@ -103,8 +102,8 @@ function TransactionsNewForm(props) {
             <label>Comments</label>
             <input type="text" name="comments" onChange={handleInputChange} />
           </div>
+          <input type="submit" value="Submit" />
         </form>
-        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );

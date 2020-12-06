@@ -63,7 +63,7 @@ function AccountsNewForm(props) {
             X
           </button>
           <h1>New Account</h1>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div>
               <label>First Name</label>
               <input
@@ -91,19 +91,8 @@ function AccountsNewForm(props) {
                 onChange={handleInputChange}
               />
             </div>
+            <input type="submit" value="Submit" />
           </form>
-          <button
-         
-         
-                onClick={handleSubmit}
-      
-      
-                      style={{ marginTop: "10px" }}
-          
-          
-          >
-            Submit
-          </button>
         </div>
       </div>
     );

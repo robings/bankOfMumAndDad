@@ -29,13 +29,15 @@ body:after {
   color: #0000FF;
 }
 
-button {
+button, input[type=submit] {
   background-color: #FFFFFF;
   font-family: "Comic Sans MS",
     sans-serif;
   font-weight: 700;
+  border-style: outset;
   border-radius: 20px;
   border-color: #009900;
+  border-width: 2px;
   color: #009900;
   height: 40px;
   min-width: 40px;
@@ -47,7 +49,7 @@ button {
   float: right;
 }
 
-button:hover {
+button:hover, input[type=submit]:hover {
   cursor: pointer;
   border-color: #009900;
   background-color: #009900;

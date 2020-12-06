@@ -71,7 +71,7 @@ function LoginForm(props) {
               X
             </button>
             <h1>Login</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div>
                 <label>Username</label>
                 <input
@@ -90,19 +90,8 @@ function LoginForm(props) {
                   onChange={handleInputChange}
                 />
               </div>
+              <input type="submit" value="Submit" />
             </form>
-            <button
-           
-           
-                  onClick={handleSubmit}
-        
-        
-                        style={{ marginTop: "10px" }}
-            
-            
-            >
-              Submit
-            </button>
             {loginAttempts > 1 && (<div style={{ textAlign: "center" }}>Login Attempts {loginAttempts}</div>)}
           </div>
         </div>
