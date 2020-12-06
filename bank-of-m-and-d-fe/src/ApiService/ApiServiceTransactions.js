@@ -1,6 +1,7 @@
+import { GetToken } from "../TokenService/TokenService";
+
 export async function GetTransactionsByAccountId(acId) {
-    const tokenFromStorage = localStorage.getItem('bearerToken');
-    const token = `Bearer ${tokenFromStorage}`;
+    const token = GetToken();
     
     const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
     
@@ -12,8 +13,7 @@ export async function GetTransactionsByAccountId(acId) {
 }
 
 export async function PostNewTransaction(data) {
-    const tokenFromStorage = localStorage.getItem('bearerToken');
-    const token = `Bearer ${tokenFromStorage}`;
+    const token = GetToken();
 
     return await fetch('https://localhost:55741/api/Transaction', {
       method: 'POST',

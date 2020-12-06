@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
 import { GetAllAccounts, DeleteAccount } from '../../ApiService/ApiServiceAccounts';
+import { RevokeToken } from '../../TokenService/TokenService';
 
 
 function AccountsList() {
@@ -17,9 +18,7 @@ function AccountsList() {
         const response = await GetAllAccounts();
         
         if (response.status === 401) {
-          if (localStorage.getItem('bearerToken') !== null) {
-            localStorage.removeItem('bearerToken');
-          }
+          RevokeToken();
           setError(true);
           setLoading(false);
           return;
@@ -44,9 +43,7 @@ function AccountsList() {
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
-        if (localStorage.getItem('bearerToken') !== null) {
-          localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         return;
       }
       

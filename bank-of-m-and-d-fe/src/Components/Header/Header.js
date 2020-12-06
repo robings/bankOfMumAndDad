@@ -4,6 +4,7 @@ import LoginForm from '../LoginForm/LoginForm';
 import { toast } from 'react-toastify';
 import './header.css';
 import logo from './m-d.jpg';
+import { RevokeToken } from '../../TokenService/TokenService';
 
 function Header() {
     const [loginModalVisibility, setLoginModalVisibility] = useState(false);
@@ -27,9 +28,7 @@ function Header() {
       }
 
     const handleLogoutClick = () => {
-        if (localStorage.getItem('bearerToken') !== null) {
-            localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         toast.success("You have logged out.");
         setTimeout(redirectPage, 5000);
     }

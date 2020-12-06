@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import './transactions.css';
 import { GetAccountById } from '../../ApiService/ApiServiceAccounts';
 import { GetTransactionsByAccountId } from '../../ApiService/ApiServiceTransactions';
+import { RevokeToken } from '../../TokenService/TokenService';
 
 function Transactions(props) {
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -37,9 +38,7 @@ function Transactions(props) {
 
       if (accountResponse.status === 401) {
         toast.error('You are not logged in.');
-        if (localStorage.getItem('bearerToken') !== null) {
-          localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         setErrors(true);
         setLoading(false);
         return;
@@ -50,9 +49,7 @@ function Transactions(props) {
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
-        if (localStorage.getItem('bearerToken') !== null) {
-          localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         setErrors(true);
         setLoading(false);
         return;

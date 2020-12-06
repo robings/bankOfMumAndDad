@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LogIn } from '../../ApiService/ApiUserService';
+import { RevokeToken, SetToken } from '../../TokenService/TokenService';
 
 function LoginForm(props) {
     const [loginFormInput, setLoginFormInput] = useState([{}]);
@@ -41,37 +43,23 @@ function LoginForm(props) {
             'Password' : loginFormInput.password,
         }
 
-        const response = await fetch('https://localhost:55741/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+        const response = await LogIn(data);
 
         if (response.status === 401) {
             toast.error('Incorrect Login Details');
-            if (localStorage.getItem('bearerToken') !== null) {
-              localStorage.removeItem('bearerToken');
-            }
+            RevokeToken();
             return;
         }
 
         if (response.status === 200) {
             const json = await response.json();
-            localStorage.setItem('bearerToken', json.token);
-            const dateNow = new Date();
-            const hours = dateNow.getHours < 10 ? `0${dateNow.getHours()}` : dateNow.getHours();
-            const minutes = dateNow.getMinutes() < 10 ? `0${dateNow.getMinutes()}` : dateNow.getMinutes();
-
-            localStorage.setItem('loginTime', `Logged in at: ${hours}:${minutes}`);
+            SetToken(json.token);
+            
             props.setLoginMessage({status: 'success', message: 'Successful login'});
             props.closeModal();
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
-            if (localStorage.getItem('bearerToken') !== null) {
-              localStorage.removeItem('bearerToken');
-            }
+            RevokeToken();
             props.closeModal();
         }
     }

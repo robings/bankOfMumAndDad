@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
+import { RevokeToken } from '../../TokenService/TokenService';
 import './transactionsNewForm.css';
 
 function TransactionsNewForm(props) {
@@ -46,6 +47,7 @@ function TransactionsNewForm(props) {
 
     if (response.status === 401) {
       props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });
+      RevokeToken();
       props.closeModal();
       return;
     }

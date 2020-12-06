@@ -6,6 +6,7 @@ import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsPage.css';
+import { RevokeToken } from "./TokenService/TokenService";
 
 function AccountsPage() {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
@@ -22,9 +23,7 @@ function AccountsPage() {
         setTimeout(reloadWindow, 5000);
       }
       else if (accountsMessage.status === 'error' && accountsMessage.message === 'You are not logged in') {
-        if (localStorage.getItem('bearerToken') !== null) {
-          localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         toast.error(accountsMessage.message);
       }
       else {
