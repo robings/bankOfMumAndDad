@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
 import './transactionsNewForm.css';
 
 function TransactionsNewForm(props) {
@@ -41,17 +42,7 @@ function TransactionsNewForm(props) {
       accountId: props.accountId,
     };
 
-    const tokenFromStorage = localStorage.getItem('bearerToken');
-    const token = `Bearer ${tokenFromStorage}`;
-
-    const response = await fetch('https://localhost:55741/api/Transaction', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await PostNewTransaction(data);
 
     if (response.status === 401) {
       props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });

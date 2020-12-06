@@ -9,6 +9,18 @@ export async function GetAllAccounts() {
     });
 }
 
+export async function GetAccountById(acId) {
+  const tokenFromStorage = localStorage.getItem('bearerToken');
+      const token = `Bearer ${tokenFromStorage}`;
+
+      const accountUrl = `https://localhost:55741/api/Account/${acId.toString()}`;
+      return await fetch(accountUrl, {
+        headers: {
+            'Authorization': token,
+        }
+      });
+}
+
 export async function PostNewAccount(data) {
   const tokenFromStorage = localStorage.getItem('bearerToken');
   const token = `Bearer ${tokenFromStorage}`;

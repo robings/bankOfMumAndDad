@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import './transactions.css';
+import { GetAccountById } from '../../ApiService/ApiServiceAccounts';
+import { GetTransactionsByAccountId } from '../../ApiService/ApiServiceTransactions';
 
 function Transactions(props) {
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -31,15 +33,7 @@ function Transactions(props) {
 
   useEffect(() => {
     async function fetchData(acId) {
-      const tokenFromStorage = localStorage.getItem('bearerToken');
-      const token = `Bearer ${tokenFromStorage}`;
-
-      const accountUrl = `https://localhost:55741/api/Account/${acId.toString()}`;
-      const accountResponse = await fetch(accountUrl, {
-        headers: {
-            'Authorization': token,
-        }
-      });
+      const accountResponse = await GetAccountById(acId)
 
       if (accountResponse.status === 401) {
         toast.error('You are not logged in.');
@@ -52,12 +46,7 @@ function Transactions(props) {
       }
       const accountJson = await accountResponse.json();
 
-      const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
-      const response = await fetch(url, {
-        headers: {
-            'Authorization': token,
-        }
-      });
+      const response = await GetTransactionsByAccountId(acId);
 
       if (response.status === 401) {
         toast.error('You are not logged in.');

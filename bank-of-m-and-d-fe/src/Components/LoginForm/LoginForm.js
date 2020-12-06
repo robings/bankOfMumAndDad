@@ -61,7 +61,10 @@ function LoginForm(props) {
             const json = await response.json();
             localStorage.setItem('bearerToken', json.token);
             const dateNow = new Date();
-            localStorage.setItem('loginTime', `Logged in at: ${dateNow.getHours()}:${dateNow.getMinutes()}`);
+            const hours = dateNow.getHours < 10 ? `0${dateNow.getHours()}` : dateNow.getHours();
+            const minutes = dateNow.getMinutes() < 10 ? `0${dateNow.getMinutes()}` : dateNow.getMinutes();
+
+            localStorage.setItem('loginTime', `Logged in at: ${hours}:${minutes}`);
             props.setLoginMessage({status: 'success', message: 'Successful login'});
             props.closeModal();
         } else {
