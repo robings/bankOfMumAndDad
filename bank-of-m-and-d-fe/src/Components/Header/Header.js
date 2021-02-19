@@ -14,8 +14,9 @@ function Header() {
     useEffect (()=>{
         if (loginMessage) {
           if (loginMessage.status === 'success'){
-            toast.success(loginMessage.message);
-            setTimeout(reloadPage, 5000);
+            // toast.success(loginMessage.message);
+            // setTimeout(reloadPage, 5000);
+            reloadPage();
           }
           else {
             toast.error(loginMessage.message);
@@ -29,8 +30,7 @@ function Header() {
 
     const handleLogoutClick = () => {
         RevokeToken();
-        toast.success("You have logged out.");
-        setTimeout(redirectPage, 5000);
+        redirectPage();
     }
 
     const handleLoginClick = () => {
