@@ -9,7 +9,7 @@ namespace bankOfMumAndDad
         {
             Regex regex = new Regex(@"^[a-zA-Z\d\s-]*$");
 
-            if (stringToValidate.Length > 256 || stringToValidate.Length <= 0 || String.IsNullOrWhiteSpace(stringToValidate))
+            if (stringToValidate.Length > 256 || stringToValidate.Length <= 0 || string.IsNullOrWhiteSpace(stringToValidate))
             {
                 return false;
             }

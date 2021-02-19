@@ -29,4 +29,8 @@
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
 </Project>
