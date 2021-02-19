@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
+import { PostNewAccount } from '../../ApiService/ApiServiceAccounts';
+import { RevokeToken } from '../../TokenService/TokenService';
 
 function AccountsNewForm(props) {
     const [newAccountFormInput, setNewAccountFormInput] = useState([{}]);
@@ -35,21 +37,12 @@ function AccountsNewForm(props) {
             'currentBalance': newAccountFormInput.openingBalance
         }
 
-        const tokenFromStorage = localStorage.getItem('bearerToken');
-        const token = `Bearer ${tokenFromStorage}`;
-
-        const response = await fetch('https://localhost:55741/api/Account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token,
-            },
-            body: JSON.stringify(data)
-        });
+        const response = await PostNewAccount(data);
 
         if (response.status === 401) {
           props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
-            props.closeModal();
+          RevokeToken();
+          props.closeModal();
           return;
         }
         
@@ -70,7 +63,7 @@ function AccountsNewForm(props) {
             X
           </button>
           <h1>New Account</h1>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div>
               <label>First Name</label>
               <input
@@ -98,19 +91,8 @@ function AccountsNewForm(props) {
                 onChange={handleInputChange}
               />
             </div>
+            <input type="submit" value="Submit" />
           </form>
-          <button
-         
-         
-                onClick={handleSubmit}
-      
-      
-                      style={{ marginTop: "10px" }}
-          
-          
-          >
-            Submit
-          </button>
         </div>
       </div>
     );

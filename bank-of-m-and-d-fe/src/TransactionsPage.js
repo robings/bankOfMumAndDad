@@ -6,6 +6,7 @@ import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNe
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams } from 'react-router-dom';
+import { RevokeToken } from './TokenService/TokenService';
 
 function TransactionsPage() {
   let { accountId } = useParams();
@@ -28,9 +29,7 @@ function TransactionsPage() {
         setTimeout(reloadWindow, 5000);
       }
       else if (transactionsMessage.status === 'error' && transactionsMessage.message === 'You are not logged in') {
-        if (localStorage.getItem('bearerToken') !== null) {
-          localStorage.removeItem('bearerToken');
-        }
+        RevokeToken();
         reloadWindow();
       }
       else if (transactionsMessage.status === 'error') {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LogIn } from '../../ApiService/ApiUserService';
+import { RevokeToken, SetToken } from '../../TokenService/TokenService';
 
 function LoginForm(props) {
     const [loginFormInput, setLoginFormInput] = useState([{}]);
@@ -41,32 +43,23 @@ function LoginForm(props) {
             'Password' : loginFormInput.password,
         }
 
-        const response = await fetch('https://localhost:55741/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+        const response = await LogIn(data);
 
         if (response.status === 401) {
             toast.error('Incorrect Login Details');
-            if (localStorage.getItem('bearerToken') !== null) {
-              localStorage.removeItem('bearerToken');
-            }
+            RevokeToken();
             return;
         }
 
         if (response.status === 200) {
             const json = await response.json();
-            localStorage.setItem('bearerToken', json.token)
+            SetToken(json.token);
+            
             props.setLoginMessage({status: 'success', message: 'Successful login'});
             props.closeModal();
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
-            if (localStorage.getItem('bearerToken') !== null) {
-              localStorage.removeItem('bearerToken');
-            }
+            RevokeToken();
             props.closeModal();
         }
     }
@@ -78,7 +71,7 @@ function LoginForm(props) {
               X
             </button>
             <h1>Login</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div>
                 <label>Username</label>
                 <input
@@ -97,19 +90,8 @@ function LoginForm(props) {
                   onChange={handleInputChange}
                 />
               </div>
+              <input type="submit" value="Submit" />
             </form>
-            <button
-           
-           
-                  onClick={handleSubmit}
-        
-        
-                        style={{ marginTop: "10px" }}
-            
-            
-            >
-              Submit
-            </button>
             {loginAttempts > 1 && (<div style={{ textAlign: "center" }}>Login Attempts {loginAttempts}</div>)}
           </div>
         </div>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
-using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +15,7 @@ namespace bankOfMumAndDad.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly DataContext _context;
+        private decimal runningTotal;
 
         public TransactionController(DataContext context)
         {
@@ -39,17 +39,86 @@ namespace bankOfMumAndDad.Controllers
                 {
                     return NotFound(new ApiResponse(false, "No transactions found for account.", new List<Object>()));
                 }
-                else
-                {
-                    return Ok(new ApiResponse(true, "Transaction details returned.", transactions));
-                }
+
+                var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id);
+
+                var transactionsList = processTransactions(transactions, account);
+
+                var response = new ApiResponse(true, "Transaction details returned.", transactionsList);
+
+                return Ok(response);
             }
             catch (Exception)
             {
                 this.HttpContext.Response.StatusCode = 500;
-                return new ApiResponse(false, "Server Error", new List<Object>());
+                return (new ApiResponse(false, "Server Error", new List<Object>()));
             }
         }
+
+        private TransactionsDTO processTransactions(List<Transaction> transactions, Account account)
+        {
+            var openingBalance = account.OpeningBalance;
+            runningTotal = openingBalance;
+
+            var transactionList = transactions.Select(t => new TransactionListItem
+            {
+                Amount = t.Amount,
+                Type = t.Type,
+                Comments = t.Comments,
+                Balance = getBalance(t.Amount,t.Type),
+                Date = t.Date,
+            }).ToArray();
+
+            if (runningTotal != account.CurrentBalance)
+            {
+                throw new ArithmeticException("Account balance does not tally with transactions");
+            }
+
+            return new TransactionsDTO{
+                AccountId = account.Id,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+                OpeningBalance = openingBalance,
+                CurrentBalance = account.CurrentBalance,
+                Transactions = transactionList,
+            };
+        }
+
+        private decimal getBalance(decimal amount, TransactionTypes transactionType)
+        {
+            var updatedBalance = transactionType == TransactionTypes.Deposit ? runningTotal + amount : runningTotal - amount;
+            runningTotal = updatedBalance;
+            return updatedBalance;
+        }
+
+        //// GET: api/Transaction
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId(int id)
+        //{
+        //    try
+        //    {
+        //        if ((!_context.Accounts.Any(e => e.Id == id)) || (_context.Accounts.Any(e => e.Id == id && e.Deleted == true)))
+        //        {
+        //            return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+        //        }
+
+        //        var transactions = await _context.Transactions.Where(d => d.AccountId == id).OrderBy(o => o.Date).ToListAsync();
+
+        //        if (transactions.Count() == 0)
+        //        {
+        //            return NotFound(new ApiResponse(false, "No transactions found for account.", new List<Object>()));
+        //        }
+        //        else
+        //        {
+        //            return Ok(new ApiResponse(true, "Transaction details returned.", transactions));
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        this.HttpContext.Response.StatusCode = 500;
+        //        return new ApiResponse(false, "Server Error", new List<Object>());
+        //    }
+        //}
 
         // PUT: api/Transaction
         // To protect from overposting attacks, enable the specific properties you want to bind to, for

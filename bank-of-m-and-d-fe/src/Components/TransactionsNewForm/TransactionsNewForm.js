@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import './transactionsNewForm.css';
+import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
+import { RevokeToken } from '../../TokenService/TokenService';
 
 function TransactionsNewForm(props) {
   const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: 'deposit'} );
@@ -41,20 +42,11 @@ function TransactionsNewForm(props) {
       accountId: props.accountId,
     };
 
-    const tokenFromStorage = localStorage.getItem('bearerToken');
-    const token = `Bearer ${tokenFromStorage}`;
-
-    const response = await fetch('https://localhost:55741/api/Transaction', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await PostNewTransaction(data);
 
     if (response.status === 401) {
       props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });
+      RevokeToken();
       props.closeModal();
       return;
     }
@@ -76,7 +68,7 @@ function TransactionsNewForm(props) {
           X
         </button>
         <h1>New Transaction</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div>
             <label>Amount £</label>
             <input
@@ -110,8 +102,8 @@ function TransactionsNewForm(props) {
             <label>Comments</label>
             <input type="text" name="comments" onChange={handleInputChange} />
           </div>
+          <input type="submit" value="Submit" />
         </form>
-        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
