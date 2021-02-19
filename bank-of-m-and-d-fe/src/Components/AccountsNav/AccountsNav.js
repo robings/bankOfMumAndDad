@@ -1,5 +1,4 @@
 import React from 'react';
-import './AccountsNav.css';
 
 function AccountsNav(props) {
     return (

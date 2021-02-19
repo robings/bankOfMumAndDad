@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import './transactions.css';
-import { GetAccountById } from '../../ApiService/ApiServiceAccounts';
 import { GetTransactionsByAccountId } from '../../ApiService/ApiServiceTransactions';
 import { RevokeToken } from '../../TokenService/TokenService';
 
@@ -11,22 +10,16 @@ function Transactions(props) {
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(false);
   
-  function processData(accountDataToConvert, dataToConvert) {
-    let runningTotal = accountDataToConvert.openingBalance;
-    let convertedTransactions = dataToConvert;
+  function processData(dataToConvert) {
+    let convertedTransactions = dataToConvert.transactions;
     convertedTransactions.forEach((transaction) => {
-      transaction.balance =
-        transaction.type === 0
-          ? runningTotal + transaction.amount
-          : runningTotal - transaction.amount;
-      runningTotal = transaction.balance;
       transaction.date = transaction.date.split('T')[0].trim();
     });
     let convertedData = {
-      firstName: accountDataToConvert.firstName,
-      lastName: accountDataToConvert.lastName,
-      openingBalance: accountDataToConvert.openingBalance,
-      currentBalance: accountDataToConvert.currentBalance,
+      firstName: dataToConvert.firstName,
+      lastName: dataToConvert.lastName,
+      openingBalance: dataToConvert.openingBalance,
+      currentBalance: dataToConvert.currentBalance,
       transactions: convertedTransactions,
     };;
     return convertedData;
@@ -34,17 +27,6 @@ function Transactions(props) {
 
   useEffect(() => {
     async function fetchData(acId) {
-      const accountResponse = await GetAccountById(acId)
-
-      if (accountResponse.status === 401) {
-        toast.error('You are not logged in.');
-        RevokeToken();
-        setErrors(true);
-        setLoading(false);
-        return;
-      }
-      const accountJson = await accountResponse.json();
-
       const response = await GetTransactionsByAccountId(acId);
 
       if (response.status === 401) {
@@ -57,28 +39,20 @@ function Transactions(props) {
 
       const json = await response.json();
 
-      if (
-        accountJson.success === false ||
-        (json.success === false &&
-          json.message !== 'No transactions found for account.')
-      ) {
+      if (json.success === false && json.message !== 'No transactions found for account.') {
         toast.error('Account information not found');
         setErrors(true);
       }
 
-      if (
-        json.success === false &&
-        json.message === 'No transactions found for account.'
-      ) {
+      if (json.success === false && json.message === 'No transactions found for account.') {
         toast.info(json.message);
         setErrors(true)
       }
 
-      if (accountJson.success && json.success) {
-        const processedData = await processData(accountJson.data[0], json.data);
+      if (json.success) {
+        const processedData = await processData(json.data);
+        console.log(processedData);
         setDataToDisplay(processedData);
-      } else if (accountJson.success && !json.success) {
-        setDataToDisplay(accountJson.data[0])
       }
 
       setLoading(false);
