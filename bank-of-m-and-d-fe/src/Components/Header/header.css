@@ -1,27 +1,28 @@
 header {
   width: 100%;
   padding: 10px;
-  color: #00FF00;
-  border-bottom: 1px solid #999999;
+  color: #107C10;
+  border-bottom: 1px solid #69797E;
   overflow: auto;
 }
 
 img {
   width: 50px;
   border-radius: 50%;
-  border: 2px solid #009900;
+  padding: 5px;
+  border: 1px solid #69797E;
   float: left;
   margin-right: 10px;
 }
 
 h1 {
-  color: blue;
+  color: #0063B1;
   text-align: center;
   margin: 0 auto;
   margin-bottom: 5px;
   width: fit-content;
   padding: 0 20px;
-  border: 2px solid #009900;
+  border: 2px solid #4C4A48;
   border-radius: 30px;
   background-color: #FFFFFF;
 }
@@ -41,14 +42,13 @@ h1 {
 }
 
 .subNavButton {
-  border-color: #0000FF;
-  color: #0000FF;
+  border-color: #0063B1;
+  color: #0063B1;
   float: right;
 }
 
 .subNavButton:hover {
-  background-color: #0000FF;
-  border-color: #0000FF;
+  background-color: #0063B1;
   color: #FFFFFF;
 }
   

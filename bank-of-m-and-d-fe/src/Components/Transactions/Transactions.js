@@ -51,7 +51,6 @@ function Transactions(props) {
 
       if (json.success) {
         const processedData = await processData(json.data);
-        console.log(processedData);
         setDataToDisplay(processedData);
       }
 

@@ -1,48 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import LoginForm from '../LoginForm/LoginForm';
-import { toast } from 'react-toastify';
 import './header.css';
 import logo from './m-d.jpg';
-import { RevokeToken } from '../../TokenService/TokenService';
+import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 
 function Header() {
-    const [loginModalVisibility, setLoginModalVisibility] = useState(false);
-    const [loginMessage, setLoginMessage] = useState({});
+    const [loggedIn] = useState(LoggedIn);
+
     const history = useHistory();
 
-    useEffect (()=>{
-        if (loginMessage) {
-          if (loginMessage.status === 'success'){
-            // toast.success(loginMessage.message);
-            // setTimeout(reloadPage, 5000);
-            reloadPage();
-          }
-          else {
-            toast.error(loginMessage.message);
-          }
+    useEffect (() => {
+        if (!loggedIn){
+            logInPageRedirect();
         }
-      }, [loginMessage])
+    }, [loggedIn])
 
     function reloadPage() {
         window.location.reload();
-      }
+    }
+
+    function logInPageRedirect() {
+        history.push('/');
+    }
 
     const handleLogoutClick = () => {
         RevokeToken();
         redirectPage();
     }
 
-    const handleLoginClick = () => {
-        setLoginModalVisibility(true);
-    }
-
-    const handleCloseModal = () => {
-        setLoginModalVisibility(false);
-      };
-
     const handleHomeButtonClick = () => {
-        history.push('/');
+        history.push('/accounts');
     }
     
     const redirectPage = () => {
@@ -72,15 +59,6 @@ function Header() {
                     </svg>
                     <div style={{float: "right", padding: "7px 5px"}}>Log Out</div>
                 </button>)}
-                <button className="subNavButton" onClick={handleLoginClick}>
-                    <svg version="1.1" className="svgButton" id="loginButton" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 32 32">
-                        <path d="M 20 14 L20 6 L2 6 L2 31 L20 31 L20 24" stroke="currentColor" strokeWidth="2" fill="transparent" />
-                        <line x1="10" y1="14" x2="28" y2="14" stroke="currentColor" strokeWidth="1" />
-                        <line x1="10" y1="24" x2="28" y2="24" stroke="currentColor" strokeWidth="1" />
-                        <path d="M 14 8 L4 19 L14 29 L7 19 L14 8" fill="currentColor" />
-                    </svg>
-                    <div style={{float: "right", padding: "7px 5px"}}>Log In</div>
-                </button>
                 <button className="subNavButton" onClick={handleHomeButtonClick}>
                     <svg version="1.1" className="svgButton" id="homeButton" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 32 32">
                         <path d="M 0 20 L16 4 L32 20 L31 22 L16 7 L1 22 L0 20" fill="currentColor"/>
@@ -90,13 +68,6 @@ function Header() {
                         <rect x="18" y="20" width="6" height="9" stroke="currentColor" fill="transparent" />
                     </svg>
                 </button>
-                {loginModalVisibility && (
-                    <LoginForm
-                    loginModalVisibility={loginModalVisibility}
-                    setLoginMessage={setLoginMessage}
-                    closeModal={handleCloseModal}
-                    />
-                )}
                 </div>
                 <div>{localStorage.getItem('loginTime') ? localStorage.getItem('loginTime') : 'Not logged in'}</div>
             </section>

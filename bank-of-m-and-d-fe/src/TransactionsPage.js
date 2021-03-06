@@ -5,11 +5,13 @@ import Transactions from './Components/Transactions/Transactions';
 import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { RevokeToken } from './TokenService/TokenService';
 
 function TransactionsPage() {
   let { accountId } = useParams();
+
+  const history = useHistory();
 
   const [
     newTransactionModalVisiblity,
@@ -30,7 +32,8 @@ function TransactionsPage() {
       }
       else if (transactionsMessage.status === 'error' && transactionsMessage.message === 'You are not logged in') {
         RevokeToken();
-        reloadWindow();
+        toast.error(transactionsMessage.message);
+        setTimeout(redirectToLoginPage, 5000);
       }
       else if (transactionsMessage.status === 'error') {
         toast.error(transactionsMessage.message);
@@ -40,6 +43,10 @@ function TransactionsPage() {
 
   const reloadWindow = () => {
     window.location.reload();
+  }
+
+  const redirectToLoginPage = () => {
+    history.push('/')
   }
 
   return (

@@ -3,8 +3,8 @@ main {
 }
 
 h2 {
-    color: #0000FF;
-    border-bottom: 1px solid #999999;
+    color: #0063B1;
+    border-bottom: 1px solid #69797E;
 }
 
 table {
@@ -12,12 +12,12 @@ table {
     padding: 5px;
     width: 100%;
     background-color: #FFFFFF;
-    border: 1px solid #999999;
+    border: 1px solid #69797E;
     border-collapse: collapse;
 }
 
 th, td {
-    border-bottom: 1px solid #999999;
+    border-bottom: 1px solid #69797E;
 }
 
 tr:nth-child(even) {
@@ -26,17 +26,17 @@ tr:nth-child(even) {
 
 th, td {
     padding: 5px 10px;
-    border-right: 1px solid #999999;
+    border-right: 1px solid #69797E;
 }
 
 th {
-    background-color: #0000FF;
+    background-color: #0063B1;
     color: #F2F2F2;
     text-align: left;
 }
 
 td {
-    color: #000000;
+    color: #111111;
 }
 
 td:last-child {

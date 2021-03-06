@@ -6,7 +6,6 @@ import { RevokeToken, SetToken } from '../../TokenService/TokenService';
 
 function LoginForm(props) {
     const [loginFormInput, setLoginFormInput] = useState([{}]);
-    const [loginAttempts, setLoginAttempts] = useState(0);
 
     const handleInputChange = (e) => {
         if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
@@ -25,19 +24,11 @@ function LoginForm(props) {
         if (!loginFormInput.username || !loginFormInput.password) {
             toast.error('Please fill in missing data');
         } else {
-            var updatedLoginAttempts = loginAttempts + 1
-            setLoginAttempts(updatedLoginAttempts);
             submitLogin(loginFormInput);
         }
     }
 
     async function submitLogin(loginFormInput) {
-        if (loginAttempts > 4) {
-          props.setLoginMessage({status: 'error', message: 'Too many login attempts'});
-          props.closeModal();
-          return;
-        }
-        
         const data = {
             'Username': loginFormInput.username,
             'Password' : loginFormInput.password,
@@ -56,20 +47,24 @@ function LoginForm(props) {
             SetToken(json.token);
             
             props.setLoginMessage({status: 'success', message: 'Successful login'});
-            props.closeModal();
+            if (props.closeModal !== null) {
+              props.closeModal();
+            }
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
             RevokeToken();
-            props.closeModal();
+            if (props.closeModal !== null) {
+              props.closeModal();
+            }
         }
     }
 
     return (
         <div className="overlay">
           <div className="modal">
-            <button className="closeButton" onClick={props.closeModal}>
+            {props.closeModal !== null && (<button className="closeButton" onClick={props.closeModal}>
               X
-            </button>
+            </button>)}
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
               <div>
@@ -92,7 +87,6 @@ function LoginForm(props) {
               </div>
               <input type="submit" value="Submit" />
             </form>
-            {loginAttempts > 1 && (<div style={{ textAlign: "center" }}>Login Attempts {loginAttempts}</div>)}
           </div>
         </div>
       );
