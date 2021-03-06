@@ -110,8 +110,8 @@ function Transactions(props) {
                   </tr>
                   {errors ? <tr><td colSpan="5">No transactions to display</td></tr> : (
                   dataToDisplay.transactions.map(
-                    ({ id, amount, date, type, comments, balance }) => (
-                      <tr key={id}>
+                    ({ amount, date, type, comments, balance }, index) => (
+                      <tr key={index}>
                         <td style={{width: "15%"}}>{date}</td>
                         <td style = {{textAlign: "right", color: "#009900", width: "150px"}}>{type === 0 ? `£${amount.toFixed(2)}` : ""}</td>
                         <td style = {{textAlign: "right", color: "#FF0000", width: "150px"}}>{type === 0 ? "" : `£${amount.toFixed(2)}`}</td>
