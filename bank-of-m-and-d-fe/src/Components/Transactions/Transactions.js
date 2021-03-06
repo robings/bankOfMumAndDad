@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import './transactions.css';
 import { GetTransactionsByAccountId } from '../../ApiService/ApiServiceTransactions';
-import { RevokeToken } from '../../TokenService/TokenService';
+import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 
 function Transactions(props) {
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(false);
+  const [loggedIn] = useState(LoggedIn);
+
+  const history = useHistory();
   
   function processData(dataToConvert) {
     let convertedTransactions = dataToConvert.transactions;
@@ -34,6 +38,7 @@ function Transactions(props) {
         RevokeToken();
         setErrors(true);
         setLoading(false);
+        setTimeout(redirectToLoginPage, 5000);
         return;
       }
 
@@ -56,8 +61,15 @@ function Transactions(props) {
 
       setLoading(false);
     }
-    fetchData(props.accountId)
-  }, [props.accountId]);
+
+    const redirectToLoginPage = () => {
+      history.push('/')
+    }
+
+    if (loggedIn) {
+      fetchData(props.accountId);
+    }
+  }, [props.accountId, loggedIn, history]);
 
   return (
     <main>

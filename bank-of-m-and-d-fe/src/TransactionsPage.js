@@ -25,6 +25,10 @@ function TransactionsPage() {
   };
 
   useEffect (()=>{
+    const redirectToLoginPage = () => {
+      history.push('/')
+    }  
+
     if (transactionsMessage) {
       if (transactionsMessage.status === 'success'){
         toast.success(transactionsMessage.message);
@@ -39,14 +43,10 @@ function TransactionsPage() {
         toast.error(transactionsMessage.message);
       }
     }
-  }, [transactionsMessage])
+  }, [transactionsMessage, history])
 
   const reloadWindow = () => {
     window.location.reload();
-  }
-
-  const redirectToLoginPage = () => {
-    history.push('/')
   }
 
   return (

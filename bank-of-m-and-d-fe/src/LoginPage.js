@@ -13,22 +13,19 @@ function LoginPage(){
 
     useEffect (()=>{
         if (loggedIn){
-            loggedInPageRedirect();
+          history.push('/accounts');
         }
         if (loginMessage) {
           if (loginMessage.status === 'success'){
-            loggedInPageRedirect();
+            history.push('/accounts');
           }
           else {
             toast.error(loginMessage.message);
             RevokeToken();
           }
         }
-      }, [loginMessage])
+      }, [loginMessage, loggedIn, history])
 
-    function loggedInPageRedirect() {
-        history.push('/accounts');
-    }
 
     return (
         <div className="App">
@@ -42,9 +39,7 @@ function LoginPage(){
           </header>
 
           <LoginForm
-                    loginModalVisibility={true}
                     setLoginMessage={setLoginMessage}
-                    closeModal={null}
                     />
           <ToastContainer />
         </div>

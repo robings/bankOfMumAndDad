@@ -11,16 +11,12 @@ function Header() {
 
     useEffect (() => {
         if (!loggedIn){
-            logInPageRedirect();
+            history.push('/');;
         }
-    }, [loggedIn])
+    }, [loggedIn, history])
 
     function reloadPage() {
         window.location.reload();
-    }
-
-    function logInPageRedirect() {
-        history.push('/');
     }
 
     const handleLogoutClick = () => {

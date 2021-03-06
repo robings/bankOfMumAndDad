@@ -37,7 +37,7 @@ function LoginForm(props) {
         const response = await LogIn(data);
 
         if (response.status === 401) {
-            toast.error('Incorrect Login Details');
+            toast.error('Those credentials are not correct');
             RevokeToken();
             return;
         }
@@ -47,24 +47,15 @@ function LoginForm(props) {
             SetToken(json.token);
             
             props.setLoginMessage({status: 'success', message: 'Successful login'});
-            if (props.closeModal !== null) {
-              props.closeModal();
-            }
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
             RevokeToken();
-            if (props.closeModal !== null) {
-              props.closeModal();
-            }
         }
     }
 
     return (
         <div className="overlay">
           <div className="modal">
-            {props.closeModal !== null && (<button className="closeButton" onClick={props.closeModal}>
-              X
-            </button>)}
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
               <div>

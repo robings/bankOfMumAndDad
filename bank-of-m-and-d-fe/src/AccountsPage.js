@@ -19,6 +19,10 @@ function AccountsPage() {
   };
 
   useEffect (()=> {
+    const redirectToLoginPage = () => {
+      history.push('/')
+    }
+
     if (accountsMessage) {
       if (accountsMessage.status === 'success'){
         toast.success(accountsMessage.message);
@@ -33,14 +37,10 @@ function AccountsPage() {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage])
+  }, [accountsMessage, history])
 
   const reloadWindow = () => {
     window.location.reload();
-  }
-
-  const redirectToLoginPage = () => {
-    history.push('/')
   }
 
   return (
