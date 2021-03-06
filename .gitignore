@@ -1,5 +1,5 @@
 .DS_Store
 .vs/
-bankOfMumAndDad/bin/
-bankOfMumAndDad/obj/
+*/bin/
+*/obj/
 connectionString.txt
