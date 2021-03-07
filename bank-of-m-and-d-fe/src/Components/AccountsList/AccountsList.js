@@ -5,40 +5,15 @@ import { useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
 import { GetAllAccounts, DeleteAccount } from '../../ApiService/ApiServiceAccounts';
-import { RevokeToken } from '../../TokenService/TokenService';
+import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 
 
 function AccountsList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [loggedIn] = useState(LoggedIn);
     const history = useHistory();
-
-    async function getAllAccounts() {
-        if (!localStorage.getItem('bearerToken')) {
-          setError(true);
-          setLoading(false);
-          return
-        }
-
-        const response = await GetAllAccounts();
-        
-        if (response.status === 401) {
-          RevokeToken();
-          setError(true);
-          setLoading(false);
-          return;
-        }
-        
-        const json = await response.json();
-
-        setData(json.data);
-        if (json.success === false) {
-          toast.error(json.message);
-          setError(true);
-        }
-        setLoading(false);
-    }
 
     async function handleDelete(e) {
       var data = {
@@ -50,6 +25,7 @@ function AccountsList() {
       if (response.status === 401) {
         toast.error('You are not logged in.');
         RevokeToken();
+        history.push('/')
         return;
       }
       
@@ -73,8 +49,39 @@ function AccountsList() {
     }
 
     useEffect(() => {
-        getAllAccounts();
-    }, []);
+      async function getAllAccounts() {
+        const redirectToLoginPage = () => {
+          history.push('/')
+        }
+        
+        if (!loggedIn) {
+            setError(true);
+            setLoading(false);
+            return
+          }
+  
+          const response = await GetAllAccounts();
+          
+          if (response.status === 401) {
+            RevokeToken();
+            setError(true);
+            setLoading(false);
+            setTimeout(redirectToLoginPage, 5000);
+            return;
+          }
+          
+          const json = await response.json();
+  
+          setData(json.data);
+          if (json.success === false) {
+            toast.error(json.message);
+            setError(true);
+          }
+          setLoading(false);
+      }
+  
+      getAllAccounts();
+    }, [history, loggedIn]);
 
     return (
       <main>

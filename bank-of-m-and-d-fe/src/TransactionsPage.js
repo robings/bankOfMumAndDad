@@ -36,7 +36,7 @@ function TransactionsPage() {
       }
       else if (transactionsMessage.status === 'error' && transactionsMessage.message === 'You are not logged in') {
         RevokeToken();
-        toast.error(transactionsMessage.message);
+        toast.error('For your security, you have been logged out');
         setTimeout(redirectToLoginPage, 5000);
       }
       else if (transactionsMessage.status === 'error') {
