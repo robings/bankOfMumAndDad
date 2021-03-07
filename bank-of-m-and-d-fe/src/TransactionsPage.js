@@ -51,7 +51,7 @@ function TransactionsPage() {
 
   return (
     <div className="App">
-      <Header />
+      <Header isTransactionsPage = {true} />
       <TransactionsNav
       
       
@@ -62,10 +62,10 @@ function TransactionsPage() {
       <Transactions accountId={accountId} />
       {newTransactionModalVisiblity && (
         <TransactionsNewForm
-          newAccountModalVisibility={newTransactionModalVisiblity}
-          setTransactionsMessage={setTransactionsMessage}
-          closeModal={() => handleCloseModal()}
-          accountId ={accountId}
+          newAccountModalVisibility = {newTransactionModalVisiblity}
+          setTransactionsMessage = {setTransactionsMessage}
+          closeModal = {() => handleCloseModal()}
+          accountId = {accountId}
         />
       )}
       <ToastContainer />

@@ -46,7 +46,7 @@ button, input[type=submit] {
   outline: none;
 }
 
-.modal button {
+input[type=submit] {
   float: right;
 }
 

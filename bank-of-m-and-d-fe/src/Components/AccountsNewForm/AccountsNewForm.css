@@ -5,12 +5,27 @@ form {
 form div {
     padding: 5px;
     margin-bottom: 10px;
+    overflow: auto;
 }
 
 input, select {
     margin: 5px;
     padding: 5px 10px;
-    border: 1px solid #999999;
+    border: 1px solid #69797E;
+}
+
+input[type=text], input[type=password] {
+    min-width: 275px;
+    float: right;
+}
+
+.modal div:first-child {
+    margin-top: 20px;
+}
+
+label {
+    padding-top: 9px;
+    float: left;
 }
 
 .subNavButton:hover {

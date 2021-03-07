@@ -19,10 +19,6 @@ function AccountsPage() {
   };
 
   useEffect (()=> {
-    const redirectToLoginPage = () => {
-      history.push('/')
-    }
-
     if (accountsMessage) {
       if (accountsMessage.status === 'success'){
         toast.success(accountsMessage.message);
@@ -31,7 +27,7 @@ function AccountsPage() {
       else if (accountsMessage.status === 'error' && accountsMessage.message === 'You are not logged in') {
         RevokeToken();
         toast.error(accountsMessage.message);
-        setTimeout(redirectToLoginPage, 5000);
+        history.push('/');
       }
       else {
         toast.error(accountsMessage.message);

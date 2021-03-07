@@ -8,9 +8,9 @@ function TransactionsNewForm(props) {
 
   const handleInputChange = (e) => {
     if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
-      e.currentTarget.style.borderColor = '#999999';
+      e.currentTarget.style.borderColor = '#107C10';
     } else if (e.currentTarget.className === 'redBorder') {
-      e.currentTarget.style.borderColor = '#FF0000';
+      e.currentTarget.style.borderColor = '#E81123';
     }
 
     setNewTransactionFormInput({
