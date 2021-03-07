@@ -1,64 +1,46 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using bankOfMumAndDad.Entities;
 using bankOfMumAndDad.Source;
+using bankOfMumAndDad.TokenService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace bankOfMumAndDad.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : Controller
+    public partial class LoginController : Controller
     {
         // GET: /<controller>/
         private readonly IConfiguration _config;
         private readonly DataContext _context;
+        private readonly TokenGenerator _tokenGenerator;
 
         public LoginController(IConfiguration config, DataContext context)
         {
             _config = config;
             _context = context;
+            _tokenGenerator = new TokenGenerator(_config);
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Login([FromBody] loginDTO login)
+        public IActionResult Login([FromBody] LoginDTO login)
         {
             IActionResult response = Unauthorized();
             var userAuthenticated = AuthenticateUser(login);
 
             if (userAuthenticated)
             {
-                var tokenString = GenerateJSONWebToken();
+                var tokenString = _tokenGenerator.GenerateJSONWebToken();
                 response = Ok(new { token = tokenString });
             }
 
             return response;
         }
 
-        private object GenerateJSONWebToken()
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-                _config["Jwt:Issuer"],
-                null,
-                expires: DateTime.UtcNow.AddMinutes(5),
-                signingCredentials: credentials);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private bool AuthenticateUser(loginDTO login)
+        private bool AuthenticateUser(LoginDTO login)
         {
             var userAccount = _context.Users.Where(u => u.Username == login.Username && !u.Deleted).FirstOrDefault();            
 
@@ -75,12 +57,6 @@ namespace bankOfMumAndDad.Controllers
             }
 
             return userAuthenticated;
-        }
-
-        public class loginDTO
-        {
-            public string Username { get; set; }
-            public string Password { get; set; }
         }
     }
 }

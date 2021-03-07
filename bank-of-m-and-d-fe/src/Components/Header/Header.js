@@ -6,7 +6,7 @@ import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 
 function Header(props) {
     const [loggedIn] = useState(LoggedIn);
-    const [isTransactionPage] = useState(props.isTransactionPage)
+    const [isTransactionsPage] = useState(props.isTransactionsPage);
 
     const history = useHistory();
 
@@ -44,7 +44,7 @@ function Header(props) {
                     </svg>
                     <div style={{float: "right", padding: "7px 5px"}}>Log Out</div>
                 </button>)}
-                {isTransactionPage && (<button className="subNavButton" onClick={handleHomeButtonClick}>
+                {isTransactionsPage && (<button className="subNavButton" onClick={handleHomeButtonClick}>
                     <svg version="1.1" className="svgButton" id="homeButton" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 32 32">
                         <path d="M 0 20 L16 4 L32 20 L31 22 L16 7 L1 22 L0 20" fill="currentColor"/>
                         <path d="M 4 17 L4 32 L28 32 L28 17 L26 16 L26 30 L6 30 L6 16 L4 17" fill="currentColor" />
