@@ -70,9 +70,16 @@ namespace bankOfMumAndDad.Controllers
                     userAccount.DelayInMs = currentDelay == 0 ? 1000 : currentDelay * 2;
                     userAccount.LastFailedLogin = DateTime.UtcNow;
                 }
-            }
 
-            await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception exception)
+                {
+                    // here you would log the exception if saving failed.
+                }
+            }
 
             return userAuthenticated;
         }
