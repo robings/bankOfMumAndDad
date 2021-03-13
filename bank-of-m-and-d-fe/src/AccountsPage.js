@@ -6,12 +6,12 @@ import AccountsNav from './Components/AccountsNav/AccountsNav';
 import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { RevokeToken } from "./TokenService/TokenService";
+import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 
 function AccountsPage() {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
   const [accountsMessage, setAccountsMessage] = useState({});
-
+  const [loggedIn] = useState(LoggedIn);
   const history = useHistory();
 
   const handleCloseModal = () => {
@@ -21,6 +21,10 @@ function AccountsPage() {
   useEffect (()=> {
     const redirectToLoginPage = () => {
       history.push('/')
+    }
+
+    if (!loggedIn) {
+      redirectToLoginPage();
     }
     
     if (accountsMessage) {
@@ -37,7 +41,7 @@ function AccountsPage() {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage, history])
+  }, [accountsMessage, loggedIn, history])
 
   const reloadWindow = () => {
     window.location.reload();
