@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
 using bankOfMumAndDad.Source;
 using bankOfMumAndDad.TokenService;
@@ -31,7 +34,7 @@ namespace bankOfMumAndDad.Controllers
             IActionResult response = Unauthorized();
             var userAuthenticated = AuthenticateUser(login);
 
-            if (userAuthenticated)
+            if (userAuthenticated.Result)
             {
                 var tokenString = _tokenGenerator.GenerateJSONWebToken();
                 response = Ok(new { token = tokenString });
@@ -40,7 +43,7 @@ namespace bankOfMumAndDad.Controllers
             return response;
         }
 
-        private bool AuthenticateUser(LoginDTO login)
+        private async Task<bool> AuthenticateUser(LoginDTO login)
         {
             var userAccount = _context.Users.Where(u => u.Username == login.Username && !u.Deleted).FirstOrDefault();            
 
@@ -53,8 +56,23 @@ namespace bankOfMumAndDad.Controllers
                 if (login.Username == userAccount.Username && userPassword == userAccount.Password)
                 {
                     userAuthenticated = true;
+                    userAccount.LastSuccessfulLogin = DateTime.UtcNow;
+                }
+                else
+                {
+                    if (DateTime.UtcNow - userAccount.LastFailedLogin > TimeSpan.FromHours(24))
+                    {
+                        userAccount.DelayInMs = 0;
+                    }
+
+                    var currentDelay = userAccount.DelayInMs;
+                    Thread.Sleep(currentDelay);
+                    userAccount.DelayInMs = currentDelay == 0 ? 1000 : currentDelay * 2;
+                    userAccount.LastFailedLogin = DateTime.UtcNow;
                 }
             }
+
+            await _context.SaveChangesAsync();
 
             return userAuthenticated;
         }
