@@ -1,22 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
 import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './AccountsPage.css';
-import { RevokeToken } from "./TokenService/TokenService";
+import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 
 function AccountsPage() {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
   const [accountsMessage, setAccountsMessage] = useState({});
+  const [loggedIn] = useState(LoggedIn);
+  const history = useHistory();
 
   const handleCloseModal = () => {
     setNewAccountModalVisibility(false);
   };
 
-  useEffect (()=>{
+  useEffect (()=> {
+    const redirectToLoginPage = () => {
+      history.push('/')
+    }
+
+    if (!loggedIn) {
+      redirectToLoginPage();
+    }
+    
     if (accountsMessage) {
       if (accountsMessage.status === 'success'){
         toast.success(accountsMessage.message);
@@ -24,13 +34,14 @@ function AccountsPage() {
       }
       else if (accountsMessage.status === 'error' && accountsMessage.message === 'You are not logged in') {
         RevokeToken();
-        toast.error(accountsMessage.message);
+        toast.error('For your security, you have been logged out');
+        setTimeout(redirectToLoginPage, 5000);;
       }
       else {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage])
+  }, [accountsMessage, loggedIn, history])
 
   const reloadWindow = () => {
     window.location.reload();

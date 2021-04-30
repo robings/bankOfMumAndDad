@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "IBMPlexMono";
+  src: url("./fonts/IBMPlexMono-Regular.ttf");
+}
+
+@font-face {
+  font-family: 'IBMPlexSans';
+  src: url('./fonts/IBMPlexSans-Regular.ttf');
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,79 +15,68 @@
 body {
   margin: 0;
   background-color: #FFFFFF;
-  font-family: "Comic Sans MS",
+  font-family: "IBMPlexMono",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body:after {
-  background-image: url('./background.jpg');
-  content: "";
-  opacity: 0.4;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-  width: auto;
-  height: 100%;
+h1, h2, h3 {
+  font-family: "IBMPlexSans",
+    sans-serif;
 }
 
 .modal {
-  color: #0000FF;
+  color: #0063B1;
 }
 
 button, input[type=submit] {
   background-color: #FFFFFF;
-  font-family: "Comic Sans MS",
+  font-family: "IBMPlexSans",
     sans-serif;
   font-weight: 700;
   border-style: outset;
   border-radius: 20px;
-  border-color: #009900;
+  border-color: #107C10;
   border-width: 2px;
-  color: #009900;
+  color: #107C10;
   height: 40px;
   min-width: 40px;
   padding: 0px 20px;
   outline: none;
 }
 
-.modal button {
+input[type=submit] {
   float: right;
 }
 
 button:hover, input[type=submit]:hover {
   cursor: pointer;
-  border-color: #009900;
-  background-color: #009900;
+  background-color: #107C10;
   color: #FFFFFF;
 }
 
 .closeButton {
-  border-color: #999999;
-  color: #FF0000;
+  border-color: #69797E;
+  color: #E81123;
   padding: 0;
   float: right;
 }
 
 .closeButton:hover {
-  border-color: #FF0000;
+  border-color: #E81123;
   background-color: #FFFFFF;
-  color: #FF0000;
+  color: #E81123;
 }
 
 .deleteButton {
-  border-color: #FF0000;
-  color: #FF0000;
+  border-color: #E81123;
+  color: #E81123;
   margin-left: 20px;
 }
 
 .deleteButton:hover {
-  background-color: #FF0000;
-  border-color: #FF0000;
+  background-color: #E81123;
   color: #FFFFFF;
 }
 
@@ -96,7 +95,7 @@ button:hover, input[type=submit]:hover {
 .modal {
   width: 50%;
   max-width: 450px;
-  border: 2px solid #0000FF;
+  border: 2px solid #0063B1;
   border-radius: 7px;
   position: relative;
   top: 50%;
@@ -116,5 +115,10 @@ button:hover, input[type=submit]:hover {
 }
 
 .redBorder {
-  border-color: #FF0000;
+  border-color: #E81123;
+}
+
+.error {
+  color: #E81123;
+  font-weight: 700;
 }

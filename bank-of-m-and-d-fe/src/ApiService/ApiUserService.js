@@ -1,5 +1,7 @@
+import { APIBaseUrl } from './apiSettings';
+
 export async function LogIn(data) {
-    return await fetch('https://localhost:55741/api/login', {
+    return await fetch(`${APIBaseUrl}/api/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

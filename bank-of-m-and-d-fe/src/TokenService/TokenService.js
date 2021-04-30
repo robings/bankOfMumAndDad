@@ -22,3 +22,11 @@ export function RevokeToken() {
         localStorage.removeItem('loginTime');
     }
 }
+
+export function LoggedIn() {
+    if (localStorage.getItem('bearerToken') !== null) {
+        return true;
+    } else {
+        return false;
+    }
+}

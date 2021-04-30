@@ -28,6 +28,7 @@
     <Folder Include="Source\" />
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
+    <Folder Include="TokenService\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
