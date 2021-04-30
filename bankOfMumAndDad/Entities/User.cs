@@ -10,6 +10,9 @@ namespace bankOfMumAndDad.Entities
         public string Password { get; set; }
         public string Salt { get; set; }
         public string Email { get; set; }
+        public DateTime LastSuccessfulLogin { get; set; }
+        public DateTime LastFailedLogin { get; set; }
+        public int DelayInMs { get; set; }
         public bool Deleted { get; set; }
     }
 }

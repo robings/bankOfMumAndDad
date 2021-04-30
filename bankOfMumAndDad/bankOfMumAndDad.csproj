@@ -28,5 +28,6 @@
     <Folder Include="Source\" />
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
+    <Folder Include="TokenService\" />
   </ItemGroup>
 </Project>

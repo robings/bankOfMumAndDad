@@ -6,13 +6,12 @@ import { RevokeToken, SetToken } from '../../TokenService/TokenService';
 
 function LoginForm(props) {
     const [loginFormInput, setLoginFormInput] = useState([{}]);
-    const [loginAttempts, setLoginAttempts] = useState(0);
 
     const handleInputChange = (e) => {
         if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
-            e.currentTarget.style.borderColor = '#999999';
+            e.currentTarget.style.borderColor = '#107C10';
         } else if (e.currentTarget.className === 'redBorder') {
-            e.currentTarget.style.borderColor = 'FF0000';
+            e.currentTarget.style.borderColor = '#E81123';
         }
         setLoginFormInput({
             ...loginFormInput,
@@ -25,19 +24,11 @@ function LoginForm(props) {
         if (!loginFormInput.username || !loginFormInput.password) {
             toast.error('Please fill in missing data');
         } else {
-            var updatedLoginAttempts = loginAttempts + 1
-            setLoginAttempts(updatedLoginAttempts);
             submitLogin(loginFormInput);
         }
     }
 
     async function submitLogin(loginFormInput) {
-        if (loginAttempts > 4) {
-          props.setLoginMessage({status: 'error', message: 'Too many login attempts'});
-          props.closeModal();
-          return;
-        }
-        
         const data = {
             'Username': loginFormInput.username,
             'Password' : loginFormInput.password,
@@ -46,7 +37,7 @@ function LoginForm(props) {
         const response = await LogIn(data);
 
         if (response.status === 401) {
-            toast.error('Incorrect Login Details');
+            toast.error('Those credentials are not correct');
             RevokeToken();
             return;
         }
@@ -56,20 +47,15 @@ function LoginForm(props) {
             SetToken(json.token);
             
             props.setLoginMessage({status: 'success', message: 'Successful login'});
-            props.closeModal();
         } else {
             props.setLoginMessage({status: 'error', message: response.statusText});
             RevokeToken();
-            props.closeModal();
         }
     }
 
     return (
         <div className="overlay">
           <div className="modal">
-            <button className="closeButton" onClick={props.closeModal}>
-              X
-            </button>
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
               <div>
@@ -92,7 +78,6 @@ function LoginForm(props) {
               </div>
               <input type="submit" value="Submit" />
             </form>
-            {loginAttempts > 1 && (<div style={{ textAlign: "center" }}>Login Attempts {loginAttempts}</div>)}
           </div>
         </div>
       );

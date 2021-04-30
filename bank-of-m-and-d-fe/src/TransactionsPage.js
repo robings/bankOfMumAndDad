@@ -5,11 +5,13 @@ import Transactions from './Components/Transactions/Transactions';
 import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { RevokeToken } from './TokenService/TokenService';
 
 function TransactionsPage() {
   let { accountId } = useParams();
+
+  const history = useHistory();
 
   const [
     newTransactionModalVisiblity,
@@ -23,6 +25,10 @@ function TransactionsPage() {
   };
 
   useEffect (()=>{
+    const redirectToLoginPage = () => {
+      history.push('/')
+    }  
+
     if (transactionsMessage) {
       if (transactionsMessage.status === 'success'){
         toast.success(transactionsMessage.message);
@@ -30,13 +36,14 @@ function TransactionsPage() {
       }
       else if (transactionsMessage.status === 'error' && transactionsMessage.message === 'You are not logged in') {
         RevokeToken();
-        reloadWindow();
+        toast.error('For your security, you have been logged out');
+        setTimeout(redirectToLoginPage, 5000);
       }
       else if (transactionsMessage.status === 'error') {
         toast.error(transactionsMessage.message);
       }
     }
-  }, [transactionsMessage])
+  }, [transactionsMessage, history])
 
   const reloadWindow = () => {
     window.location.reload();
@@ -44,7 +51,7 @@ function TransactionsPage() {
 
   return (
     <div className="App">
-      <Header />
+      <Header isTransactionsPage = {true} />
       <TransactionsNav
       
       
@@ -55,10 +62,10 @@ function TransactionsPage() {
       <Transactions accountId={accountId} />
       {newTransactionModalVisiblity && (
         <TransactionsNewForm
-          newAccountModalVisibility={newTransactionModalVisiblity}
-          setTransactionsMessage={setTransactionsMessage}
-          closeModal={() => handleCloseModal()}
-          accountId ={accountId}
+          newAccountModalVisibility = {newTransactionModalVisiblity}
+          setTransactionsMessage = {setTransactionsMessage}
+          closeModal = {() => handleCloseModal()}
+          accountId = {accountId}
         />
       )}
       <ToastContainer />

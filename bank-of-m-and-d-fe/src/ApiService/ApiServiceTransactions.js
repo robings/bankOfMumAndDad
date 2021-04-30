@@ -1,9 +1,10 @@
 import { GetToken } from "../TokenService/TokenService";
+import { APIBaseUrl } from './apiSettings';
 
 export async function GetTransactionsByAccountId(acId) {
     const token = GetToken();
     
-    const url = `https://localhost:55741/api/Transaction/${acId.toString()}`;
+    const url = `${APIBaseUrl}/api/Transaction/${acId.toString()}`;
     
     return await fetch(url, {
     headers: {
@@ -15,7 +16,7 @@ export async function GetTransactionsByAccountId(acId) {
 export async function PostNewTransaction(data) {
     const token = GetToken();
 
-    return await fetch('https://localhost:55741/api/Transaction', {
+    return await fetch(`${APIBaseUrl}/api/Transaction`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
