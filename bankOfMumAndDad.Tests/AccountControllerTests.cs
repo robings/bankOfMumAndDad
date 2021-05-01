@@ -515,6 +515,5 @@ namespace bankOfMumAndDad.Tests
             Assert.That(deletedTransactions.Count, Is.EqualTo(2));
             deletedTransactions.ForEach(dT => Assert.That(dT.Deleted, Is.EqualTo(true)));
         }
-
     }
 }
