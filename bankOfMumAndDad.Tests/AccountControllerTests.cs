@@ -748,7 +748,6 @@ namespace bankOfMumAndDad.Tests
             Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
             Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
         }
-
         #endregion
     }
 }
