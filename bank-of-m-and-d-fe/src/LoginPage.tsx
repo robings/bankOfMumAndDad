@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
@@ -10,9 +10,9 @@ import { IMessage } from "./Interfaces/IMessage";
 function LoginPage(): JSX.Element {
     const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
     const [loggedIn] = useState<boolean>(LoggedIn);
-    const history = useHistory();
+    const history = useHistory<RouteComponentProps>();
 
-    useEffect (()=>{
+    useEffect ((): void => {
         if (loggedIn){
           history.push('/accounts');
         }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import './header.css';
 import logo from './m-d.jpg';
 import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
@@ -9,7 +9,7 @@ function Header(props: IHeaderProps): JSX.Element {
     const [loggedIn] = useState<boolean>(LoggedIn);
     const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
 
-    const history = useHistory();
+    const history = useHistory<RouteComponentProps>();
 
     useEffect ((): void => {
         if (!loggedIn){

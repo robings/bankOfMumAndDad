@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, RouteComponentProps } from 'react-router-dom';
 import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
@@ -13,13 +13,13 @@ function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState<boolean>(false);
   const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
   const [loggedIn] = useState<boolean>(LoggedIn);
-  const history = useHistory();
+  const history = useHistory<RouteComponentProps>();
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setNewAccountModalVisibility(false);
   };
 
-  useEffect (()=> {
+  useEffect ((): void => {
     const redirectToLoginPage = () => {
       history.push('/')
     }
@@ -44,7 +44,7 @@ function AccountsPage(): JSX.Element {
     }
   }, [accountsMessage, loggedIn, history])
 
-  const reloadWindow = () => {
+  const reloadWindow = (): void => {
     window.location.reload();
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import './transactions.css';
@@ -22,9 +22,9 @@ function Transactions(props: ITransactionProps): JSX.Element {
   const [errors, setErrors] = useState<boolean>(false);
   const [loggedIn] = useState<boolean>(LoggedIn);
 
-  const history = useHistory();
+  const history = useHistory<RouteComponentProps>();
   
-  function processData(dataToConvert: IListOfTransactionsForAccount) {
+  function processData(dataToConvert: IListOfTransactionsForAccount): IListOfTransactionsForAccount {
     const convertedTransactions: ITransaction[] = dataToConvert.transactions;
     
     convertedTransactions.forEach((transaction) => {
@@ -42,7 +42,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
     return convertedData;
   }
 
-  useEffect(() => {
+  useEffect((): void => {
     async function fetchData(acId: string): Promise<void> {
       const response: Response = await GetTransactionsByAccountId(acId);
 
@@ -75,7 +75,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
       setLoading(false);
     }
 
-    const redirectToLoginPage = () => {
+    const redirectToLoginPage = (): void => {
       history.push('/')
     }
 

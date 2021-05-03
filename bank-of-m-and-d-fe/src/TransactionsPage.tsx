@@ -5,7 +5,7 @@ import Transactions from './Components/Transactions/Transactions';
 import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, RouteComponentProps } from 'react-router-dom';
 import { RevokeToken } from './TokenService/TokenService';
 import { ITransactionsPageParams } from './Interfaces/Params/ITransactionsPageParams';
 import { IMessage } from './Interfaces/IMessage';
@@ -13,7 +13,7 @@ import { IMessage } from './Interfaces/IMessage';
 function TransactionsPage(): JSX.Element {
   const { accountId }: ITransactionsPageParams = useParams();
 
-  const history: any = useHistory();
+  const history: any = useHistory<RouteComponentProps>();
 
   const [ newTransactionModalVisiblity, setNewTransactionModalVisiblity ] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ function TransactionsPage(): JSX.Element {
     setNewTransactionModalVisiblity(false);
   };
 
-  useEffect (()=>{
+  useEffect ((): void => {
     const redirectToLoginPage = (): void => {
       history.push('/')
     }  

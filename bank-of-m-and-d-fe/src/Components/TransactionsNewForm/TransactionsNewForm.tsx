@@ -100,7 +100,11 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
           </div>
           <div>
             <label>Comments</label>
-            <input type="text" name="comments" onChange={handleInputChange} />
+            <input
+              className="redBorder"
+              type="text" 
+              name="comments" 
+              onChange={handleInputChange} />
           </div>
           <input type="submit" value="Submit" />
         </form>
