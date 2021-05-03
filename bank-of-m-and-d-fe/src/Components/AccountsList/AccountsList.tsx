@@ -10,7 +10,7 @@ import { IAccount } from '../../Interfaces/Entities/IAccount';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
 
 
-function AccountsList() {
+function AccountsList(): JSX.Element {
     const [data, setData] = useState<IAccount[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);

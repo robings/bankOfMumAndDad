@@ -7,9 +7,9 @@ import LoginForm from "./Components/LoginForm/LoginForm";
 import logo from './Components/Header/m-d.jpg';
 import { IMessage } from "./Interfaces/IMessage";
 
-function LoginPage(){
+function LoginPage(): JSX.Element {
     const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
-    const [loggedIn] = useState(LoggedIn);
+    const [loggedIn] = useState<boolean>(LoggedIn);
     const history = useHistory();
 
     useEffect (()=>{

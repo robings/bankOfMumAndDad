@@ -7,7 +7,7 @@ import { RevokeToken } from '../../TokenService/TokenService';
 import { INewAccountFormInput, INewAccountFormProps } from '../../Interfaces/INewAccountForm';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
 
-function AccountsNewForm(props: INewAccountFormProps) {
+function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
     const [newAccountFormInput, setNewAccountFormInput] = useState<INewAccountFormInput>({firstName: '', lastName: '', openingBalance: null});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

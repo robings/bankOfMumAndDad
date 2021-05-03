@@ -6,7 +6,7 @@ import { ILoginDto } from '../../Interfaces/Entities/ILoginDto';
 import { ILoginProps } from '../../Interfaces/Props/ILoginProps';
 import { RevokeToken, SetToken } from '../../TokenService/TokenService';
 
-function LoginForm(props: ILoginProps) {
+function LoginForm(props: ILoginProps): JSX.Element {
     const [loginFormInput, setLoginFormInput] = useState<ILoginDto>({ username: '', password: ''});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

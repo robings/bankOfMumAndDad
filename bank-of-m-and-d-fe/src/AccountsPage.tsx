@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 import { IMessage } from './Interfaces/IMessage';
 
-function AccountsPage() {
+function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState<boolean>(false);
   const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
   const [loggedIn] = useState<boolean>(LoggedIn);
@@ -52,7 +52,7 @@ function AccountsPage() {
     <div className="App">
       <Header isTransactionsPage = {false} />
       <AccountsNav
-        openNewAccountModal={():any => setNewAccountModalVisibility(true)}
+        openNewAccountModal={() => setNewAccountModalVisibility(true)}
       />
       <AccountsList />
       {newAccountModalVisibility && (

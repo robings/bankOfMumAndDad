@@ -1,7 +1,7 @@
 export interface ITransactionDto {
-    amount: string;
-    date: string;
-    type: string;
+    amount: number;
+    date: Date;
+    type: '0' | '1';
     comments: string;
     accountId: string;
 }

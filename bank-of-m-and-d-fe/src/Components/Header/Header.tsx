@@ -5,7 +5,7 @@ import logo from './m-d.jpg';
 import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 import { IHeaderProps } from '../../Interfaces/Props/IHeaderProps';
 
-function Header(props: IHeaderProps) {
+function Header(props: IHeaderProps): JSX.Element {
     const [loggedIn] = useState<boolean>(LoggedIn);
     const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
 
