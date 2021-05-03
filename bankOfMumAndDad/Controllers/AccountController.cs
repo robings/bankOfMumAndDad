@@ -142,6 +142,11 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostAccount(AccountDTO postedAccount)
         {
+            if(postedAccount is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
             if (!Validation.ValidateString(postedAccount.FirstName) ||
                 !Validation.ValidateString(postedAccount.LastName))
             {
@@ -173,6 +178,11 @@ namespace bankOfMumAndDad.Controllers
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
+            if (deleteRequest is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
             var accountId = Convert.ToInt64(deleteRequest.Id);
 
             try

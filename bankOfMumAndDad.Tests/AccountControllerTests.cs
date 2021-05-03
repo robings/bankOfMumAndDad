@@ -14,6 +14,68 @@ namespace bankOfMumAndDad.Tests
 {
     public class AccountControllerTests
     {
+        #region Variables
+        List<Account> _seedDatabaseAccounts = new List<Account>
+        {
+            new Account
+            {
+                Id = 1,
+                FirstName = "Cuthbert",
+                LastName = "Dibble",
+                OpeningBalance = 0,
+                CurrentBalance = 150,
+                Deleted = false,
+            },
+            new Account
+            {
+                Id = 2,
+                FirstName = "Barney",
+                LastName = "McGrew",
+                OpeningBalance = 0,
+                CurrentBalance = 200,
+                Deleted = false,
+            },
+            new Account
+            {
+                Id = 3,
+                FirstName = "Pew",
+                LastName = "Pew",
+                OpeningBalance = 0,
+                CurrentBalance = 300,
+                Deleted = true,
+            },
+        };
+
+        List<Account> _accountsThatAreAllDeleted = new List<Account>
+            {
+                new Account
+                {
+                    FirstName = "Cuthbert",
+                    LastName = "Dibble",
+                    OpeningBalance = 0,
+                    CurrentBalance = 150,
+                    Deleted = true,
+                },
+                new Account
+                {
+                    FirstName = "Barney",
+                    LastName = "McGrew",
+                    OpeningBalance = 0,
+                    CurrentBalance = 200,
+                    Deleted = true,
+                },
+                new Account
+                {
+                    FirstName = "Pew",
+                    LastName = "Pew",
+                    OpeningBalance = 0,
+                    CurrentBalance = 300,
+                    Deleted = true,
+                },
+            };
+        #endregion
+
+        #region GetAccounts Tests
         [Test]
         public async Task GetAccountsGetsAllAccounts()
         {
@@ -145,35 +207,7 @@ namespace bankOfMumAndDad.Tests
 
             var context = factory.CreateSqliteContext();
 
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = true,
-                },
-                new Account
-                {
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = true,
-                },
-                new Account
-                {
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
-
-            context.AddRange(accounts);
+            context.AddRange(_accountsThatAreAllDeleted);
             context.SaveChanges();
 
             var accountController = new AccountController(context);
@@ -185,6 +219,9 @@ namespace bankOfMumAndDad.Tests
             Assert.That(response.StatusCode, Is.EqualTo(404));
         }
 
+        #endregion
+
+        #region GetAccount Tests
         [Test]
         public async Task GetAccountGivenNonExistingIdReturnsNotFound()
         {
@@ -208,38 +245,7 @@ namespace bankOfMumAndDad.Tests
 
             var context = factory.CreateSqliteContext();
 
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    Id = 1,
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = true,
-                },
-                new Account
-                {
-                    Id = 2,
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = true,
-                },
-                new Account
-                {
-                    Id = 3,
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
-
-            context.AddRange(accounts);
+            context.AddRange(_accountsThatAreAllDeleted);
             context.SaveChanges();
 
             var accountController = new AccountController(context);
@@ -258,38 +264,7 @@ namespace bankOfMumAndDad.Tests
 
             var context = factory.CreateSqliteContext();
 
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    Id = 1,
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 2,
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 3,
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
-
-            context.AddRange(accounts);
+            context.AddRange(_seedDatabaseAccounts);
             context.SaveChanges();
 
             var accountController = new AccountController(context);
@@ -303,8 +278,32 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(response.StatusCode, Is.EqualTo(200));
             Assert.That(responseData.Count, Is.EqualTo(1));
-            Assert.That(responseData[0], Is.EqualTo(accounts[1]));
+            Assert.That(responseData[0], Is.EqualTo(_seedDatabaseAccounts[1]));
         }
+
+        #endregion
+
+        #region DeleteAccount Tests
+        [Test]
+        public async Task DeleteAccountGivenNoDataReturnsBadRequest()
+        {
+            var factory = new SqliteInMemoryConnectionFactory();
+
+            var context = factory.CreateSqliteContext();
+
+            var accountController = new AccountController(context);
+
+            var result = await accountController.DeleteAccount(null);
+
+            var response = result.Result as BadRequestObjectResult;
+
+            Assert.That(response.StatusCode, Is.EqualTo(400));
+            var responseValue = response.Value as ApiResponse;
+
+            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+        }
+
 
         [Test]
         public async Task DeleteAccountGivenNonExistingIdReturnsNotFound()
@@ -329,38 +328,7 @@ namespace bankOfMumAndDad.Tests
 
             var context = factory.CreateSqliteContext();
 
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    Id = 1,
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 2,
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 3,
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
-
-            context.AddRange(accounts);
+            context.AddRange(_seedDatabaseAccounts);
             context.SaveChanges();
 
             var accountController = new AccountController(context);
@@ -379,38 +347,7 @@ namespace bankOfMumAndDad.Tests
 
             var context = factory.CreateSqliteContext();
 
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    Id = 1,
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 2,
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 3,
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
-
-            context.AddRange(accounts);
+            context.AddRange(_seedDatabaseAccounts);
             context.SaveChanges();
 
             var accountController = new AccountController(context);
@@ -434,37 +371,6 @@ namespace bankOfMumAndDad.Tests
             var factory = new SqliteInMemoryConnectionFactory();
 
             var context = factory.CreateSqliteContext();
-
-            var accounts = new List<Account>
-            {
-                new Account
-                {
-                    Id = 1,
-                    FirstName = "Cuthbert",
-                    LastName = "Dibble",
-                    OpeningBalance = 0,
-                    CurrentBalance = 150,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 2,
-                    FirstName = "Barney",
-                    LastName = "McGrew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 200,
-                    Deleted = false,
-                },
-                new Account
-                {
-                    Id = 3,
-                    FirstName = "Pew",
-                    LastName = "Pew",
-                    OpeningBalance = 0,
-                    CurrentBalance = 300,
-                    Deleted = true,
-                },
-            };
 
             var transactions = new List<Transaction>
             {
@@ -494,7 +400,7 @@ namespace bankOfMumAndDad.Tests
                 },
             };
 
-            context.AddRange(accounts);
+            context.AddRange(_seedDatabaseAccounts);
             context.AddRange(transactions);
             context.SaveChanges();
 
@@ -515,5 +421,122 @@ namespace bankOfMumAndDad.Tests
             Assert.That(deletedTransactions.Count, Is.EqualTo(2));
             deletedTransactions.ForEach(dT => Assert.That(dT.Deleted, Is.EqualTo(true)));
         }
+        #endregion
+
+        #region PostAccount Tests
+        [Test]
+        public async Task PostAccountGivenValidData_WhereDatabaseIsEmpty_AddsAccount()
+        {
+            var factory = new SqliteInMemoryConnectionFactory();
+
+            var context = factory.CreateSqliteContext();
+
+            var accountController = new AccountController(context);
+
+            var accountToPost = new AccountDTO
+            {
+                FirstName = "Cuthbert",
+                LastName = "Dibble",
+                OpeningBalance = "150",
+                CurrentBalance = "150",
+            };
+
+            Assert.That(await context.Accounts.CountAsync(), Is.Zero);
+
+            var result = await accountController.PostAccount(accountToPost);
+
+            var createdAccount = await context.Accounts.FirstOrDefaultAsync();
+
+            var response = result.Result as OkObjectResult;
+
+            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(await context.Accounts.CountAsync(), Is.EqualTo(1));
+            Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
+            Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
+            Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
+            Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+        }
+
+        [Test]
+        public async Task PostAccountGivenValidData_WhereDatabaseHasAccounts_AddsAccount()
+        {
+            var factory = new SqliteInMemoryConnectionFactory();
+
+            var context = factory.CreateSqliteContext();
+
+            await context.AddRangeAsync(_seedDatabaseAccounts);
+            await context.SaveChangesAsync();
+
+            var accountController = new AccountController(context);
+
+            var accountToPost = new AccountDTO
+            {
+                FirstName = "Crouching",
+                LastName = "Tiger",
+                OpeningBalance = "250",
+                CurrentBalance = "250",
+            };
+
+            var result = await accountController.PostAccount(accountToPost);
+
+            var createdAccount = context.Accounts.Where(a => a.FirstName == accountToPost.FirstName).FirstOrDefault();
+
+            var response = result.Result as OkObjectResult;
+
+            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(context.Accounts.Count(), Is.EqualTo(4));
+            Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
+            Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
+            Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
+            Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+        }
+
+        [TestCase("Cuthbert<")]
+        [TestCase("   /n /t  ")]
+        [TestCase("")]
+        public async Task PostAccountGivenInValidData_ReturnsBadRequest(string invalidData)
+        {
+            var factory = new SqliteInMemoryConnectionFactory();
+
+            var context = factory.CreateSqliteContext();
+
+            var accountController = new AccountController(context);
+
+            var accountToPost = new AccountDTO
+            {
+                FirstName = invalidData,
+                LastName = "Dibble",
+                OpeningBalance = "150",
+                CurrentBalance = "150",
+            };
+
+            var result = await accountController.PostAccount(accountToPost);
+
+            var response = result.Result as BadRequestObjectResult;
+            var responseValue = response.Value as ApiResponse;
+
+
+            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
+        }
+
+        [Test]
+        public async Task PostAccountGivenINoData_ReturnsBadRequest()
+        {
+            var factory = new SqliteInMemoryConnectionFactory();
+
+            var context = factory.CreateSqliteContext();
+
+            var accountController = new AccountController(context);
+
+            var result = await accountController.PostAccount(null);
+
+            var response = result.Result as BadRequestObjectResult;
+            var responseValue = response.Value as ApiResponse;
+
+            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+        }
+        #endregion
     }
 }
