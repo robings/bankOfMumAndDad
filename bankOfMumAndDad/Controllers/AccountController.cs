@@ -75,8 +75,13 @@ namespace bankOfMumAndDad.Controllers
         [HttpPut]
         public async Task<ActionResult<ApiResponse>> PutAccount([FromBody] PutRequest putRequest)
         {
+            if (putRequest is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
             var id = putRequest.Id;
-            var account = new Account();
+            Account account;
 
             try
             {
@@ -115,7 +120,7 @@ namespace bankOfMumAndDad.Controllers
                 this.HttpContext.Response.StatusCode = 500;
                 return new ApiResponse(false, ex.Message, new List<Object>());
             }
-            
+
 
             try
             {
