@@ -1,9 +1,9 @@
-export function GetToken() {
+export function GetToken(): string {
     const tokenFromStorage = localStorage.getItem('bearerToken');
     return `Bearer ${tokenFromStorage}`;
 }
 
-export function SetToken(token) {
+export function SetToken(token: string): void {
     localStorage.setItem('bearerToken', token);
 
     const dateNow = new Date();
@@ -13,7 +13,7 @@ export function SetToken(token) {
     localStorage.setItem('loginTime', `Logged in at: ${hours}:${minutes}`);
 }
 
-export function RevokeToken() {
+export function RevokeToken(): void {
     if (localStorage.getItem('bearerToken') !== null) {
         localStorage.removeItem('bearerToken');
     }
@@ -23,7 +23,7 @@ export function RevokeToken() {
     }
 }
 
-export function LoggedIn() {
+export function LoggedIn():boolean {
     if (localStorage.getItem('bearerToken') !== null) {
         return true;
     } else {
