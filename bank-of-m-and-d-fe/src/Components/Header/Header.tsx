@@ -3,25 +3,26 @@ import { useHistory } from 'react-router-dom';
 import './header.css';
 import logo from './m-d.jpg';
 import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
+import { IHeaderProps } from '../../Interfaces/Props/IHeaderProps';
 
-function Header(props) {
-    const [loggedIn] = useState(LoggedIn);
-    const [isTransactionsPage] = useState(props.isTransactionsPage);
+function Header(props: IHeaderProps) {
+    const [loggedIn] = useState<boolean>(LoggedIn);
+    const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
 
     const history = useHistory();
 
-    useEffect (() => {
+    useEffect ((): void => {
         if (!loggedIn){
             history.push('/');
         }
     }, [loggedIn, history])
 
-    const handleLogoutClick = () => {
+    const handleLogoutClick = (): void => {
         RevokeToken();
         history.push('/');
     }
 
-    const handleHomeButtonClick = () => {
+    const handleHomeButtonClick = (): void => {
         history.push('/accounts');
     }
     

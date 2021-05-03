@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
 import { PostNewAccount } from '../../ApiService/ApiServiceAccounts';
 import { RevokeToken } from '../../TokenService/TokenService';
+import { INewAccountFormInput, INewAccountFormProps } from '../../Interfaces/INewAccountForm';
+import { IResponse } from '../../Interfaces/Entities/IResponse';
 
-function AccountsNewForm(props) {
-    const [newAccountFormInput, setNewAccountFormInput] = useState([{}]);
+function AccountsNewForm(props: INewAccountFormProps) {
+    const [newAccountFormInput, setNewAccountFormInput] = useState<INewAccountFormInput>({firstName: '', lastName: '', openingBalance: null});
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
             e.currentTarget.style.borderColor = '#107C10';
         } else if (e.currentTarget.className === 'redBorder') {
@@ -20,8 +22,8 @@ function AccountsNewForm(props) {
         })
     };
 
-    function handleSubmit(event) {
-        event.preventDefault();
+    function handleSubmit(e: FormEvent) {
+        e.preventDefault();
         if (!newAccountFormInput.firstName || !newAccountFormInput.lastName || !newAccountFormInput.openingBalance) {
             toast.error('Please fill in missing data');
         } else {
@@ -29,15 +31,15 @@ function AccountsNewForm(props) {
         }
     }
 
-    async function submitNewAccount(newAccountFormInput) {
-        const data = {
+    async function submitNewAccount(newAccountFormInput: INewAccountFormInput) {
+        const data: any = {
             'firstName': newAccountFormInput.firstName,
             'lastName' : newAccountFormInput.lastName,
             'openingBalance': newAccountFormInput.openingBalance,
             'currentBalance': newAccountFormInput.openingBalance
         }
 
-        const response = await PostNewAccount(data);
+        const response: Response = await PostNewAccount(data);
 
         if (response.status === 401) {
           props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
@@ -46,7 +48,7 @@ function AccountsNewForm(props) {
           return;
         }
         
-        const json = await response.json();
+        const json: IResponse<Account> = await response.json();
 
         if (json.success === true) {
             props.setAccountsMessage({ status: 'success', message: 'Account Created' });

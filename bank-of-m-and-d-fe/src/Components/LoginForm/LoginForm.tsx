@@ -36,7 +36,7 @@ function LoginForm(props: ILoginProps) {
             'Password' : loginFormInput.password,
         }
 
-        const response = await LogIn(data);
+        const response: Response = await LogIn(data);
 
         if (response.status === 401) {
             toast.error('Those credentials are not correct');
@@ -45,7 +45,7 @@ function LoginForm(props: ILoginProps) {
         }
 
         if (response.status === 200) {
-            const json = await response.json();
+            const json: { token: string } = await response.json();
             SetToken(json.token);
             
             props.setLoginMessage({status: 'success', message: 'Successful login'});

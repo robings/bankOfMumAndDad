@@ -37,7 +37,7 @@ export async function PostNewAccount(data: IAccountDto) {
   });
 }
 
-export async function DeleteAccount(data: IIdOnlyRequest) {
+export async function DeleteAccount(data: IIdOnlyRequest): Promise<Response> {
   const token = GetToken();
 
   return await fetch(`${APIBaseUrl}/api/Account`, {

@@ -7,11 +7,12 @@ import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
+import { IMessage } from './Interfaces/IMessage';
 
 function AccountsPage() {
-  const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
-  const [accountsMessage, setAccountsMessage] = useState({});
-  const [loggedIn] = useState(LoggedIn);
+  const [newAccountModalVisibility, setNewAccountModalVisibility] = useState<boolean>(false);
+  const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
+  const [loggedIn] = useState<boolean>(LoggedIn);
   const history = useHistory();
 
   const handleCloseModal = () => {
@@ -49,14 +50,13 @@ function AccountsPage() {
 
   return (
     <div className="App">
-      <Header />
+      <Header isTransactionsPage = {false} />
       <AccountsNav
-        openNewAccountModal={() => setNewAccountModalVisibility(true)}
+        openNewAccountModal={():any => setNewAccountModalVisibility(true)}
       />
       <AccountsList />
       {newAccountModalVisibility && (
         <AccountsNewForm
-          newAccountModalVisibility={newAccountModalVisibility}
           setAccountsMessage={setAccountsMessage}
           closeModal={() => handleCloseModal()}
         />
