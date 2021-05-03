@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 import LoginForm from "./Components/LoginForm/LoginForm";
 import logo from './Components/Header/m-d.jpg';
+import { IMessage } from "./Interfaces/IMessage";
 
-function LoginPage(){
-    const [loginMessage, setLoginMessage] = useState({});
-    const [loggedIn] = useState(LoggedIn);
-    const history = useHistory();
+function LoginPage(): JSX.Element {
+    const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
+    const [loggedIn] = useState<boolean>(LoggedIn);
+    const history = useHistory<RouteComponentProps>();
 
-    useEffect (()=>{
+    useEffect ((): void => {
         if (loggedIn){
           history.push('/accounts');
         }

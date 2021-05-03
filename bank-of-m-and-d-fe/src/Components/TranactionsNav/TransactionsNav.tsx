@@ -1,7 +1,8 @@
 import React from 'react';
+import { ITransactionsNavProps } from '../../Interfaces/Props/ITransactionsNavProps';
 import './transactionsNav.css';
 
-function TransactionsNav(props) {
+function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
   return (
     <div className="subNav">
       {localStorage.getItem('bearerToken') && 
