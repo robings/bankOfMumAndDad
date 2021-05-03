@@ -1,37 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
 import './transactions.css';
 import { GetTransactionsByAccountId } from '../../ApiService/ApiServiceTransactions';
 import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
+import { ITransactionProps } from '../../Interfaces/Props/ITransactionsProps';
+import { IListOfTransactionsForAccount, ITransaction } from '../../Interfaces/Entities/ITransaction'
+import { IResponse } from '../../Interfaces/Entities/IResponse';
 
-function Transactions(props) {
-  const [dataToDisplay, setDataToDisplay] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState(false);
-  const [loggedIn] = useState(LoggedIn);
+function Transactions(props: ITransactionProps): JSX.Element {
+  const [dataToDisplay, setDataToDisplay] = useState<IListOfTransactionsForAccount>({
+    accountId: null,
+    firstName: '',
+    lastName: '',
+    openingBalance: 0,
+    currentBalance: 0,
+    transactions: [] 
+  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<boolean>(false);
+  const [loggedIn] = useState<boolean>(LoggedIn);
 
-  const history = useHistory();
+  const history = useHistory<RouteComponentProps>();
   
-  function processData(dataToConvert) {
-    let convertedTransactions = dataToConvert.transactions;
+  function processData(dataToConvert: IListOfTransactionsForAccount): IListOfTransactionsForAccount {
+    const convertedTransactions: ITransaction[] = dataToConvert.transactions;
+    
     convertedTransactions.forEach((transaction) => {
       transaction.date = transaction.date.split('T')[0].trim();
     });
-    let convertedData = {
+
+    const convertedData: IListOfTransactionsForAccount = {
+      accountId: dataToConvert.accountId,
       firstName: dataToConvert.firstName,
       lastName: dataToConvert.lastName,
       openingBalance: dataToConvert.openingBalance,
       currentBalance: dataToConvert.currentBalance,
       transactions: convertedTransactions,
-    };;
+    };
     return convertedData;
   }
 
-  useEffect(() => {
-    async function fetchData(acId) {
-      const response = await GetTransactionsByAccountId(acId);
+  useEffect((): void => {
+    async function fetchData(acId: string): Promise<void> {
+      const response: Response = await GetTransactionsByAccountId(acId);
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
@@ -42,7 +55,7 @@ function Transactions(props) {
         return;
       }
 
-      const json = await response.json();
+      const json: IResponse<IListOfTransactionsForAccount> = await response.json();
 
       if (json.success === false && json.message !== 'No transactions found for account.') {
         toast.error('Account information not found');
@@ -55,14 +68,14 @@ function Transactions(props) {
       }
 
       if (json.success) {
-        const processedData = await processData(json.data);
+        const processedData: IListOfTransactionsForAccount = processData(json.data);
         setDataToDisplay(processedData);
       }
 
       setLoading(false);
     }
 
-    const redirectToLoginPage = () => {
+    const redirectToLoginPage = (): void => {
       history.push('/')
     }
 
@@ -108,7 +121,7 @@ function Transactions(props) {
                     )}
                     <td></td>
                   </tr>
-                  {errors ? <tr><td colSpan="5">No transactions to display</td></tr> : (
+                  {errors ? <tr><td colSpan={5}>No transactions to display</td></tr> : (
                   dataToDisplay.transactions.map(
                     ({ amount, date, type, comments, balance }, index) => (
                       <tr key={index}>

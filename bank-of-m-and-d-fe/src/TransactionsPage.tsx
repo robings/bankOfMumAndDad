@@ -5,27 +5,26 @@ import Transactions from './Components/Transactions/Transactions';
 import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, RouteComponentProps } from 'react-router-dom';
 import { RevokeToken } from './TokenService/TokenService';
+import { ITransactionsPageParams } from './Interfaces/Params/ITransactionsPageParams';
+import { IMessage } from './Interfaces/IMessage';
 
-function TransactionsPage() {
-  let { accountId } = useParams();
+function TransactionsPage(): JSX.Element {
+  const { accountId }: ITransactionsPageParams = useParams();
 
-  const history = useHistory();
+  const history: any = useHistory<RouteComponentProps>();
 
-  const [
-    newTransactionModalVisiblity,
-    setNewTransactionModalVisiblity,
-  ] = useState(false);
+  const [ newTransactionModalVisiblity, setNewTransactionModalVisiblity ] = useState<boolean>(false);
 
-  const [transactionsMessage, setTransactionsMessage] = useState({});
+  const [ transactionsMessage, setTransactionsMessage ] = useState<IMessage | null>(null);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setNewTransactionModalVisiblity(false);
   };
 
-  useEffect (()=>{
-    const redirectToLoginPage = () => {
+  useEffect ((): void => {
+    const redirectToLoginPage = (): void => {
       history.push('/')
     }  
 
@@ -43,9 +42,9 @@ function TransactionsPage() {
         toast.error(transactionsMessage.message);
       }
     }
-  }, [transactionsMessage, history])
+  }, [ transactionsMessage, history ])
 
-  const reloadWindow = () => {
+  const reloadWindow = (): void => {
     window.location.reload();
   }
 
@@ -53,16 +52,11 @@ function TransactionsPage() {
     <div className="App">
       <Header isTransactionsPage = {true} />
       <TransactionsNav
-      
-      
           openModal={() => setNewTransactionModalVisiblity(true)}
-     
-     
       />
       <Transactions accountId={accountId} />
       {newTransactionModalVisiblity && (
         <TransactionsNewForm
-          newAccountModalVisibility = {newTransactionModalVisiblity}
           setTransactionsMessage = {setTransactionsMessage}
           closeModal = {() => handleCloseModal()}
           accountId = {accountId}

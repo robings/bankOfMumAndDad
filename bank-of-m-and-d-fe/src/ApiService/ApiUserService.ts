@@ -1,6 +1,7 @@
+import { ILoginDto } from '../Interfaces/Entities/ILoginDto';
 import { APIBaseUrl } from './apiSettings';
 
-export async function LogIn(data) {
+export async function LogIn(data: ILoginDto) {
     return await fetch(`${APIBaseUrl}/api/login`, {
         method: 'POST',
         headers: {

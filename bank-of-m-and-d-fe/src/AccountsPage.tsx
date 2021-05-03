@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, RouteComponentProps } from 'react-router-dom';
 import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
@@ -7,18 +7,19 @@ import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
+import { IMessage } from './Interfaces/IMessage';
 
-function AccountsPage() {
-  const [newAccountModalVisibility, setNewAccountModalVisibility] = useState(false);
-  const [accountsMessage, setAccountsMessage] = useState({});
-  const [loggedIn] = useState(LoggedIn);
-  const history = useHistory();
+function AccountsPage(): JSX.Element {
+  const [newAccountModalVisibility, setNewAccountModalVisibility] = useState<boolean>(false);
+  const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
+  const [loggedIn] = useState<boolean>(LoggedIn);
+  const history = useHistory<RouteComponentProps>();
 
-  const handleCloseModal = () => {
+  const handleCloseModal = (): void => {
     setNewAccountModalVisibility(false);
   };
 
-  useEffect (()=> {
+  useEffect ((): void => {
     const redirectToLoginPage = () => {
       history.push('/')
     }
@@ -43,22 +44,21 @@ function AccountsPage() {
     }
   }, [accountsMessage, loggedIn, history])
 
-  const reloadWindow = () => {
+  const reloadWindow = (): void => {
     window.location.reload();
   }
 
   return (
     <div className="App">
-      <Header />
+      <Header isTransactionsPage = {false} />
       <AccountsNav
         openNewAccountModal={() => setNewAccountModalVisibility(true)}
       />
       <AccountsList />
       {newAccountModalVisibility && (
         <AccountsNewForm
-          newAccountModalVisibility={newAccountModalVisibility}
           setAccountsMessage={setAccountsMessage}
-          closeModal={() => handleCloseModal("AccountsNewForm")}
+          closeModal={() => handleCloseModal()}
         />
       )}
       <ToastContainer />

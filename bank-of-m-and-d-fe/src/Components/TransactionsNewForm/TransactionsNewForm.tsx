@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
+import { ITransactionDto } from '../../Interfaces/Entities/ITransactionDto';
+import { INewTransactionFormInput, INewTransactionFormProps } from '../../Interfaces/INewTransactionForm';
 import { RevokeToken } from '../../TokenService/TokenService';
 
-function TransactionsNewForm(props) {
-  const [newTransactionFormInput, setNewTransactionFormInput] = useState( {type: 'deposit'} );
+function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
+  const [newTransactionFormInput, setNewTransactionFormInput] = useState<INewTransactionFormInput>( { amount: null, dateOfTransaction: null, type: 'DEPOSIT', comments: '' } );
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
       e.currentTarget.style.borderColor = '#107C10';
     } else if (e.currentTarget.className === 'redBorder') {
@@ -19,13 +21,11 @@ function TransactionsNewForm(props) {
     });
   };
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
     if (
       !newTransactionFormInput.amount ||
-      !newTransactionFormInput.dateOfTransaction ||
-      !newTransactionFormInput.type === 'deposit' ||
-      !newTransactionFormInput.type === 'withdrawal'
+      !newTransactionFormInput.dateOfTransaction
     ) {
       toast.error('Please fill in missing data');
     } else {
@@ -33,16 +33,16 @@ function TransactionsNewForm(props) {
     }
   }
 
-  async function submitNewTransaction(newTransactionFormInput) {
-    const data = {
-      amount: newTransactionFormInput.amount,
-      date: newTransactionFormInput.dateOfTransaction,
-      type: newTransactionFormInput.type === 'deposit' ? '0' : '1',
+  async function submitNewTransaction(newTransactionFormInput: INewTransactionFormInput): Promise<void> {
+    const data: ITransactionDto  = {
+      amount: newTransactionFormInput.amount!,
+      date: newTransactionFormInput.dateOfTransaction!,
+      type: newTransactionFormInput.type === 'DEPOSIT' ? '0' : '1',
       comments: newTransactionFormInput.comments,
       accountId: props.accountId,
     };
 
-    const response = await PostNewTransaction(data);
+    const response: Response = await PostNewTransaction(data);
 
     if (response.status === 401) {
       props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });
@@ -100,7 +100,11 @@ function TransactionsNewForm(props) {
           </div>
           <div>
             <label>Comments</label>
-            <input type="text" name="comments" onChange={handleInputChange} />
+            <input
+              className="redBorder"
+              type="text" 
+              name="comments" 
+              onChange={handleInputChange} />
           </div>
           <input type="submit" value="Submit" />
         </form>

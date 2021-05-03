@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Loader from '../Loader/Loader';
 import { toast } from 'react-toastify';
-import { useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
 import { GetAllAccounts, DeleteAccount } from '../../ApiService/ApiServiceAccounts';
 import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
+import { IAccount } from '../../Interfaces/Entities/IAccount';
+import { IResponse } from '../../Interfaces/Entities/IResponse';
 
 
-function AccountsList() {
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-    const [loggedIn] = useState(LoggedIn);
-    const history = useHistory();
+function AccountsList(): JSX.Element {
+    const [data, setData] = useState<IAccount[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+    const [loggedIn] = useState<boolean>(LoggedIn);
+    const history = useHistory<RouteComponentProps>();
 
-    async function handleDelete(e) {
+    async function handleDelete(e: React.BaseSyntheticEvent): Promise<void> {
       var data = {
         id: e.currentTarget.dataset.id,
       };
 
-      const response = await DeleteAccount(data);
+      const response: Response = await DeleteAccount(data);
 
       if (response.status === 401) {
         toast.error('You are not logged in.');
@@ -29,7 +31,7 @@ function AccountsList() {
         return;
       }
       
-      const json = await response.json();
+      const json: IResponse<any> = await response.json();
 
       if (json.success === true) {
         toast.success('Account Deleted');
@@ -39,18 +41,18 @@ function AccountsList() {
       }
     }
 
-    function home() {
+    function home(): void {
       window.location.reload();
     }
 
-    function handleViewTransactions(e) {
+    function handleViewTransactions(e: React.BaseSyntheticEvent): void {
       let urlParam = e.currentTarget.dataset.id;
       history.push(`/transactions/${urlParam}`);
     }
 
-    useEffect(() => {
-      async function getAllAccounts() {
-        const redirectToLoginPage = () => {
+    useEffect((): void => {
+      async function getAllAccounts(): Promise<void> {
+        const redirectToLoginPage = (): void => {
           history.push('/')
         }
         
@@ -60,7 +62,7 @@ function AccountsList() {
             return
           }
   
-          const response = await GetAllAccounts();
+          const response: Response = await GetAllAccounts();
           
           if (response.status === 401) {
             RevokeToken();
@@ -70,7 +72,7 @@ function AccountsList() {
             return;
           }
           
-          const json = await response.json();
+          const json: IResponse<IAccount[]> = await response.json();
   
           setData(json.data);
           if (json.success === false) {
