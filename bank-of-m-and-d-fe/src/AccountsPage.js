@@ -58,7 +58,7 @@ function AccountsPage() {
         <AccountsNewForm
           newAccountModalVisibility={newAccountModalVisibility}
           setAccountsMessage={setAccountsMessage}
-          closeModal={() => handleCloseModal("AccountsNewForm")}
+          closeModal={() => handleCloseModal()}
         />
       )}
       <ToastContainer />

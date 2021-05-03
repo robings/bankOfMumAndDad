@@ -5,9 +5,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 import LoginForm from "./Components/LoginForm/LoginForm";
 import logo from './Components/Header/m-d.jpg';
+import { IMessage } from "./Interfaces/IMessage";
 
 function LoginPage(){
-    const [loginMessage, setLoginMessage] = useState({});
+    const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
     const [loggedIn] = useState(LoggedIn);
     const history = useHistory();
 
