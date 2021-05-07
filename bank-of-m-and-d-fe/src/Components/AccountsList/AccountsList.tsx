@@ -7,9 +7,12 @@ import { IAccount } from '../../Interfaces/Entities/IAccount';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
 import { DeleteAccount } from '../../ApiService/ApiServiceAccounts';
 import { IAccountsListProps } from '../../Interfaces/Props/IAccountsListProps';
+import Loader from '../Loader/Loader';
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
     const data: IAccount[] = props.accountsData;
+    const error: boolean = props.accountsError;
+    const loading: boolean = props.accountsLoading;
     const history = useHistory<RouteComponentProps>();
 
     async function handleDelete(e: React.BaseSyntheticEvent): Promise<void> {
@@ -41,6 +44,9 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
     return (
       <main>
         <h2>Accounts</h2>
+        {loading  && !error ? (
+          <Loader />
+        ) : (
           <table>
             <thead>
               <tr>
@@ -80,6 +86,10 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
               ))}
             </tbody>
           </table>
+        )}
+        {error && (
+          <div className="error">Unable to display account details.</div>
+        )}
       </main>
     );
 }

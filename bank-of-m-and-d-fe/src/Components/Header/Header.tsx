@@ -22,6 +22,10 @@ function Header(props: IHeaderProps): JSX.Element {
         history.push('/');
     }
 
+    const handleRevokeToken = (): void => {
+        RevokeToken();
+    }
+
     const handleHomeButtonClick = (): void => {
         history.push('/accounts');
     }
@@ -56,7 +60,11 @@ function Header(props: IHeaderProps): JSX.Element {
                     <div style={{float: "right", padding: "7px 5px"}}>Accounts</div>
                 </button>)}
                 </div>
-                <div>{localStorage.getItem('loginTime') ? localStorage.getItem('loginTime') : 'Not logged in'}</div>
+                <div>{localStorage.getItem('loginTime') ? localStorage.getItem('loginTime') : 'Not logged in'}
+                <button className="subNavButton" onClick={handleRevokeToken}>
+                    Revoke Token
+                </button>
+                </div>
             </section>
         </header>
     );

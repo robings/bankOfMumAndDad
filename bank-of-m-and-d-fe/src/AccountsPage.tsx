@@ -11,7 +11,6 @@ import { IMessage } from './Interfaces/IMessage';
 import { GetAllAccounts } from './ApiService/ApiServiceAccounts';
 import { IResponse } from './Interfaces/Entities/IResponse';
 import { IAccount } from './Interfaces/Entities/IAccount';
-import Loader from './Components/Loader/Loader';
 
 function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] = useState<boolean>(false);
@@ -19,7 +18,6 @@ function AccountsPage(): JSX.Element {
   const [loggedIn] = useState<boolean>(LoggedIn);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [reloadComponent] = useState<boolean>(true);
   const [accountsData, setAccountsData] = useState<IAccount[]>([]);
   const history = useHistory<RouteComponentProps>();
 
@@ -37,10 +35,6 @@ function AccountsPage(): JSX.Element {
     }
 
     async function getAllAccounts(): Promise<void> {
-      if (!reloadComponent) {
-        return;
-      }
-
       const response: Response = await GetAllAccounts();
       
       if (response.status === 401) {
@@ -86,29 +80,24 @@ function AccountsPage(): JSX.Element {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage, loggedIn, history, reloadComponent])
+  }, [accountsMessage, loggedIn, history])
 
   return (
     <div className="App">
       <Header isTransactionsPage = {false} />
       <AccountsNav
-        openNewAccountModal={() => setNewAccountModalVisibility(true)}
+        openNewAccountModal = { () => setNewAccountModalVisibility(true) }
       />
-      {loading  && !error ? (
-          <Loader />
-        ) : (
       <AccountsList
-        accountsData={accountsData}
-        setAccountsMessage={setAccountsMessage}
+        accountsData = {accountsData}
+        accountsError = {error}
+        accountsLoading = {loading}
+        setAccountsMessage = {setAccountsMessage}
       />
-      )}
-      {error && (
-        <div className="error">Unable to display account details.</div>
-      )}
       {newAccountModalVisibility && (
         <AccountsNewForm
-          setAccountsMessage={setAccountsMessage}
-          closeModal={() => handleCloseModal()}
+          setAccountsMessage = {setAccountsMessage}
+          closeModal = {() => handleCloseModal()}
         />
       )}
       <ToastContainer />
