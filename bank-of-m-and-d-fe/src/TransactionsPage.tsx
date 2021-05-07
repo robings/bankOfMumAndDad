@@ -21,6 +21,7 @@ function TransactionsPage(): JSX.Element {
   const [ loggedIn ] = useState<boolean>(LoggedIn);
   const [ loading, setLoading ] = useState<boolean>(false);
   const [ errors, setErrors ] = useState<boolean>(false);
+  const [ noTransactions, setNoTransactions ] = useState<boolean>(false);
   const [ transactionsData, setTransactionsData ] = useState<IListOfTransactionsForAccount>({
     accountId: null,
     firstName: '',
@@ -82,7 +83,7 @@ function TransactionsPage(): JSX.Element {
 
       if (json.success === false && json.message === 'No transactions found for account.') {
         toast.info(json.message);
-        setErrors(true)
+        setNoTransactions(true);
       }
 
       if (json.success) {
@@ -99,6 +100,8 @@ function TransactionsPage(): JSX.Element {
     if (transactionsMessage) {
       if (transactionsMessage.status === 'success'){
         toast.success(transactionsMessage.message);
+        setErrors(false);
+        setNoTransactions(false);
       }
       else if (transactionsMessage.status === 'error' && transactionsMessage.message === 'You are not logged in') {
         RevokeToken();
@@ -120,6 +123,7 @@ function TransactionsPage(): JSX.Element {
       <Transactions
         transactionsData = {transactionsData}
         transactionsError = {errors}
+        noTransactions = {noTransactions}
         transactionsLoading = {loading}
         setTransactionsMessage = {setTransactionsMessage}
       />

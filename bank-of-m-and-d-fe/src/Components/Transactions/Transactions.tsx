@@ -7,6 +7,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
   const dataToDisplay = props.transactionsData;
   const error = props.transactionsError;
   const loading = props.transactionsLoading;
+  const noTransactions = props.noTransactions;
 
   return (
     <main>
@@ -45,7 +46,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
                 )}
                 <td></td>
               </tr>
-              {error ? <tr><td colSpan={5}>No transactions to display</td></tr> : (
+              {noTransactions ? <tr><td colSpan={5}>No transactions to display</td></tr> : (
               dataToDisplay.transactions.map(
                 ({ amount, date, type, comments, balance }, index) => (
                   <tr key={index}>

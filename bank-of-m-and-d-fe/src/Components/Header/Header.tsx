@@ -61,9 +61,9 @@ function Header(props: IHeaderProps): JSX.Element {
                 </button>)}
                 </div>
                 <div>{localStorage.getItem('loginTime') ? localStorage.getItem('loginTime') : 'Not logged in'}
-                <button className="subNavButton" onClick={handleRevokeToken}>
+                {/* <button onClick={handleRevokeToken}>
                     Revoke Token
-                </button>
+                </button> */}
                 </div>
             </section>
         </header>
