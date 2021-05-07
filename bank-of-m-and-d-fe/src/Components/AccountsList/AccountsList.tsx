@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import Loader from '../Loader/Loader';
+import React from 'react';
 import { toast } from 'react-toastify';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './accountsList.css';
-import { GetAllAccounts, DeleteAccount } from '../../ApiService/ApiServiceAccounts';
-import { RevokeToken, LoggedIn } from '../../TokenService/TokenService';
 import { IAccount } from '../../Interfaces/Entities/IAccount';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
+import { DeleteAccount } from '../../ApiService/ApiServiceAccounts';
+import { IAccountsListProps } from '../../Interfaces/Props/IAccountsListProps';
 
-
-function AccountsList(): JSX.Element {
-    const [data, setData] = useState<IAccount[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<boolean>(false);
-    const [loggedIn] = useState<boolean>(LoggedIn);
+function AccountsList(props: IAccountsListProps): JSX.Element {
+    const data: IAccount[] = props.accountsData;
     const history = useHistory<RouteComponentProps>();
 
     async function handleDelete(e: React.BaseSyntheticEvent): Promise<void> {
@@ -25,24 +20,17 @@ function AccountsList(): JSX.Element {
       const response: Response = await DeleteAccount(data);
 
       if (response.status === 401) {
-        toast.error('You are not logged in.');
-        RevokeToken();
-        history.push('/')
+        props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
         return;
       }
       
       const json: IResponse<any> = await response.json();
 
       if (json.success === true) {
-        toast.success('Account Deleted');
-        setTimeout(home, 5000);
+        props.setAccountsMessage({ status: 'accountDeleted', message: 'Account Deleted' });
       } else {
         toast.error(json.message);
       }
-    }
-
-    function home(): void {
-      window.location.reload();
     }
 
     function handleViewTransactions(e: React.BaseSyntheticEvent): void {
@@ -50,47 +38,9 @@ function AccountsList(): JSX.Element {
       history.push(`/transactions/${urlParam}`);
     }
 
-    useEffect((): void => {
-      async function getAllAccounts(): Promise<void> {
-        const redirectToLoginPage = (): void => {
-          history.push('/')
-        }
-        
-        if (!loggedIn) {
-            setError(true);
-            setLoading(false);
-            return
-          }
-  
-          const response: Response = await GetAllAccounts();
-          
-          if (response.status === 401) {
-            RevokeToken();
-            setError(true);
-            setLoading(false);
-            setTimeout(redirectToLoginPage, 5000);
-            return;
-          }
-          
-          const json: IResponse<IAccount[]> = await response.json();
-  
-          setData(json.data);
-          if (json.success === false) {
-            toast.error(json.message);
-            setError(true);
-          }
-          setLoading(false);
-      }
-  
-      getAllAccounts();
-    }, [history, loggedIn]);
-
     return (
       <main>
         <h2>Accounts</h2>
-        {loading ? (
-          <Loader />
-        ) : (
           <table>
             <thead>
               <tr>
@@ -130,8 +80,6 @@ function AccountsList(): JSX.Element {
               ))}
             </tbody>
           </table>
-        )}
-        {error ? <div className="error">Unable to display account details.</div> : <div></div>}
       </main>
     );
 }

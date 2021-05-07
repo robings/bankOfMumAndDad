@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
 import { PostNewAccount } from '../../ApiService/ApiServiceAccounts';
-import { RevokeToken } from '../../TokenService/TokenService';
 import { INewAccountFormInput, INewAccountFormProps } from '../../Interfaces/INewAccountForm';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
 
@@ -43,7 +42,6 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
 
         if (response.status === 401) {
           props.setAccountsMessage({ status: 'error', message: 'You are not logged in' });
-          RevokeToken();
           props.closeModal();
           return;
         }
