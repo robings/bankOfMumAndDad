@@ -1,3 +1,10 @@
+import { IListOfTransactionsForAccount } from "../Entities/ITransaction";
+import { IMessage } from "../IMessage";
+
 export interface ITransactionProps {
-  accountId: string;
+  transactionsData: IListOfTransactionsForAccount;
+  transactionsError: boolean;
+  noTransactions: boolean;
+  transactionsLoading: boolean;
+  setTransactionsMessage(message: IMessage): void;
 }

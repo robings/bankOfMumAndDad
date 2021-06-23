@@ -13,7 +13,7 @@ ReactDOM.render(
         <Route exact path="/" component={LoginPage} />
         <Route path="/accounts" component={AccountsPage} />
         <Route path="/transactions/:accountId" component={TransactionsPage} />
-        <Route component={AccountsPage} />
+        <Route component={LoginPage} />
       </Switch>
     </Router>
   </React.StrictMode>,
