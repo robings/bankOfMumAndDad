@@ -22,9 +22,9 @@ function Header(props: IHeaderProps): JSX.Element {
         history.push('/');
     }
 
-    const handleRevokeToken = (): void => {
-        RevokeToken();
-    }
+    // const handleRevokeToken = (): void => {
+    //     RevokeToken();
+    // }
 
     const handleHomeButtonClick = (): void => {
         history.push('/accounts');
