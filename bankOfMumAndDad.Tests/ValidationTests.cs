@@ -8,7 +8,7 @@ namespace bankOfMumAndDad.Tests
         [TestCase("    \n \t  ")]
         public void ValidateString_GivenNullOrWhitespaceString_ReturnsFalse(string invalidString)
         {
-            Assert.That(Validation.ValidateString(invalidString), Is.False);
+            Assert.That(invalidString.ValidateString(), Is.False);
         }
 
         [TestCase("Hello Everybody")]
@@ -16,7 +16,7 @@ namespace bankOfMumAndDad.Tests
         [TestCase("Bibble-bobble")]
         public void ValidateString_GivenValidString_ReturnsTrue(string validString)
         {
-            Assert.That(Validation.ValidateString(validString), Is.True);
+            Assert.That(validString.ValidateString(), Is.True);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace bankOfMumAndDad.Tests
         {
             var aVeryLongString = "thequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydogthequickbrownfoxjumpsoverthelazydog";
 
-            Assert.That(Validation.ValidateString(aVeryLongString), Is.False);
+            Assert.That(aVeryLongString.ValidateString(), Is.False);
         }
     }
 }

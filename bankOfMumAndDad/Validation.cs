@@ -5,7 +5,7 @@ namespace bankOfMumAndDad
 {
     public static class Validation
     {
-        public static bool ValidateString(string stringToValidate)
+        public static bool ValidateString(this string stringToValidate)
         {
             Regex regex = new Regex(@"^[a-zA-Z\d\s-]*$");
 

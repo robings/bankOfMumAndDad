@@ -93,7 +93,7 @@ namespace bankOfMumAndDad.Controllers
 
                 if (putRequest.FirstName != null)
                 {
-                    if (!Validation.ValidateString(putRequest.FirstName))
+                    if (!putRequest.FirstName.ValidateString())
                     {
                         return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
                     }

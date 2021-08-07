@@ -60,8 +60,8 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostUser(UserDTO postedUser)
         {
-            if (!Validation.ValidateString(postedUser.FirstName) ||
-                !Validation.ValidateString(postedUser.LastName))
+            if (!postedUser.FirstName.ValidateString() ||
+                !postedUser.LastName.ValidateString())
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
