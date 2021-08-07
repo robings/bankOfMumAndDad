@@ -6,6 +6,7 @@ using bankOfMumAndDad.Controllers;
 using bankOfMumAndDad.Entities;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
+using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -15,6 +16,9 @@ namespace bankOfMumAndDad.Tests
     public class AccountControllerTests
     {
         #region Variables
+        DataContext _dataContext;
+        AccountController _accountController;
+
         List<Account> _seedDatabaseAccounts => new List<Account>
         {
             new Account
@@ -76,13 +80,24 @@ namespace bankOfMumAndDad.Tests
         #endregion
 
         #region GetAccounts Tests
-        [Test]
-        public async Task GetAccountsGetsAllAccounts()
+        [SetUp]
+        public void Setup()
         {
             var factory = new SqliteInMemoryConnectionFactory();
 
-            var context = factory.CreateSqliteContext();
+            _dataContext = factory.CreateSqliteContext();
+            _accountController = new AccountController(_dataContext);
+        }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _dataContext.Dispose();
+        }
+
+        [Test]
+        public async Task GetAccountsGetsAllAccounts()
+        {
             var accounts = new List<Account>
             {
                 new Account
@@ -111,18 +126,14 @@ namespace bankOfMumAndDad.Tests
                 },
             };
 
-            context.AddRange(accounts);
-            context.SaveChanges();
+            _dataContext.AddRange(accounts);
+            _dataContext.SaveChanges();
 
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccounts();
-            
-            var response = result.Result as OkObjectResult;
-            var responseValue = response.Value as ApiResponse;
+            var result = await _accountController.GetAccounts();
+            var responseValue = (ApiResponse)((OkObjectResult)result.Result).Value;
             var responseData = responseValue.Data as List<Account>;
 
-            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseData.Count, Is.EqualTo(3));
             Assert.That(responseData, Is.EqualTo(accounts));
         }
@@ -130,10 +141,6 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task GetAccountsWhenSomeAccountsAreSetAsDeletedGetsOnlyNonDeletedAccounts()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
             var accounts = new List<Account>
             {
                 new Account
@@ -168,18 +175,14 @@ namespace bankOfMumAndDad.Tests
                 accounts[2],
             };
 
-            context.AddRange(accounts);
-            context.SaveChanges();
+            _dataContext.AddRange(accounts);
+            _dataContext.SaveChanges();
 
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccounts();
-
-            var response = result.Result as OkObjectResult;
-            var responseValue = response.Value as ApiResponse;
+            var result = await _accountController.GetAccounts();
+            var responseValue = (ApiResponse)((OkObjectResult)result.Result).Value;
             var responseData = responseValue.Data as List<Account>;
 
-            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseData.Count, Is.EqualTo(2));
             Assert.That(responseData, Is.EqualTo(expectedAccounts));
         }
@@ -187,36 +190,20 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task GetAccountsWhenThereAreNoAccountsReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.GetAccounts();
 
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccounts();
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [Test]
         public async Task GetAccountsWhenThereAreNoLiveAccountsReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            _dataContext.AddRange(_accountsThatAreAllDeleted);
+            _dataContext.SaveChanges();
 
-            var context = factory.CreateSqliteContext();
+            var result = await _accountController.GetAccounts();
 
-            context.AddRange(_accountsThatAreAllDeleted);
-            context.SaveChanges();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccounts();
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         #endregion
@@ -225,60 +212,36 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task GetAccountGivenNonExistingIdReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.GetAccount(3);
 
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccount(3);
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [Test]
         public async Task GetAccountGivenDeletedAccountIdReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            _dataContext.AddRange(_accountsThatAreAllDeleted);
+            _dataContext.SaveChanges();
 
-            var context = factory.CreateSqliteContext();
+            var result = await _accountController.GetAccount(2);
 
-            context.AddRange(_accountsThatAreAllDeleted);
-            context.SaveChanges();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccount(2);
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [Test]
         public async Task GetAccountGivenExistingAccountReturnsAccount()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            _dataContext.AddRange(_seedDatabaseAccounts);
+            _dataContext.SaveChanges();
 
-            var context = factory.CreateSqliteContext();
-
-            context.AddRange(_seedDatabaseAccounts);
-            context.SaveChanges();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.GetAccount(2);
-
-            var response = result.Result as OkObjectResult;
-
-            var responseValue = response.Value as ApiResponse;
+            var result = await _accountController.GetAccount(2);
+            var responseValue = (ApiResponse)((OkObjectResult)result.Result).Value;
             var responseData = responseValue.Data as List<Account>;
+            var expectedAccounts = _dataContext.Accounts.Where(a => a.Id == 2).FirstOrDefault();
 
-            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseData.Count, Is.EqualTo(1));
-            Assert.That(responseData[0], Is.EqualTo(context.Accounts.Where(a => a.Id == 2).FirstOrDefault()));
+            Assert.That(responseData[0], Is.EqualTo(expectedAccounts));
         }
 
         #endregion
@@ -287,80 +250,47 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task DeleteAccountGivenNoDataReturnsBadRequest()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.DeleteAccount(null);
+            var apiResponse = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
-            var context = factory.CreateSqliteContext();
 
-            var accountController = new AccountController(context);
-
-            var result = await accountController.DeleteAccount(null);
-
-            var response = result.Result as BadRequestObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
-            var responseValue = response.Value as ApiResponse;
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
-            Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(apiResponse.Message, Is.EqualTo("No account data received."));
         }
 
 
         [Test]
         public async Task DeleteAccountGivenNonExistingIdReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [Test]
         public async Task DeleteAccountGivenExistingDeletedAccountReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            _dataContext.AddRange(_seedDatabaseAccounts);
+            _dataContext.SaveChanges();
 
-            var context = factory.CreateSqliteContext();
+            var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
-            context.AddRange(_seedDatabaseAccounts);
-            context.SaveChanges();
-
-            var accountController = new AccountController(context);
-
-            var result = await accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
-
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [Test]
         public async Task DeleteAccountGivenExistingAccountSoftDeletesAccount()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            _dataContext.AddRange(_seedDatabaseAccounts);
+            _dataContext.SaveChanges();
 
-            var context = factory.CreateSqliteContext();
+            var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "2" });
 
-            context.AddRange(_seedDatabaseAccounts);
-            context.SaveChanges();
+            var responseValue = (ApiResponse)((OkObjectResult)result.Result).Value;
 
-            var accountController = new AccountController(context);
+            var deletedAccount = await _dataContext.Accounts.Where(a => a.Id == 2).FirstOrDefaultAsync();
 
-            var result = await accountController.DeleteAccount(new IdOnlyRequest { Id = "2" });
-
-            var response = result.Result as OkObjectResult;
-
-            var responseValue = response.Value as ApiResponse;
-            
-            var deletedAccount = await context.Accounts.Where(a => a.Id == 2).FirstOrDefaultAsync();
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Account successfully deleted."));
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
         }
@@ -368,10 +298,6 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task DeleteAccountGivenExistingAccountWithTransactionsSoftDeletesAccountAndTransactions()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
             var transactions = new List<Transaction>
             {
                 new Transaction
@@ -400,22 +326,18 @@ namespace bankOfMumAndDad.Tests
                 },
             };
 
-            context.AddRange(_seedDatabaseAccounts);
-            context.AddRange(transactions);
-            context.SaveChanges();
+            _dataContext.AddRange(_seedDatabaseAccounts);
+            _dataContext.AddRange(transactions);
+            _dataContext.SaveChanges();
 
-            var accountController = new AccountController(context);
+            var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "2" });
 
-            var result = await accountController.DeleteAccount(new IdOnlyRequest { Id = "2" });
+            var responseValue = (ApiResponse)((OkObjectResult)result.Result).Value;
 
-            var response = result.Result as OkObjectResult;
+            var deletedAccount = await _dataContext.Accounts.Where(a => a.Id == 2).FirstOrDefaultAsync();
+            var deletedTransactions = await _dataContext.Transactions.Where(t => t.AccountId == 2).ToListAsync();
 
-            var responseValue = response.Value as ApiResponse;
-
-            var deletedAccount = await context.Accounts.Where(a => a.Id == 2).FirstOrDefaultAsync();
-            var deletedTransactions = await context.Transactions.Where(t => t.AccountId == 2).ToListAsync();
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Account successfully deleted."));
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
             Assert.That(deletedTransactions.Count, Is.EqualTo(2));
@@ -427,12 +349,6 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task PostAccountGivenValidData_WhereDatabaseIsEmpty_AddsAccount()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
             var accountToPost = new AccountDTO
             {
                 FirstName = "Cuthbert",
@@ -441,33 +357,28 @@ namespace bankOfMumAndDad.Tests
                 CurrentBalance = "150",
             };
 
-            Assert.That(await context.Accounts.CountAsync(), Is.Zero);
+            Assert.That(await _dataContext.Accounts.CountAsync(), Is.Zero);
 
-            var result = await accountController.PostAccount(accountToPost);
+            var result = await _accountController.PostAccount(accountToPost);
 
-            var createdAccount = await context.Accounts.FirstOrDefaultAsync();
+            var createdAccount = await _dataContext.Accounts.FirstOrDefaultAsync();
 
-            var response = result.Result as OkObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(await context.Accounts.CountAsync(), Is.EqualTo(1));
-            Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
-            Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
-            Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
-            Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.That(await _dataContext.Accounts.CountAsync(), Is.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
+                Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
+                Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
+                Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+            });
         }
 
         [Test]
         public async Task PostAccountGivenValidData_WhereDatabaseHasAccounts_AddsAccount()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
-
-            var accountController = new AccountController(context);
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var accountToPost = new AccountDTO
             {
@@ -477,18 +388,19 @@ namespace bankOfMumAndDad.Tests
                 CurrentBalance = "250",
             };
 
-            var result = await accountController.PostAccount(accountToPost);
+            var result = await _accountController.PostAccount(accountToPost);
 
-            var createdAccount = context.Accounts.Where(a => a.FirstName == accountToPost.FirstName).FirstOrDefault();
+            var createdAccount = _dataContext.Accounts.Where(a => a.FirstName == accountToPost.FirstName).FirstOrDefault();
 
-            var response = result.Result as OkObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(context.Accounts.Count(), Is.EqualTo(4));
-            Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
-            Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
-            Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
-            Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(4));
+            Assert.Multiple(() =>
+            {
+                Assert.That(createdAccount.FirstName, Is.EqualTo(accountToPost.FirstName));
+                Assert.That(createdAccount.LastName, Is.EqualTo(accountToPost.LastName));
+                Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
+                Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
+            });
         }
 
         [TestCase("Cuthbert<")]
@@ -496,12 +408,6 @@ namespace bankOfMumAndDad.Tests
         [TestCase("")]
         public async Task PostAccountGivenInValidData_ReturnsBadRequest(string invalidData)
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
             var accountToPost = new AccountDTO
             {
                 FirstName = invalidData,
@@ -510,31 +416,21 @@ namespace bankOfMumAndDad.Tests
                 CurrentBalance = "150",
             };
 
-            var result = await accountController.PostAccount(accountToPost);
+            var result = await _accountController.PostAccount(accountToPost);
+            var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
-            var response = result.Result as BadRequestObjectResult;
-            var responseValue = response.Value as ApiResponse;
-
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
         }
 
         [Test]
         public async Task PostAccountGivenNoData_ReturnsBadRequest()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.PostAccount(null);
 
-            var context = factory.CreateSqliteContext();
+            var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
-            var accountController = new AccountController(context);
-
-            var result = await accountController.PostAccount(null);
-
-            var response = result.Result as BadRequestObjectResult;
-            var responseValue = response.Value as ApiResponse;
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
         }
         #endregion
@@ -543,30 +439,17 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task PutAccountGivenNoData_ReturnsBadRequest()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
+            var result = await _accountController.PutAccount(null);
 
-            var context = factory.CreateSqliteContext();
+            var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
-            var accountController = new AccountController(context);
-
-            var result = await accountController.PutAccount(null);
-
-            var response = result.Result as BadRequestObjectResult;
-            var responseValue = response.Value as ApiResponse;
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
         }
 
         [Test]
         public async Task PutAccountGivenNonExistingIdReturnsNotFound()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
             var putRequest = new PutRequest
             {
                 Id = 4,
@@ -574,26 +457,18 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await accountController.PutAccount(putRequest);
+            var result = await _accountController.PutAccount(putRequest);
 
-            var response = result.Result as NotFoundObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(404));
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
         }
 
         [TestCase("Cuthbert<")]
         [TestCase("   /n /t  ")]
         [TestCase("")]
-        public async Task PutAccountGivenInValidData_ReturnsBadRequest(string invalidData)
+        public async Task PutAccountGivenInvalidData_ReturnsBadRequest(string invalidData)
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            var accountController = new AccountController(context);
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var putRequest = new PutRequest
             {
@@ -602,27 +477,19 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await accountController.PutAccount(putRequest);
+            var result = await _accountController.PutAccount(putRequest);
 
-            var response = result.Result as BadRequestObjectResult;
-            var responseValue = response.Value as ApiResponse;
+            var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
-
-            Assert.That(response.StatusCode, Is.EqualTo(400));
+            Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
         }
 
         [Test]
         public async Task PutAccountGivenValidRequestToChangeFirstName_UpdatesAccount_WithChangedDataOnly()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
-
-            var accountController = new AccountController(context);
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var putRequest = new PutRequest
             {
@@ -632,31 +499,26 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await accountController.PutAccount(putRequest);
+            var result = await _accountController.PutAccount(putRequest);
 
-            var editedAccount = context.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
+            var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var response = result.Result as OkObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(context.Accounts.Count(), Is.EqualTo(3));
-            Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
-            Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
-            Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
-            Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
+                Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
+                Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
+                Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
+            });
         }
 
         [Test]
         public async Task PutAccountGivenValidRequestToChangeLastName_UpdatesAccount_WithChangedDataOnly()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
-
-            var accountController = new AccountController(context);
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var putRequest = new PutRequest
             {
@@ -666,31 +528,25 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await accountController.PutAccount(putRequest);
+            var result = await _accountController.PutAccount(putRequest);
 
-            var editedAccount = context.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
+            var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var response = result.Result as OkObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(context.Accounts.Count(), Is.EqualTo(3));
-            Assert.That(editedAccount.FirstName, Is.EqualTo(preEditedAccount.FirstName));
-            Assert.That(editedAccount.LastName, Is.EqualTo(putRequest.LastName));
-            Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
-            Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedAccount.FirstName, Is.EqualTo(preEditedAccount.FirstName));
+                Assert.That(editedAccount.LastName, Is.EqualTo(putRequest.LastName));
+                Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
+                Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
+            });
         }
 
         [Test]
         public async Task PutAccountGivenValidRequestToChangeCurrentBalance_UpdatesAccount_WithChangedDataOnly()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
-
-            var accountController = new AccountController(context);
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var putRequest = new PutRequest
             {
@@ -700,31 +556,26 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await accountController.PutAccount(putRequest);
-            
-            var editedAccount = context.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
+            var result = await _accountController.PutAccount(putRequest);
 
-            var response = result.Result as OkObjectResult;
+            var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(context.Accounts.Count(), Is.EqualTo(3));
-            Assert.That(editedAccount.FirstName, Is.EqualTo(preEditedAccount.FirstName));
-            Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
-            Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
-            Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedAccount.FirstName, Is.EqualTo(preEditedAccount.FirstName));
+                Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
+                Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
+                Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
+            });
         }
 
         [Test]
         public async Task PutAccountGivenValidRequestToChangeMultipleFields_UpdatesAccount_WithChangedDataOnly()
         {
-            var factory = new SqliteInMemoryConnectionFactory();
-
-            var context = factory.CreateSqliteContext();
-
-            await context.AddRangeAsync(_seedDatabaseAccounts);
-            await context.SaveChangesAsync();
-
-            var accountController = new AccountController(context);
+            await _dataContext.AddRangeAsync(_seedDatabaseAccounts);
+            await _dataContext.SaveChangesAsync();
 
             var putRequest = new PutRequest
             {
@@ -735,18 +586,19 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await accountController.PutAccount(putRequest);
+            var result = await _accountController.PutAccount(putRequest);
 
-            var editedAccount = context.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
+            var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var response = result.Result as OkObjectResult;
-
-            Assert.That(response.StatusCode, Is.EqualTo(200));
-            Assert.That(context.Accounts.Count(), Is.EqualTo(3));
-            Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
-            Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
-            Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
-            Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
+            Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
+                Assert.That(editedAccount.LastName, Is.EqualTo(preEditedAccount.LastName));
+                Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
+                Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
+            });
         }
         #endregion
     }
