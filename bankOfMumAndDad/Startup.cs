@@ -62,7 +62,7 @@ namespace bankOfMumAndDad
                 builder.AllowAnyMethod();
             });
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseAuthentication();
 
