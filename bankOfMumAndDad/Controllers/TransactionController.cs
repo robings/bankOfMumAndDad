@@ -107,7 +107,7 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostTransaction(TransactionDTO transaction)
         {
-            if (!Validation.ValidateString(transaction.Comments))
+            if (!transaction.Comments.ValidateString())
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }

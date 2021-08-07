@@ -103,7 +103,7 @@ namespace bankOfMumAndDad.Controllers
 
                 if (putRequest.LastName != null)
                 {
-                    if (!Validation.ValidateString(putRequest.LastName))
+                    if (!putRequest.LastName.ValidateString())
                     {
                         return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
                     }
@@ -152,8 +152,8 @@ namespace bankOfMumAndDad.Controllers
                 return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
             }
 
-            if (!Validation.ValidateString(postedAccount.FirstName) ||
-                !Validation.ValidateString(postedAccount.LastName))
+            if (!postedAccount.FirstName.ValidateString() ||
+                !postedAccount.LastName.ValidateString())
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
