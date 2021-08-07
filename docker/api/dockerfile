@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:3.1-alpine as dependencies
+WORKDIR /build
+COPY ./bankOfMumAndDad/*.csproj ./bankOfMumAndDad/
+COPY ./*.sln ./
+RUN dotnet restore
+
+FROM dependencies as build
+COPY ./bankOfMumAndDad/ ./bankOfMumAndDad/
+RUN dotnet publish "./bankOfMumAndDad/bankOfMumAndDad.csproj" -c release -o "./out"
+
+FROM mcr.microsoft.com/dotnet/aspnet:3.1-alpine as final
+WORKDIR /app
+COPY --from=build /build/out/ ./
+EXPOSE 80/tcp
+ENTRYPOINT ["dotnet", "bankOfMumAndDad.dll"]

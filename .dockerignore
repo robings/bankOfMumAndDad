@@ -1,0 +1,4 @@
+./bank-of-m-and-d-fe/node_modules
+./bank-of-m-and-d-fe/dist
+./**/bin
+./**/obj
