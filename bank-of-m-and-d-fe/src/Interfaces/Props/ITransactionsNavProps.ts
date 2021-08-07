@@ -1,3 +1,3 @@
 export interface ITransactionsNavProps {
-    openModal(): void;
+    openNewTransactionModal(): void;
 }
