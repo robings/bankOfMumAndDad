@@ -5,6 +5,7 @@ import './AccountsNewForm.css';
 import { PostNewAccount } from '../../ApiService/ApiServiceAccounts';
 import { INewAccountFormInput, INewAccountFormProps } from '../../Interfaces/INewAccountForm';
 import { IResponse } from '../../Interfaces/Entities/IResponse';
+import { IAccount } from '../../Interfaces/Entities/IAccount';
 
 function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
     const [newAccountFormInput, setNewAccountFormInput] = useState<INewAccountFormInput>({firstName: '', lastName: '', openingBalance: null});
@@ -46,7 +47,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
           return;
         }
         
-        const json: IResponse<Account> = await response.json();
+        const json: IResponse<IAccount> = await response.json();
 
         if (json.success === true) {
             props.setAccountsMessage({ status: 'success', message: 'Account Created' });
