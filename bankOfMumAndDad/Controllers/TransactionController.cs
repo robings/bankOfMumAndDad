@@ -91,35 +91,6 @@ namespace bankOfMumAndDad.Controllers
             return updatedBalance;
         }
 
-        //// GET: api/Transaction
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<ApiResponse>> GetTransactionsByAccountId(int id)
-        //{
-        //    try
-        //    {
-        //        if ((!_context.Accounts.Any(e => e.Id == id)) || (_context.Accounts.Any(e => e.Id == id && e.Deleted == true)))
-        //        {
-        //            return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
-        //        }
-
-        //        var transactions = await _context.Transactions.Where(d => d.AccountId == id).OrderBy(o => o.Date).ToListAsync();
-
-        //        if (transactions.Count() == 0)
-        //        {
-        //            return NotFound(new ApiResponse(false, "No transactions found for account.", new List<Object>()));
-        //        }
-        //        else
-        //        {
-        //            return Ok(new ApiResponse(true, "Transaction details returned.", transactions));
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        this.HttpContext.Response.StatusCode = 500;
-        //        return new ApiResponse(false, "Server Error", new List<Object>());
-        //    }
-        //}
-
         // PUT: api/Transaction
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -136,7 +107,7 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostTransaction(TransactionDTO transaction)
         {
-            if (!Validation.ValidateString(transaction.Comments))
+            if (!transaction.Comments.ValidateString())
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }

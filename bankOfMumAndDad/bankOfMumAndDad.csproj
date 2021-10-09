@@ -30,4 +30,8 @@
     <Folder Include="Responses\" />
     <Folder Include="TokenService\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
 </Project>

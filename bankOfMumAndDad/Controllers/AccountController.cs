@@ -75,8 +75,13 @@ namespace bankOfMumAndDad.Controllers
         [HttpPut]
         public async Task<ActionResult<ApiResponse>> PutAccount([FromBody] PutRequest putRequest)
         {
+            if (putRequest is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
             var id = putRequest.Id;
-            var account = new Account();
+            Account account;
 
             try
             {
@@ -88,7 +93,7 @@ namespace bankOfMumAndDad.Controllers
 
                 if (putRequest.FirstName != null)
                 {
-                    if (!Validation.ValidateString(putRequest.FirstName))
+                    if (!putRequest.FirstName.ValidateString())
                     {
                         return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
                     }
@@ -98,7 +103,7 @@ namespace bankOfMumAndDad.Controllers
 
                 if (putRequest.LastName != null)
                 {
-                    if (!Validation.ValidateString(putRequest.LastName))
+                    if (!putRequest.LastName.ValidateString())
                     {
                         return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
                     }
@@ -115,7 +120,7 @@ namespace bankOfMumAndDad.Controllers
                 this.HttpContext.Response.StatusCode = 500;
                 return new ApiResponse(false, ex.Message, new List<Object>());
             }
-            
+
 
             try
             {
@@ -142,8 +147,13 @@ namespace bankOfMumAndDad.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> PostAccount(AccountDTO postedAccount)
         {
-            if (!Validation.ValidateString(postedAccount.FirstName) ||
-                !Validation.ValidateString(postedAccount.LastName))
+            if(postedAccount is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
+            if (!postedAccount.FirstName.ValidateString() ||
+                !postedAccount.LastName.ValidateString())
             {
                 return BadRequest(new ApiResponse(false, "Validation Error.", new List<Object>()));
             }
@@ -173,6 +183,11 @@ namespace bankOfMumAndDad.Controllers
         [HttpDelete]
         public async Task<ActionResult<ApiResponse>> DeleteAccount([FromBody] IdOnlyRequest deleteRequest)
         {
+            if (deleteRequest is null)
+            {
+                return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
+            }
+
             var accountId = Convert.ToInt64(deleteRequest.Id);
 
             try
