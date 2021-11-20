@@ -1,21 +1,27 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import LoginForm from './LoginForm';
+import { LogIn } from '../../ApiService/ApiUserService';
 
-test('renders login form title', () => {
-  const { getByText } = render(<LoginForm />);
-  const loginTitle = getByText('Login');
-  expect(loginTitle).toBeInTheDocument();
+jest.mock('../../ApiService/ApiUserService');
+
+afterEach(() => {
+  jest.clearAllMocks();
 });
 
-test('renders login form username input', () => {
-  const { getByText } = render(<LoginForm />);
-  const usernameLabel = getByText('Username');
-  expect(usernameLabel).toBeInTheDocument();
-})
-
-test('renders login form password input', () => {
-  const { getByText } = render(<LoginForm />);
-  const passwordLabel = getByText('Password');
-  expect(passwordLabel).toBeInTheDocument();
-})
+describe('login form', () => {
+  test('displays title', () => {
+    render(<LoginForm />);
+    expect(screen.getByText('Login')).toBeInTheDocument();
+  });
+  
+  test('displays username input', () => {
+    render(<LoginForm />);
+    expect(screen.getByLabelText('Username')).toBeInTheDocument();
+  });
+  
+  test('displays password input', () => {
+    render(<LoginForm />);
+    expect(screen.getByLabelText('Password')).toBeInTheDocument();
+  });  
+});

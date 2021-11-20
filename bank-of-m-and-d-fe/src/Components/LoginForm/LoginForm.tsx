@@ -61,20 +61,22 @@ function LoginForm(props: ILoginProps): JSX.Element {
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
               <div>
-                <label>Username</label>
+                <label htmlFor="username">Username</label>
                 <input
                   className="redBorder"
                   type="text"
                   name="username"
+                  id="username"
                   onChange={handleInputChange}
                 />
               </div>
               <div>
-                <label>Password</label>
+                <label htmlFor="password">Password</label>
                 <input
                   className="redBorder"
                   type="password"
                   name="password"
+                  id="password"
                   onChange={handleInputChange}
                 />
               </div>
