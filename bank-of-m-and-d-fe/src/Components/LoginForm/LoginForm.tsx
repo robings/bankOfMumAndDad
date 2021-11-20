@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LogIn } from '../../ApiService/ApiUserService';
+import api from '../../ApiService/apiUserService';
 import { ILoginDto } from '../../Interfaces/Entities/ILoginDto';
 import { ILoginProps } from '../../Interfaces/Props/ILoginProps';
 import { RevokeToken, SetToken } from '../../TokenService/TokenService';
@@ -31,28 +31,21 @@ function LoginForm(props: ILoginProps): JSX.Element {
     }
 
     async function submitLogin(loginFormInput: ILoginDto) {
-        const data: any = {
-            'Username': loginFormInput.username,
-            'Password' : loginFormInput.password,
-        }
-
-        const response: Response = await LogIn(data);
-
-        if (response.status === 401) {
-            toast.error('Those credentials are not correct');
-            RevokeToken();
-            return;
-        }
-
-        if (response.status === 200) {
-            const json: { token: string } = await response.json();
-            SetToken(json.token);
+        await api.login(loginFormInput).then(
+          (response) => {
+            SetToken(response.token);
             
             props.setLoginMessage({status: 'success', message: 'Successful login'});
-        } else {
-            props.setLoginMessage({status: 'error', message: response.statusText});
+          }).catch((error) => {
+            if (error.message === 'Those credentials are not correct.') {
+              toast.error('Those credentials are not correct');
+              RevokeToken();
+              return;
+            }
+            
+            props.setLoginMessage({status: 'error', message: error.message});
             RevokeToken();
-        }
+          });
     }
 
     return (
