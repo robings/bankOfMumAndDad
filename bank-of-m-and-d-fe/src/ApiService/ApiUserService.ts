@@ -25,12 +25,12 @@ async function login (data: ILoginDto): Promise<{token: string}> {
         return response;
     },
         {
-            pending: 'Logging in',
+            pending: 'logging in...',
             success: 'You have been logged in',
             error: {
                 render({data}: any) {
                     return `${data.message}`
-                }
+                },
             }
         }
     );

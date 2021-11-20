@@ -2,7 +2,7 @@ import LoginPage from './LoginPage';
 import AccountsPage from './AccountsPage';
 import TransactionsPage from './TransactionsPage';
 import { Route, Switch } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { Slide, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App(): JSX.Element {
@@ -14,7 +14,7 @@ function App(): JSX.Element {
                 <Route path="/transactions/:accountId" component={TransactionsPage} />
                 <Route component={LoginPage} />
             </Switch>
-            <ToastContainer />
+            <ToastContainer transition={Slide}/>
         </>
     );
 }
