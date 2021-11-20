@@ -3,7 +3,7 @@ import Header from './Components/Header/Header';
 import TransactionsNav from './Components/TranactionsNav/TransactionsNav';
 import Transactions from './Components/Transactions/Transactions';
 import TransactionsNewForm from './Components/TransactionsNewForm/TransactionsNewForm';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useParams, useHistory, RouteComponentProps } from 'react-router-dom';
 import { RevokeToken, LoggedIn } from './TokenService/TokenService';
@@ -134,7 +134,6 @@ function TransactionsPage(): JSX.Element {
           accountId = {accountId}
         />
       )}
-      <ToastContainer />
     </div>
   );
 }

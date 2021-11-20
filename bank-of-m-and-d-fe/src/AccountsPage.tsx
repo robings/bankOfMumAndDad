@@ -4,7 +4,7 @@ import Header from './Components/Header/Header';
 import AccountsList from './Components/AccountsList/AccountsList';
 import AccountsNav from './Components/AccountsNav/AccountsNav';
 import AccountsNewForm from './Components/AccountsNewForm/AccountsNewForm';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 import { IMessage } from './Interfaces/IMessage';
@@ -100,7 +100,6 @@ function AccountsPage(): JSX.Element {
           closeModal = {() => handleCloseModal()}
         />
       )}
-      <ToastContainer />
     </div>
   );
 }

@@ -48,13 +48,13 @@ describe("login api call", () => {
     });
 
     const fourHundredCodes: number[] = [400, 401, 403, 404]
-    test.each(fourHundredCodes)("throws if an reponse is received with status code: %p", async (code) => {
+    test.each(fourHundredCodes)("throws if a response is received with status code: %p", async (code) => {
         fetch.mockResponseOnce("Error", { status: code});
 
         await expect(() => api.login(data)).rejects.toThrow("Those credentials are not correct.")
     });
 
-    test("throws if a reponse is received with status code: 500", async () => {
+    test("throws if a response is received with a 500 status code", async () => {
         fetch.mockResponseOnce("Error", { status: 500});
 
         await expect(() => api.login(data)).rejects.toThrow("An error occured whilst attempting to log in.")

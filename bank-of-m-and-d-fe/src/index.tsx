@@ -1,20 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import LoginPage from './LoginPage';
-import AccountsPage from './AccountsPage';
-import TransactionsPage from './TransactionsPage';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <Switch>
-        <Route exact path="/" component={LoginPage} />
-        <Route path="/accounts" component={AccountsPage} />
-        <Route path="/transactions/:accountId" component={TransactionsPage} />
-        <Route component={LoginPage} />
-      </Switch>
+      <App />
     </Router>
   </React.StrictMode>,
   document.getElementById("root")

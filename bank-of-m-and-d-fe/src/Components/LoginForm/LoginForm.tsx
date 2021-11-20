@@ -34,16 +34,8 @@ function LoginForm(props: ILoginProps): JSX.Element {
         await api.login(loginFormInput).then(
           (response) => {
             SetToken(response.token);
-            
-            props.setLoginMessage({status: 'success', message: 'Successful login'});
-          }).catch((error) => {
-            if (error.message === 'Those credentials are not correct.') {
-              toast.error('Those credentials are not correct');
-              RevokeToken();
-              return;
-            }
-            
-            props.setLoginMessage({status: 'error', message: error.message});
+            props.setLoginMessage({status: 'success', message: ''})
+          }).catch(() => {
             RevokeToken();
           });
     }

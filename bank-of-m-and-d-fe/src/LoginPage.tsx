@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
 import LoginForm from "./Components/LoginForm/LoginForm";
 import logo from './Components/Header/m-d.jpg';
@@ -21,7 +19,6 @@ function LoginPage(): JSX.Element {
             history.push('/accounts');
           }
           else {
-            toast.error(loginMessage.message);
             RevokeToken();
           }
         }
@@ -42,7 +39,6 @@ function LoginPage(): JSX.Element {
           <LoginForm
                     setLoginMessage={setLoginMessage}
                     />
-          <ToastContainer />
         </div>
       );
 }

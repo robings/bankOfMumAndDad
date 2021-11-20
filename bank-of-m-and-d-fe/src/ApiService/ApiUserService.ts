@@ -1,28 +1,46 @@
+import { toast } from 'react-toastify';
 import { ILoginDto } from '../Interfaces/Entities/ILoginDto';
 import { APIBaseUrl } from './apiSettings';
 
 async function login (data: ILoginDto): Promise<{token: string}> {
-    const response = await fetch(`${APIBaseUrl}/api/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    }).catch(() => {
-        throw new Error("An error occured whilst attempting to log in.");
-    });
+    const loginResponse = await toast.promise(async () => {
+        const response = await fetch(`${APIBaseUrl}/api/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        }).catch(() => {
+            throw new Error("An error occured whilst attempting to log in.");
+        });
+    
+        if (response.status >= 400 && response.status < 500) {
+            throw new Error("Those credentials are not correct.");
+        }
+    
+        if (response.status === 500) {
+            throw new Error("An error occured whilst attempting to log in.");
+        };
 
-    if (response.status >= 400 && response.status < 500) {
-        throw new Error("Those credentials are not correct.");
-    }
+        return response;
+    },
+        {
+            pending: 'Logging in',
+            success: 'You have been logged in',
+            error: {
+                render({data}: any) {
+                    return `${data.message}`
+                }
+            }
+        }
+    );
 
-    if (response.status === 500) {
-        throw new Error("An error occured whilst attempting to log in.");
-    }
-
-    return response.json();
+    return loginResponse.json();
 };
 
-export default {
-    login,
+const api = {
+    login
 };
+
+
+export default api;
