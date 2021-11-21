@@ -15,9 +15,9 @@ function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
 
   return (
     <div className="subNav">
-      {localStorage.getItem("bearerToken") && (
+      {loggedIn() && (
         <button
-          className="subNavButton"
+          className="appButton subNavButton"
           onClick={handleOpenNewTransactionModal}
         >
           New Transaction

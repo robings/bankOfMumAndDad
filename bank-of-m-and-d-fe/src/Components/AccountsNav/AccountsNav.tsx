@@ -14,8 +14,11 @@ function AccountsNav(props: IAccountsNavProps): JSX.Element {
 
   return (
     <div className="subNav">
-      {localStorage.getItem("bearerToken") && (
-        <button className="subNavButton" onClick={handleOpenNewAccountModal}>
+      {loggedIn() && (
+        <button
+          className="appButton subNavButton"
+          onClick={handleOpenNewAccountModal}
+        >
           New Account
         </button>
       )}

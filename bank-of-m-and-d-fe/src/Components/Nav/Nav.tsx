@@ -21,7 +21,7 @@ function Nav(props: IHeaderProps): JSX.Element {
   return (
     <nav>
       <div className="headerButtons">
-        <button className="subNavButton" onClick={handleLogoutClick}>
+        <button className="appButton subNavButton" onClick={handleLogoutClick}>
           <svg
             version="1.1"
             className="svgButton"
@@ -32,33 +32,28 @@ function Nav(props: IHeaderProps): JSX.Element {
             viewBox="0 0 32 32"
           >
             <path
-              d="M 19 14 L19 6 L2 6 L2 31 L19 31 L19 24"
+              d="M18 6 L2 6 L2 31 L18 31"
               stroke="currentColor"
               strokeWidth="2"
               fill="transparent"
             />
             <line
-              x1="7"
-              y1="14"
-              x2="26"
-              y2="14"
+              x1="10"
+              y1="19"
+              x2="29"
+              y2="19"
               stroke="currentColor"
-              strokeWidth="1"
+              strokeWidth="2"
             />
-            <line
-              x1="7"
-              y1="24"
-              x2="26"
-              y2="24"
-              stroke="currentColor"
-              strokeWidth="1"
-            />
-            <path d="M 24 8 L32 19 L24 29 L29 19 L24 8" fill="currentColor" />
+            <path d="M 24 10 L32 19 L24 27 L29 19 L24 10" fill="currentColor" />
           </svg>
           <div style={{ float: "right", padding: "7px 5px" }}>Log Out</div>
         </button>
         {isTransactionsPage && (
-          <button className="subNavButton" onClick={handleHomeButtonClick}>
+          <button
+            className="appButton subNavButton"
+            onClick={handleHomeButtonClick}
+          >
             <svg
               version="1.1"
               className="svgButton"

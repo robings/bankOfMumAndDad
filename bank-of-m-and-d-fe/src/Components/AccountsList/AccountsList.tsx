@@ -44,7 +44,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
     return (
       <main>
         <h2>Accounts</h2>
-        {loading  && !error ? (
+        {loading && !error ? (
           <Loader />
         ) : (
           <table>
@@ -52,7 +52,9 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
               <tr>
                 <th>Last Name</th>
                 <th>First Name</th>
-                <th style={{ width: "150px", textAlign: "center" }}>Current Balance</th>
+                <th style={{ width: "150px", textAlign: "center" }}>
+                  Current Balance
+                </th>
                 <th></th>
               </tr>
             </thead>
@@ -63,7 +65,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                   <td>{firstName}</td>
                   {currentBalance < 0 ? (
                     <td style={{ textAlign: "right", color: "#FF0000" }}>
-                      -£{(currentBalance*-1).toFixed(2)}
+                      -£{(currentBalance * -1).toFixed(2)}
                     </td>
                   ) : (
                     <td style={{ textAlign: "right", color: "#009900" }}>
@@ -71,11 +73,15 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                     </td>
                   )}
                   <td>
-                    <button data-id={id} onClick={handleViewTransactions}>
+                    <button
+                      className="appButton thinnerButton"
+                      data-id={id}
+                      onClick={handleViewTransactions}
+                    >
                       View Transactions
                     </button>
                     <button
-                      className="deleteButton"
+                      className="appButton deleteButton thinnerButton"
                       data-id={id}
                       onClick={handleDelete}
                     >

@@ -70,7 +70,7 @@ function LoginForm(props: ILoginProps): JSX.Element {
               onChange={handleInputChange}
             />
           </div>
-          <input type="submit" value="Submit" />
+          <input className="appButton" type="submit" value="Submit" />
         </form>
       </div>
     </div>

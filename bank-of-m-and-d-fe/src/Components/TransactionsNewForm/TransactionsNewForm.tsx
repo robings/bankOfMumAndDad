@@ -82,7 +82,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   return (
     <div className="overlay">
       <div className="modal">
-        <button className="closeButton" onClick={props.closeModal}>
+        <button className="appButton closeButton" onClick={props.closeModal}>
           X
         </button>
         <h1>New Transaction</h1>
@@ -122,7 +122,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
               onChange={handleInputChange}
             />
           </div>
-          <input type="submit" value="Submit" />
+          <input className="appButton" type="submit" value="Submit" />
         </form>
       </div>
     </div>
