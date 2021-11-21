@@ -1,46 +1,32 @@
 import { useState, useEffect } from "react";
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { RevokeToken, LoggedIn } from "./TokenService/TokenService";
+import { revokeToken, loggedIn } from "./TokenService/TokenService";
 import LoginForm from "./Components/LoginForm/LoginForm";
-import logo from './Components/Header/m-d.jpg';
 import { IMessage } from "./Interfaces/IMessage";
 
 function LoginPage(): JSX.Element {
-    const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
-    const [loggedIn] = useState<boolean>(LoggedIn);
-    const history = useHistory<RouteComponentProps>();
+  const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
+  const [isLoggedIn] = useState<boolean>(loggedIn);
+  const history = useHistory<RouteComponentProps>();
 
-    useEffect ((): void => {
-        if (loggedIn){
-          history.push('/accounts');
-        }
-        if (loginMessage) {
-          if (loginMessage.status === 'success'){
-            history.push('/accounts');
-          }
-          else {
-            RevokeToken();
-          }
-        }
-      }, [loginMessage, loggedIn, history])
+  useEffect((): void => {
+    if (isLoggedIn) {
+      history.push("/accounts");
+    }
+    if (loginMessage) {
+      if (loginMessage.status === "success") {
+        history.push("/accounts");
+      } else {
+        revokeToken();
+      }
+    }
+  }, [loginMessage, isLoggedIn, history]);
 
-
-    return (
-        <div className="App">
-          <header>
-            <section>
-            <img src={logo} alt="Fraught Mum and Dad" />
-            <h1>
-                Bank Of Mum And Dad
-            </h1>
-            </section>
-          </header>
-
-          <LoginForm
-                    setLoginMessage={setLoginMessage}
-                    />
-        </div>
-      );
+  return (
+    <div className="App">
+      <LoginForm setLoginMessage={setLoginMessage} />
+    </div>
+  );
 }
 
 export default LoginPage;

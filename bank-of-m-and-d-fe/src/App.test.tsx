@@ -22,7 +22,7 @@ describe("app", () => {
     test("displays login on starting application", () => {
         renderApp();
 
-        expect(screen.getByText('Login')).toBeInTheDocument();
+        expect(screen.getByText("Login")).toBeInTheDocument();
     });
 
     test("shows toast if toast requested", async () => {
