@@ -6,7 +6,7 @@ import AccountsNav from "./Components/AccountsNav/AccountsNav";
 import AccountsNewForm from "./Components/AccountsNewForm/AccountsNewForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { revokeToken, loggedIn } from "./TokenService/TokenService";
+import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import { IMessage } from "./Interfaces/IMessage";
 import { GetAllAccounts } from "./ApiService/ApiServiceAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";

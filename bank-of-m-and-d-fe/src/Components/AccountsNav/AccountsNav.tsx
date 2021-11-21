@@ -1,5 +1,5 @@
 import { IAccountsNavProps } from "../../Interfaces/Props/IAccountsNavProps";
-import { loggedIn } from "../../TokenService/TokenService";
+import { loggedIn } from "../../tokenService/tokenService";
 import { RouteComponentProps, useHistory } from "react-router-dom";
 
 function AccountsNav(props: IAccountsNavProps): JSX.Element {

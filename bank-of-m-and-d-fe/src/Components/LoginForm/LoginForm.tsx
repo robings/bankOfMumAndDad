@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import api from '../../ApiService/apiUserService';
 import { ILoginDto } from '../../Interfaces/Entities/ILoginDto';
 import { ILoginProps } from '../../Interfaces/Props/ILoginProps';
-import { revokeToken, setToken } from "../../TokenService/TokenService";
+import { revokeToken, setToken } from "../../tokenService/tokenService";
 
 function LoginForm(props: ILoginProps): JSX.Element {
   const [loginFormInput, setLoginFormInput] = useState<ILoginDto>({

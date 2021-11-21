@@ -6,7 +6,7 @@ import TransactionsNewForm from "./Components/TransactionsNewForm/TransactionsNe
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams, useHistory, RouteComponentProps } from "react-router-dom";
-import { revokeToken, loggedIn } from "./TokenService/TokenService";
+import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage } from "./Interfaces/IMessage";
 import { GetTransactionsByAccountId } from "./ApiService/ApiServiceTransactions";

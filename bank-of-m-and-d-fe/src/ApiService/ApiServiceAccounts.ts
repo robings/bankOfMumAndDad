@@ -1,6 +1,6 @@
 import { IAccountDto } from "../Interfaces/Entities/IAccountDto";
 import { IIdOnlyRequest } from "../Interfaces/Entities/IIdOnlyRequest";
-import { getToken } from "../TokenService/TokenService";
+import { getToken } from "../tokenService/tokenService";
 import { APIBaseUrl } from "./apiSettings";
 
 export async function GetAllAccounts(): Promise<Response> {

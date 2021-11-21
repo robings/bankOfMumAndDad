@@ -1,5 +1,5 @@
 import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
-import { getToken } from "../TokenService/TokenService";
+import { getToken } from "../tokenService/tokenService";
 import { APIBaseUrl } from "./apiSettings";
 
 export async function GetTransactionsByAccountId(acId: string) {

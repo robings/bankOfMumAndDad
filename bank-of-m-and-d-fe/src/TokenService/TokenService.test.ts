@@ -1,4 +1,4 @@
-import { getToken, revokeToken, setToken, loggedIn } from "./TokenService";
+import { getToken, revokeToken, setToken, loggedIn } from "./tokenService";
 
 beforeAll(() => {
   localStorage.clear();
