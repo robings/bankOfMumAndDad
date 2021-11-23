@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useHistory, RouteComponentProps } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Nav from "./Components/Nav/Nav";
 import AccountsList from "./Components/AccountsList/AccountsList";
 import AccountsNav from "./Components/AccountsNav/AccountsNav";
@@ -20,7 +20,7 @@ function AccountsPage(): JSX.Element {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [accountsData, setAccountsData] = useState<IAccount[]>([]);
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
   const handleCloseModal = (): void => {
     setNewAccountModalVisibility(false);
@@ -28,7 +28,7 @@ function AccountsPage(): JSX.Element {
 
   useEffect((): void => {
     const redirectToLoginPage = () => {
-      history.push("/");
+      navigate("/");
     };
 
     if (!isLoggedIn) {
@@ -88,7 +88,7 @@ function AccountsPage(): JSX.Element {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage, isLoggedIn, history]);
+  }, [accountsMessage, isLoggedIn, navigate]);
 
   return (
     <div className="App">

@@ -1,14 +1,14 @@
 import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
 import "./transactionsNav.css";
 import { loggedIn } from "../../tokenService/tokenService";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
   const handleOpenNewTransactionModal = (): void => {
     if (!loggedIn()) {
-      history.push("/");
+      navigate("/");
     }
     props.openNewTransactionModal();
   };

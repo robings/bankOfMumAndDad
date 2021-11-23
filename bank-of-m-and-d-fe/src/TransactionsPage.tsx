@@ -5,7 +5,7 @@ import Transactions from "./Components/Transactions/Transactions";
 import TransactionsNewForm from "./Components/TransactionsNewForm/TransactionsNewForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useParams, useHistory, RouteComponentProps } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage } from "./Interfaces/IMessage";
@@ -18,7 +18,7 @@ import {
 
 function TransactionsPage(): JSX.Element {
   const { accountId }: ITransactionsPageParams = useParams();
-  const history: any = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
   const [newTransactionModalVisiblity, setNewTransactionModalVisiblity] =
     useState<boolean>(false);
   const [transactionsMessage, setTransactionsMessage] =
@@ -63,7 +63,7 @@ function TransactionsPage(): JSX.Element {
 
   useEffect((): void => {
     const redirectToLoginPage = (): void => {
-      history.push("/");
+      navigate("/");
     };
 
     if (!isLoggedIn) {
@@ -112,7 +112,10 @@ function TransactionsPage(): JSX.Element {
     }
 
     setLoading(true);
-    getTransactionsByAccountId(accountId);
+
+    if (accountId) {
+      getTransactionsByAccountId(accountId);
+    }
 
     if (transactionsMessage) {
       if (transactionsMessage.status === "success") {

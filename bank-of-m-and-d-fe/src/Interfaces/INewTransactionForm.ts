@@ -1,9 +1,9 @@
 import { IMessage } from "./IMessage";
 
 export interface INewTransactionFormProps {
-    accountId: string,
-    closeModal(): void;
-    setTransactionsMessage(message: IMessage): void;
+  accountId: string | undefined;
+  closeModal(): void;
+  setTransactionsMessage(message: IMessage): void;
 }
 
 export interface INewTransactionFormInput {

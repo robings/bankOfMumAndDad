@@ -1,3 +1,3 @@
 export interface ITransactionsPageParams {
-    accountId: string;
+  accountId: string | undefined;
 }

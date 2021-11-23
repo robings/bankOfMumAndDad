@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import LoginForm from "./Components/LoginForm/LoginForm";
 import { IMessage } from "./Interfaces/IMessage";
@@ -7,15 +7,15 @@ import { IMessage } from "./Interfaces/IMessage";
 function LoginPage(): JSX.Element {
   const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
   const [isLoggedIn] = useState<boolean>(loggedIn);
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
   useEffect((): void => {
     if (isLoggedIn) {
-      history.push("/accounts");
+      navigate("/accounts");
     }
     if (loginMessage) {
       if (loginMessage.status === "success") {
-        history.push("/accounts");
+        navigate("/accounts");
       } else {
         revokeToken();
       }

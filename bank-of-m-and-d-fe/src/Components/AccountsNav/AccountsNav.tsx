@@ -1,13 +1,13 @@
 import { IAccountsNavProps } from "../../Interfaces/Props/IAccountsNavProps";
 import { loggedIn } from "../../tokenService/tokenService";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AccountsNav(props: IAccountsNavProps): JSX.Element {
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
   const handleOpenNewAccountModal = (): void => {
     if (!loggedIn()) {
-      history.push("/");
+      navigate("/");
     }
     props.openNewAccountModal();
   };
