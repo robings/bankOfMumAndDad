@@ -20,7 +20,7 @@ function LoginPage(): JSX.Element {
         revokeToken();
       }
     }
-  }, [loginMessage, isLoggedIn, history]);
+  }, [loginMessage, isLoggedIn, navigate]);
 
   return (
     <div className="App">

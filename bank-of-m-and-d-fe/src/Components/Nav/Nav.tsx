@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../Header/header.css";
 import { revokeToken } from "../../tokenService/tokenService";
 import { IHeaderProps } from "../../Interfaces/Props/IHeaderProps";
@@ -7,15 +7,15 @@ import { IHeaderProps } from "../../Interfaces/Props/IHeaderProps";
 function Nav(props: IHeaderProps): JSX.Element {
   const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
 
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
   const handleLogoutClick = (): void => {
     revokeToken();
-    history.push("/");
+    navigate("/");
   };
 
   const handleHomeButtonClick = (): void => {
-    history.push("/accounts");
+    navigate("/accounts");
   };
 
   return (

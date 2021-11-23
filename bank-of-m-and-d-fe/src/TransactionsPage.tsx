@@ -133,7 +133,7 @@ function TransactionsPage(): JSX.Element {
         toast.error(transactionsMessage.message);
       }
     }
-  }, [transactionsMessage, history, isLoggedIn, accountId]);
+  }, [transactionsMessage, navigate, isLoggedIn, accountId]);
 
   return (
     <div className="App">
