@@ -1,23 +1,26 @@
-import React from 'react';
-import { IAccountsNavProps } from '../../Interfaces/Props/IAccountsNavProps';
-import { LoggedIn } from '../../TokenService/TokenService';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { IAccountsNavProps } from "../../Interfaces/Props/IAccountsNavProps";
+import { LoggedIn } from "../../tokenService/TokenService";
+import { useNavigate } from "react-router-dom";
 
 function AccountsNav(props: IAccountsNavProps): JSX.Element {
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
-  const handleOpenNewAccountModal = ():void => {
+  const handleOpenNewAccountModal = (): void => {
     if (!LoggedIn()) {
-      history.push('/');
+      navigate("/");
     }
     props.openNewAccountModal();
-  }
+  };
 
   return (
     <div className="subNav">
-      {localStorage.getItem('bearerToken') && (<button className="subNavButton" onClick={handleOpenNewAccountModal}>New Account</button>)}
+      {localStorage.getItem("bearerToken") && (
+        <button className="subNavButton" onClick={handleOpenNewAccountModal}>
+          New Account
+        </button>
+      )}
     </div>
-  )
+  );
 }
 
 export default AccountsNav;

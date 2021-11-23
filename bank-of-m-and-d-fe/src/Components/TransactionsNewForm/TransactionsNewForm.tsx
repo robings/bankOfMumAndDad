@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
 import { ITransactionDto } from '../../Interfaces/Entities/ITransactionDto';
 import { INewTransactionFormInput, INewTransactionFormProps } from '../../Interfaces/INewTransactionForm';
-import { RevokeToken } from '../../TokenService/TokenService';
+import { RevokeToken } from "../../tokenService/TokenService";
 
 function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   const [newTransactionFormInput, setNewTransactionFormInput] = useState<INewTransactionFormInput>( { amount: null, dateOfTransaction: null, type: 'DEPOSIT', comments: '' } );

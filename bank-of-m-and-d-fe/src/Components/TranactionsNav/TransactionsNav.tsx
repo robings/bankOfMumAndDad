@@ -1,26 +1,28 @@
-import React from 'react';
-import { ITransactionsNavProps } from '../../Interfaces/Props/ITransactionsNavProps';
-import './transactionsNav.css';
-import { LoggedIn } from '../../TokenService/TokenService';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-
+import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
+import "./transactionsNav.css";
+import { LoggedIn } from "../../tokenService/TokenService";
+import { useNavigate } from "react-router-dom";
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
-  const history = useHistory<RouteComponentProps>();
+  const navigate = useNavigate();
 
-  const handleOpenNewTransactionModal = ():void => {
+  const handleOpenNewTransactionModal = (): void => {
     if (!LoggedIn()) {
-      history.push('/');
+      navigate("/");
     }
     props.openNewTransactionModal();
-  }
-  
+  };
+
   return (
     <div className="subNav">
-      {localStorage.getItem('bearerToken') && 
-      <button className="subNavButton" onClick={handleOpenNewTransactionModal}>
-        New Transaction
-      </button>}
+      {localStorage.getItem("bearerToken") && (
+        <button
+          className="subNavButton"
+          onClick={handleOpenNewTransactionModal}
+        >
+          New Transaction
+        </button>
+      )}
     </div>
   );
 }
