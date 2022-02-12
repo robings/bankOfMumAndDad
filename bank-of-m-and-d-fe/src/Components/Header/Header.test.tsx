@@ -3,15 +3,16 @@ import Header from "./Header";
 
 describe("header", () => {
     test("displays title", () => {
-        render(<Header />)
+      render(<Header />);
 
-        expect(screen.getByText("Bank Of Mum And Dad")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Bank Of Mum And Dad" })
+      ).toBeInTheDocument();
     });
 
     test("displays logo", () => {
-        render(<Header />)
+      render(<Header />);
 
-        expect(screen.getByAltText("Fraught Mum and Dad")).toBeInTheDocument();
+      expect(screen.getByAltText("Fraught Mum and Dad")).toBeInTheDocument();
     });
-
 });

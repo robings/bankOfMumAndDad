@@ -13,16 +13,19 @@ describe("app", () => {
     };
 
     test("displays header on starting application", () => {
-        renderApp();
+      renderApp();
 
-        expect(screen.getByText('Bank Of Mum And Dad')).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Bank Of Mum And Dad" })
+      ).toBeInTheDocument();
     });
 
-
     test("displays login on starting application", () => {
-        renderApp();
+      renderApp();
 
-        expect(screen.getByText("Login")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Login" })
+      ).toBeInTheDocument();
     });
 
     test("shows toast if toast requested", async () => {

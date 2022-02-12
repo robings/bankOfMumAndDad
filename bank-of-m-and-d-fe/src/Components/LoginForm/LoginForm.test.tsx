@@ -8,7 +8,7 @@ describe('login form', () => {
 
   test('displays title', () => {
     renderLoginForm();
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument();
   });
   
   test('displays username input', () => {

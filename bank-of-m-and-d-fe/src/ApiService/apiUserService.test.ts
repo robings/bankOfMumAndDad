@@ -41,10 +41,12 @@ describe("login api call", () => {
         expect(response).toEqual(responseData);
     });
 
-    test("throws if API can't be talked to", async () => {
-        fetch.mockReject(new Error("API not available."));
+    test("throws if API unavailable", async () => {
+      fetch.mockReject(new Error("API not available."));
 
-        await expect(() => api.login(data)).rejects.toThrow("An error occured whilst attempting to log in.")
+      await expect(() => api.login(data)).rejects.toThrow(
+        "An error occured whilst attempting to log in."
+      );
     });
 
     const fourHundredCodes: number[] = [400, 401, 403, 404]

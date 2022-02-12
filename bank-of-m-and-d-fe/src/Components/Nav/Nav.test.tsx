@@ -10,7 +10,7 @@ describe("nav", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Log Out")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Log Out" })).toBeInTheDocument();
   });
 
   test("displays accounts button if is rendering transaction page", () => {
@@ -20,6 +20,8 @@ describe("nav", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Accounts")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Accounts" })
+    ).toBeInTheDocument();
   });
 });
