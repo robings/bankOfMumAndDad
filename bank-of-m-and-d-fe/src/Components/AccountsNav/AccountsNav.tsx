@@ -1,5 +1,5 @@
 import { IAccountsNavProps } from "../../Interfaces/Props/IAccountsNavProps";
-import { loggedIn } from "../../tokenService/tokenService";
+import { loggedIn } from "../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
 
 function AccountsNav(props: IAccountsNavProps): JSX.Element {

@@ -1,6 +1,6 @@
 import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
 import "./transactionsNav.css";
-import { loggedIn } from "../../tokenService/tokenService";
+import { loggedIn } from "../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {

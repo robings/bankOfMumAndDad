@@ -6,10 +6,10 @@ import TransactionsNewForm from "./Components/TransactionsNewForm/TransactionsNe
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { revokeToken, loggedIn } from "./tokenService/tokenService";
+import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage } from "./Interfaces/IMessage";
-import { GetTransactionsByAccountId } from "./ApiService/ApiServiceTransactions";
+import { getTransactionsByAccountId } from "./api/apiTransactions";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import {
   IListOfTransactionsForAccount,
@@ -70,8 +70,8 @@ function TransactionsPage(): JSX.Element {
       redirectToLoginPage();
     }
 
-    async function getTransactionsByAccountId(acId: string): Promise<void> {
-      const response: Response = await GetTransactionsByAccountId(acId);
+    async function loadTransactions(acId: string): Promise<void> {
+      const response: Response = await getTransactionsByAccountId(acId);
 
       if (response.status === 401) {
         toast.error("You are not logged in.");
@@ -114,7 +114,7 @@ function TransactionsPage(): JSX.Element {
     setLoading(true);
 
     if (accountId) {
-      getTransactionsByAccountId(accountId);
+      loadTransactions(accountId);
     }
 
     if (transactionsMessage) {

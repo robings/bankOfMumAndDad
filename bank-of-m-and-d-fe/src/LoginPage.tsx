@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { revokeToken, loggedIn } from "./tokenService/tokenService";
+import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import LoginForm from "./Components/LoginForm/LoginForm";
 import { IMessage } from "./Interfaces/IMessage";
 

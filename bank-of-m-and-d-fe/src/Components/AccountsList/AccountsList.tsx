@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./accountsList.css";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
 import { IResponse } from "../../Interfaces/Entities/IResponse";
-import { DeleteAccount } from "../../ApiService/ApiServiceAccounts";
+import { deleteAccount } from "../../api/apiAccounts";
 import { IAccountsListProps } from "../../Interfaces/Props/IAccountsListProps";
 import Loader from "../Loader/Loader";
 
@@ -20,7 +20,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
       id: e.currentTarget.dataset.id,
     };
 
-    const response: Response = await DeleteAccount(data);
+    const response: Response = await deleteAccount(data);
 
     if (response.status === 401) {
       props.setAccountsMessage({
@@ -99,11 +99,9 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
           </tbody>
         </table>
       )}
-      {error && (
-        <div className="error">Unable to display account details.</div>
-      )}
+      {error && <div className="error">Unable to display account details.</div>}
     </main>
- );
+  );
 }
 
 export default AccountsList;

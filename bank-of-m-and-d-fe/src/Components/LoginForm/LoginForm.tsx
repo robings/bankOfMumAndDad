@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../../ApiService/apiUserService';
-import { ILoginDto } from '../../Interfaces/Entities/ILoginDto';
-import { ILoginProps } from '../../Interfaces/Props/ILoginProps';
-import { revokeToken, setToken } from "../../tokenService/tokenService";
+import api from "../../api/apiUser";
+import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
+import { ILoginProps } from "../../Interfaces/Props/ILoginProps";
+import { revokeToken, setToken } from "../../tokenHelper/tokenHelper";
 
 function LoginForm(props: ILoginProps): JSX.Element {
   const [loginFormInput, setLoginFormInput] = useState<ILoginDto>({
