@@ -1,9 +1,12 @@
 import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
-import { ITransactionDto } from '../../Interfaces/Entities/ITransactionDto';
-import { INewTransactionFormInput, INewTransactionFormProps } from '../../Interfaces/INewTransactionForm';
-import { revokeToken } from "../../tokenService/tokenService";
+import { saveNewTransaction } from "../../api/apiServiceTransactions";
+import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
+import {
+  INewTransactionFormInput,
+  INewTransactionFormProps,
+} from "../../Interfaces/INewTransactionForm";
+import { revokeToken } from "../../tokenHelper/tokenHelper";
 
 function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   const [newTransactionFormInput, setNewTransactionFormInput] =
@@ -54,7 +57,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
       accountId: props.accountId,
     };
 
-    const response: Response = await PostNewTransaction(data);
+    const response: Response = await saveNewTransaction(data);
 
     if (response.status === 401) {
       props.setTransactionsMessage({

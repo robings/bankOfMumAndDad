@@ -1,8 +1,8 @@
 import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
-import { getToken } from "../tokenService/tokenService";
+import { getToken } from "../tokenHelper/tokenHelper";
 import { APIBaseUrl } from "./apiSettings";
 
-export async function GetTransactionsByAccountId(acId: string) {
+export async function getTransactionsByAccountId(acId: string) {
   const token = getToken();
 
   const url = `${APIBaseUrl}/api/Transaction/${acId.toString()}`;
@@ -14,7 +14,7 @@ export async function GetTransactionsByAccountId(acId: string) {
   });
 }
 
-export async function PostNewTransaction(data: ITransactionDto) {
+export async function saveNewTransaction(data: ITransactionDto) {
   const token = getToken();
 
   return await fetch(`${APIBaseUrl}/api/Transaction`, {

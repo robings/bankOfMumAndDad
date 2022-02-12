@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Header/header.css";
-import { revokeToken } from "../../tokenService/tokenService";
+import { revokeToken } from "../../tokenHelper/tokenHelper";
 import { IHeaderProps } from "../../Interfaces/Props/IHeaderProps";
 
 function Nav(props: IHeaderProps): JSX.Element {

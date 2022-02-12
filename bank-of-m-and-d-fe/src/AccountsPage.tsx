@@ -6,9 +6,9 @@ import AccountsNav from "./Components/AccountsNav/AccountsNav";
 import AccountsNewForm from "./Components/AccountsNewForm/AccountsNewForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { revokeToken, loggedIn } from "./tokenService/tokenService";
+import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { IMessage } from "./Interfaces/IMessage";
-import { GetAllAccounts } from "./ApiService/ApiServiceAccounts";
+import { getAllAccounts } from "./api/apiServiceAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import { IAccount } from "./Interfaces/Entities/IAccount";
 
@@ -35,8 +35,8 @@ function AccountsPage(): JSX.Element {
       redirectToLoginPage();
     }
 
-    async function getAllAccounts(): Promise<void> {
-      const response: Response = await GetAllAccounts();
+    async function loadAccounts(): Promise<void> {
+      const response: Response = await getAllAccounts();
 
       if (response.status === 401) {
         revokeToken();
@@ -67,7 +67,7 @@ function AccountsPage(): JSX.Element {
     }
 
     setLoading(true);
-    getAllAccounts();
+    loadAccounts();
 
     if (accountsMessage) {
       if (accountsMessage.status === "success") {
