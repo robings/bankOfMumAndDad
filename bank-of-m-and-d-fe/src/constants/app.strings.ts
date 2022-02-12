@@ -71,6 +71,8 @@ const appStrings = {
       },
       comments: "Comments",
     },
+    error: "No transactions found for account.",
+    accountError: "Account information not found",
   },
 };
 

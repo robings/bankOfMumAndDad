@@ -8,13 +8,14 @@ import "react-toastify/dist/ReactToastify.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
-import { IMessage } from "./Interfaces/IMessage";
+import { IMessage, MessageStatus } from "./Interfaces/IMessage";
 import apiTransactions from "./api/apiTransactions";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import {
   IListOfTransactionsForAccount,
   ITransaction,
 } from "./Interfaces/Entities/ITransaction";
+import appStrings from "./constants/app.strings";
 
 function TransactionsPage(): JSX.Element {
   const { accountId }: ITransactionsPageParams = useParams();
@@ -75,7 +76,7 @@ function TransactionsPage(): JSX.Element {
         await apiTransactions.getTransactionsByAccountId(acId);
 
       if (response.status === 401) {
-        toast.error("You are not logged in.");
+        toast.error(appStrings.notLoggedIn);
         revokeToken();
         setErrors(true);
         setLoading(false);
@@ -88,15 +89,15 @@ function TransactionsPage(): JSX.Element {
 
       if (
         json.success === false &&
-        json.message !== "No transactions found for account."
+        json.message !== appStrings.transactions.error
       ) {
-        toast.error("Account information not found");
+        toast.error(appStrings.transactions.accountError);
         setErrors(true);
       }
 
       if (
         json.success === false &&
-        json.message === "No transactions found for account."
+        json.message === appStrings.transactions.error
       ) {
         toast.info(json.message);
         setNoTransactions(true);
@@ -119,18 +120,18 @@ function TransactionsPage(): JSX.Element {
     }
 
     if (transactionsMessage) {
-      if (transactionsMessage.status === "success") {
+      if (transactionsMessage.status === MessageStatus.success) {
         toast.success(transactionsMessage.message);
         setErrors(false);
         setNoTransactions(false);
       } else if (
-        transactionsMessage.status === "error" &&
-        transactionsMessage.message === "You are not logged in"
+        transactionsMessage.status === MessageStatus.error &&
+        transactionsMessage.message === appStrings.notLoggedIn
       ) {
         revokeToken();
-        toast.error("For your security, you have been logged out");
+        toast.error(appStrings.loggedOut);
         setTimeout(redirectToLoginPage, 5000);
-      } else if (transactionsMessage.status === "error") {
+      } else if (transactionsMessage.status === MessageStatus.error) {
         toast.error(transactionsMessage.message);
       }
     }
