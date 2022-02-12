@@ -24,7 +24,9 @@ describe("app", () => {
   test("displays login on starting application", () => {
     renderApp();
 
-    expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: appStrings.loginForm.title })
+    ).toBeInTheDocument();
   });
 
   test("shows toast if toast requested", async () => {

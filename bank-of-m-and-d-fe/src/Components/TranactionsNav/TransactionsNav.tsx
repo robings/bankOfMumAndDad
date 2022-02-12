@@ -2,6 +2,7 @@ import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavPr
 import "./transactionsNav.css";
 import { loggedIn } from "../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
+import appStrings from "../../constants/app.strings";
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
           className="appButton subNavButton"
           onClick={handleOpenNewTransactionModal}
         >
-          New Transaction
+          {appStrings.transactions.navButtons.newTransaction}
         </button>
       )}
     </div>

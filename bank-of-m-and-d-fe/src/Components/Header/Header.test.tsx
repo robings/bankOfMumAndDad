@@ -14,6 +14,6 @@ describe("header", () => {
   test("displays logo", () => {
     render(<Header />);
 
-    expect(screen.getByAltText("Fraught Mum and Dad")).toBeInTheDocument();
+    expect(screen.getByAltText(appStrings.logoAltText)).toBeInTheDocument();
   });
 });

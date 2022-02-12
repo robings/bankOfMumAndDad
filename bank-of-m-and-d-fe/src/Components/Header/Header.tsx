@@ -4,7 +4,7 @@ import logo from "./../Header/m-d.jpg";
 function Header(): JSX.Element {
   return (
     <header>
-      <img src={logo} alt="Fraught Mum and Dad" />
+      <img src={logo} alt={appStrings.logoAltText} />
       <h1>{appStrings.title}</h1>
     </header>
   );

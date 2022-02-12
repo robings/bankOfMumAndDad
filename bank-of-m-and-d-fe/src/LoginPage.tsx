@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import LoginForm from "./Components/LoginForm/LoginForm";
-import { IMessage } from "./Interfaces/IMessage";
+import { IMessage, MessageStatus } from "./Interfaces/IMessage";
 
 function LoginPage(): JSX.Element {
   const [loginMessage, setLoginMessage] = useState<IMessage | null>(null);
@@ -14,7 +14,7 @@ function LoginPage(): JSX.Element {
       navigate("/accounts");
     }
     if (loginMessage) {
-      if (loginMessage.status === "success") {
+      if (loginMessage.status === MessageStatus.success) {
         navigate("/accounts");
       } else {
         revokeToken();

@@ -9,6 +9,8 @@ import {
 } from "../../Interfaces/INewAccountForm";
 import { IResponse } from "../../Interfaces/Entities/IResponse";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
+import { MessageStatus } from "../../Interfaces/IMessage";
+import appStrings from "../../constants/app.strings";
 
 function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
   const [newAccountFormInput, setNewAccountFormInput] =
@@ -37,7 +39,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
       !newAccountFormInput.lastName ||
       !newAccountFormInput.openingBalance
     ) {
-      toast.error("Please fill in missing data");
+      toast.error(appStrings.missingInfoError);
     } else {
       submitNewAccount(newAccountFormInput);
     }
@@ -55,8 +57,8 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
 
     if (response.status === 401) {
       props.setAccountsMessage({
-        status: "error",
-        message: "You are not logged in",
+        status: MessageStatus.error,
+        message: appStrings.notLoggedIn,
       });
       props.closeModal();
       return;
@@ -66,8 +68,8 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
 
     if (json.success === true) {
       props.setAccountsMessage({
-        status: "success",
-        message: "Account Created",
+        status: MessageStatus.success,
+        message: appStrings.accounts.newForm.success,
       });
       props.closeModal();
     } else {
@@ -79,12 +81,12 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
     <div className="overlay">
       <div className="modal">
         <button className="appButton closeButton" onClick={props.closeModal}>
-          X
+          {appStrings.closeButton}
         </button>
-        <h1>New Account</h1>
+        <h1>{appStrings.accounts.newForm.title}</h1>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>First Name</label>
+            <label>{appStrings.accounts.newForm.firstName}</label>
             <input
               className="redBorder"
               type="text"
@@ -93,7 +95,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
             />
           </div>
           <div>
-            <label>Last Name</label>
+            <label>{appStrings.accounts.newForm.lastName}</label>
             <input
               className="redBorder"
               type="text"
@@ -102,7 +104,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
             />
           </div>
           <div>
-            <label>Opening Balance £</label>
+            <label>{appStrings.accounts.newForm.openingBalance}</label>
             <input
               className="redBorder"
               type="number"
@@ -110,7 +112,11 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
               onChange={handleInputChange}
             />
           </div>
-          <input className="appButton" type="submit" value="Submit" />
+          <input
+            className="appButton"
+            type="submit"
+            value={appStrings.submit}
+          />
         </form>
       </div>
     </div>

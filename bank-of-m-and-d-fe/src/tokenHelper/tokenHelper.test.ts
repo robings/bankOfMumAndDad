@@ -1,3 +1,4 @@
+import appStrings from "../constants/app.strings";
 import { getToken, revokeToken, setToken, loggedIn } from "./tokenHelper";
 
 beforeAll(() => {
@@ -14,8 +15,8 @@ describe("token service", () => {
   const token = "myToken";
 
   test("gets token with bearer appended when getToken called", () => {
-    localStorage.setItem("bearerToken", token);
-    const expectedToken = `Bearer ${token}`;
+    localStorage.setItem(appStrings.localStorageKeys.bearerToken, token);
+    const expectedToken = `${appStrings.tokenPrefix}${token}`;
 
     const actualToken = getToken();
 
@@ -33,24 +34,35 @@ describe("token service", () => {
         ? `0${dateNow.getMinutes()}`
         : dateNow.getMinutes();
 
-    const expectedTimePhrase = `Logged in at: ${hours}:${minutes}`;
+    const expectedTimePhrase = `${appStrings.loggedInAt} ${hours}:${minutes}`;
 
-    expect(localStorage.getItem("bearerToken")).toBe(token);
-    expect(localStorage.getItem("loginTime")).toBe(expectedTimePhrase);
+    expect(localStorage.getItem(appStrings.localStorageKeys.bearerToken)).toBe(
+      token
+    );
+    expect(localStorage.getItem(appStrings.localStorageKeys.loginTime)).toBe(
+      expectedTimePhrase
+    );
   });
 
   test("deletes localstorage values when revokeToken called", () => {
-    localStorage.setItem("bearerToken", token);
-    localStorage.setItem("loginTime", "login time string");
+    localStorage.setItem(appStrings.localStorageKeys.bearerToken, token);
+    localStorage.setItem(
+      appStrings.localStorageKeys.loginTime,
+      "login time string"
+    );
 
     revokeToken();
 
-    expect(localStorage.getItem("bearerToken")).toBe(null);
-    expect(localStorage.getItem("loginTime")).toBe(null);
+    expect(localStorage.getItem(appStrings.localStorageKeys.bearerToken)).toBe(
+      null
+    );
+    expect(localStorage.getItem(appStrings.localStorageKeys.loginTime)).toBe(
+      null
+    );
   });
 
   test("loggedIn returns true when logged in", () => {
-    localStorage.setItem("bearerToken", token);
+    localStorage.setItem(appStrings.localStorageKeys.bearerToken, token);
 
     expect(loggedIn()).toBe(true);
   });

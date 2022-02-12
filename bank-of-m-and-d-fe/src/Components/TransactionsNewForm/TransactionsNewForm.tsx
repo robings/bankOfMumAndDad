@@ -1,7 +1,9 @@
 import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import apiTransactions from "../../api/apiTransactions";
+import appStrings from "../../constants/app.strings";
 import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
+import { MessageStatus } from "../../Interfaces/IMessage";
 import {
   INewTransactionFormInput,
   INewTransactionFormProps,
@@ -40,7 +42,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
       !newTransactionFormInput.amount ||
       !newTransactionFormInput.dateOfTransaction
     ) {
-      toast.error("Please fill in missing data");
+      toast.error(appStrings.missingInfoError);
     } else {
       submitNewTransaction(newTransactionFormInput);
     }
@@ -61,8 +63,8 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
 
     if (response.status === 401) {
       props.setTransactionsMessage({
-        status: "error",
-        message: "You are not logged in",
+        status: MessageStatus.error,
+        message: appStrings.notLoggedIn,
       });
       revokeToken();
       props.closeModal();
@@ -73,8 +75,8 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
 
     if (json.success === true) {
       props.setTransactionsMessage({
-        status: "success",
-        message: "Transaction recorded",
+        status: MessageStatus.success,
+        message: appStrings.transactions.newForm.success,
       });
       props.closeModal();
     } else {
@@ -86,12 +88,12 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
     <div className="overlay">
       <div className="modal">
         <button className="appButton closeButton" onClick={props.closeModal}>
-          X
+          {appStrings.closeButton}
         </button>
-        <h1>New Transaction</h1>
+        <h1>{appStrings.transactions.newForm.title}</h1>
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Amount £</label>
+            <label>{appStrings.transactions.newForm.amount}</label>
             <input
               className="redBorder"
               type="number"
@@ -100,7 +102,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
             />
           </div>
           <div>
-            <label>Date of transaction</label>
+            <label>{appStrings.transactions.newForm.date}</label>
             <input
               className="redBorder"
               type="date"
@@ -109,15 +111,19 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
             />
           </div>
           <div>
-            <label>Type</label>
+            <label>{appStrings.transactions.newForm.type}</label>
 
             <select name="type" onChange={handleInputChange}>
-              <option value="deposit">Deposit</option>
-              <option value="withdrawal">Withdrawal</option>
+              <option value="deposit">
+                {appStrings.transactions.newForm.typeOptions.deposit}
+              </option>
+              <option value="withdrawal">
+                {appStrings.transactions.newForm.typeOptions.withdrawal}
+              </option>
             </select>
           </div>
           <div>
-            <label>Comments</label>
+            <label>{appStrings.transactions.newForm.comments}</label>
             <input
               className="redBorder"
               type="text"
@@ -125,7 +131,11 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
               onChange={handleInputChange}
             />
           </div>
-          <input className="appButton" type="submit" value="Submit" />
+          <input
+            className="appButton"
+            type="submit"
+            value={appStrings.submit}
+          />
         </form>
       </div>
     </div>

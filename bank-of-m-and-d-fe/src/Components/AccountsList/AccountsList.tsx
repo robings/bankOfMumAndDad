@@ -8,6 +8,8 @@ import { IResponse } from "../../Interfaces/Entities/IResponse";
 import apiAccounts from "../../api/apiAccounts";
 import { IAccountsListProps } from "../../Interfaces/Props/IAccountsListProps";
 import Loader from "../Loader/Loader";
+import appStrings from "../../constants/app.strings";
+import { MessageStatus } from "../../Interfaces/IMessage";
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
   const data: IAccount[] = props.accountsData;
@@ -24,8 +26,8 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
 
     if (response.status === 401) {
       props.setAccountsMessage({
-        status: "error",
-        message: "You are not logged in",
+        status: MessageStatus.error,
+        message: appStrings.notLoggedIn,
       });
       return;
     }
@@ -34,8 +36,8 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
 
     if (json.success === true) {
       props.setAccountsMessage({
-        status: "accountDeleted",
-        message: "Account Deleted",
+        status: MessageStatus.accountDeleted,
+        message: appStrings.accounts.accountDeleted,
       });
     } else {
       toast.error(json.message);
@@ -56,10 +58,10 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
         <table>
           <thead>
             <tr>
-              <th>Last Name</th>
-              <th>First Name</th>
+              <th>{appStrings.accounts.listTableHeaders.lastName}</th>
+              <th>{appStrings.accounts.listTableHeaders.firstName}</th>
               <th style={{ width: "150px", textAlign: "center" }}>
-                Current Balance
+                {appStrings.accounts.listTableHeaders.currentBalance}
               </th>
               <th></th>
             </tr>
@@ -84,14 +86,14 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                     data-id={id}
                     onClick={handleViewTransactions}
                   >
-                    View Transactions
+                    {appStrings.accounts.listButtons.viewTransactions}
                   </button>
                   <button
                     className="appButton deleteButton thinnerButton"
                     data-id={id}
                     onClick={handleDelete}
                   >
-                    Delete
+                    {appStrings.accounts.listButtons.delete}
                   </button>
                 </td>
               </tr>
@@ -99,7 +101,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
           </tbody>
         </table>
       )}
-      {error && <div className="error">Unable to display account details.</div>}
+      {error && <div className="error">{appStrings.accounts.error}</div>}
     </main>
   );
 }
