@@ -9,7 +9,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage } from "./Interfaces/IMessage";
-import { getTransactionsByAccountId } from "./api/apiServiceTransactions";
+import { getTransactionsByAccountId } from "./api/apiTransactions";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import {
   IListOfTransactionsForAccount,

@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
-import { postNewAccount } from "../../api/apiServiceAccounts";
+import { postNewAccount } from "../../api/apiAccounts";
 import {
   INewAccountFormInput,
   INewAccountFormProps,

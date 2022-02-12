@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import { saveNewTransaction } from "../../api/apiServiceTransactions";
+import { saveNewTransaction } from "../../api/apiTransactions";
 import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
 import {
   INewTransactionFormInput,

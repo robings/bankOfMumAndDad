@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./accountsList.css";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
 import { IResponse } from "../../Interfaces/Entities/IResponse";
-import { deleteAccount } from "../../api/apiServiceAccounts";
+import { deleteAccount } from "../../api/apiAccounts";
 import { IAccountsListProps } from "../../Interfaces/Props/IAccountsListProps";
 import Loader from "../Loader/Loader";
 

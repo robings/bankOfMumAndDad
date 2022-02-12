@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { IMessage } from "./Interfaces/IMessage";
-import { getAllAccounts } from "./api/apiServiceAccounts";
+import { getAllAccounts } from "./api/apiAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import { IAccount } from "./Interfaces/Entities/IAccount";
 
