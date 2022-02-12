@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import { saveNewTransaction } from "../../api/apiTransactions";
+import apiTransactions from "../../api/apiTransactions";
 import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
 import {
   INewTransactionFormInput,
@@ -57,7 +57,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
       accountId: props.accountId,
     };
 
-    const response: Response = await saveNewTransaction(data);
+    const response: Response = await apiTransactions.saveNewTransaction(data);
 
     if (response.status === 401) {
       props.setTransactionsMessage({

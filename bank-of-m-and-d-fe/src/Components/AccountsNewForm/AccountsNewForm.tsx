@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AccountsNewForm.css';
-import { postNewAccount } from "../../api/apiAccounts";
+import apiAccounts from "../../api/apiAccounts";
 import {
   INewAccountFormInput,
   INewAccountFormProps,
@@ -51,7 +51,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
       currentBalance: newAccountFormInput.openingBalance,
     };
 
-    const response: Response = await postNewAccount(data);
+    const response: Response = await apiAccounts.saveNewAccount(data);
 
     if (response.status === 401) {
       props.setAccountsMessage({

@@ -1,7 +1,8 @@
 import fetch from "jest-fetch-mock";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
-import api from "./apiUser";
+import apiUser from "./apiUser";
 import { APIBaseUrl } from "./apiSettings";
+import apiStrings from "../constants/api.strings";
 
 beforeEach(() => {
   fetch.enableMocks();
@@ -21,7 +22,7 @@ describe("login api call", () => {
 
     fetch.mockResponseOnce(JSON.stringify(response));
 
-    await api.login(data);
+    await apiUser.login(data);
 
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(fetch.mock.calls[0][0]).toBe(`${APIBaseUrl}/api/login`);
@@ -36,7 +37,7 @@ describe("login api call", () => {
 
     fetch.mockResponseOnce(JSON.stringify(responseData));
 
-    const response = await api.login(data);
+    const response = await apiUser.login(data);
 
     expect(response).toEqual(responseData);
   });
@@ -44,8 +45,8 @@ describe("login api call", () => {
   test("throws if API unavailable", async () => {
     fetch.mockReject(new Error("API not available."));
 
-    await expect(() => api.login(data)).rejects.toThrow(
-      "An error occured whilst attempting to log in."
+    await expect(() => apiUser.login(data)).rejects.toThrow(
+      apiStrings.user.error
     );
   });
 
@@ -55,8 +56,8 @@ describe("login api call", () => {
     async (code) => {
       fetch.mockResponseOnce("Error", { status: code });
 
-      await expect(() => api.login(data)).rejects.toThrow(
-        "Those credentials are not correct."
+      await expect(() => apiUser.login(data)).rejects.toThrow(
+        apiStrings.user.incorrectCredentials
       );
     }
   );
@@ -64,8 +65,8 @@ describe("login api call", () => {
   test("throws if a response is received with a 500 status code", async () => {
     fetch.mockResponseOnce("Error", { status: 500 });
 
-    await expect(() => api.login(data)).rejects.toThrow(
-      "An error occured whilst attempting to log in."
+    await expect(() => apiUser.login(data)).rejects.toThrow(
+      apiStrings.user.error
     );
   });
 });

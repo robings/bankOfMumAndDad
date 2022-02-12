@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { IMessage } from "./Interfaces/IMessage";
-import { getAllAccounts } from "./api/apiAccounts";
+import apiAccounts from "./api/apiAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import { IAccount } from "./Interfaces/Entities/IAccount";
 
@@ -36,7 +36,7 @@ function AccountsPage(): JSX.Element {
     }
 
     async function loadAccounts(): Promise<void> {
-      const response: Response = await getAllAccounts();
+      const response: Response = await apiAccounts.getAllAccounts();
 
       if (response.status === 401) {
         revokeToken();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from "../../api/apiUser";
+import apiUser from "../../api/apiUser";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
 import { ILoginProps } from "../../Interfaces/Props/ILoginProps";
 import { revokeToken, setToken } from "../../tokenHelper/tokenHelper";
@@ -34,7 +34,7 @@ function LoginForm(props: ILoginProps): JSX.Element {
   }
 
   async function submitLogin(loginFormInput: ILoginDto) {
-    await api
+    await apiUser
       .login(loginFormInput)
       .then((response) => {
         setToken(response.token);

@@ -3,7 +3,7 @@ import { IIdOnlyRequest } from "../Interfaces/Entities/IIdOnlyRequest";
 import { getToken } from "../tokenHelper/tokenHelper";
 import { APIBaseUrl } from "./apiSettings";
 
-export async function getAllAccounts(): Promise<Response> {
+async function getAllAccounts(): Promise<Response> {
   const token: string = getToken();
 
   return await fetch(`${APIBaseUrl}/api/Account/all`, {
@@ -13,7 +13,7 @@ export async function getAllAccounts(): Promise<Response> {
   });
 }
 
-export async function getAccountById(acId: string) {
+async function getAccountById(acId: string) {
   const token: string = getToken();
 
   const accountUrl = `${APIBaseUrl}/api/Account/${acId.toString()}`;
@@ -24,7 +24,7 @@ export async function getAccountById(acId: string) {
   });
 }
 
-export async function postNewAccount(data: IAccountDto) {
+async function saveNewAccount(data: IAccountDto) {
   const token = getToken();
 
   return await fetch(`${APIBaseUrl}/api/Account`, {
@@ -37,7 +37,7 @@ export async function postNewAccount(data: IAccountDto) {
   });
 }
 
-export async function deleteAccount(data: IIdOnlyRequest): Promise<Response> {
+async function deleteAccount(data: IIdOnlyRequest): Promise<Response> {
   const token = getToken();
 
   return await fetch(`${APIBaseUrl}/api/Account`, {
@@ -49,3 +49,12 @@ export async function deleteAccount(data: IIdOnlyRequest): Promise<Response> {
     body: JSON.stringify(data),
   });
 }
+
+const apiAccounts = {
+  getAllAccounts,
+  getAccountById,
+  saveNewAccount,
+  deleteAccount,
+};
+
+export default apiAccounts;
