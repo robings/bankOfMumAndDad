@@ -17,6 +17,7 @@ body {
   background-color: #FFFFFF;
   font-family: "IBMPlexMono",
     sans-serif;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,11 +31,12 @@ h1, h2, h3 {
   color: #0063B1;
 }
 
-button, input[type=submit] {
+.appButton {
   background-color: #FFFFFF;
   font-family: "IBMPlexSans",
     sans-serif;
   font-weight: 700;
+  font-size: 16px;
   border-style: outset;
   border-radius: 20px;
   border-color: #107C10;
@@ -50,7 +52,7 @@ input[type=submit] {
   float: right;
 }
 
-button:hover, input[type=submit]:hover {
+.appButton:hover {
   cursor: pointer;
   background-color: #107C10;
   color: #FFFFFF;
@@ -78,6 +80,23 @@ button:hover, input[type=submit]:hover {
 .deleteButton:hover {
   background-color: #E81123;
   color: #FFFFFF;
+}
+
+.thinnerButton {
+  font-family: "IBMPlexMono";
+  font-weight: 400;
+  border: none;
+  border-bottom: 4px solid transparent;
+  border-radius: 4px;
+  min-width: none;
+  padding: 5px 10px;
+  height: auto;
+  background-color: transparent;
+  margin-top: 4px;
+}
+
+.thinnerButton:hover {
+  border-bottom: 4px solid #111111;
 }
 
 .overlay {

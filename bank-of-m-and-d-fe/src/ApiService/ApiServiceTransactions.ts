@@ -1,28 +1,28 @@
 import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
-import { GetToken } from "../tokenService/TokenService";
-import { APIBaseUrl } from './apiSettings';
+import { getToken } from "../tokenService/tokenService";
+import { APIBaseUrl } from "./apiSettings";
 
 export async function GetTransactionsByAccountId(acId: string) {
-    const token = GetToken();
-    
-    const url = `${APIBaseUrl}/api/Transaction/${acId.toString()}`;
-    
-    return await fetch(url, {
+  const token = getToken();
+
+  const url = `${APIBaseUrl}/api/Transaction/${acId.toString()}`;
+
+  return await fetch(url, {
     headers: {
-        'Authorization': token,
-    }
-    });
+      Authorization: token,
+    },
+  });
 }
 
 export async function PostNewTransaction(data: ITransactionDto) {
-    const token = GetToken();
+  const token = getToken();
 
-    return await fetch(`${APIBaseUrl}/api/Transaction`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-      body: JSON.stringify(data),
-    });
+  return await fetch(`${APIBaseUrl}/api/Transaction`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+    body: JSON.stringify(data),
+  });
 }

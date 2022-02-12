@@ -3,16 +3,26 @@ import { toast } from 'react-toastify';
 import { PostNewTransaction } from '../../ApiService/ApiServiceTransactions';
 import { ITransactionDto } from '../../Interfaces/Entities/ITransactionDto';
 import { INewTransactionFormInput, INewTransactionFormProps } from '../../Interfaces/INewTransactionForm';
-import { RevokeToken } from "../../tokenService/TokenService";
+import { revokeToken } from "../../tokenService/tokenService";
 
 function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
-  const [newTransactionFormInput, setNewTransactionFormInput] = useState<INewTransactionFormInput>( { amount: null, dateOfTransaction: null, type: 'DEPOSIT', comments: '' } );
+  const [newTransactionFormInput, setNewTransactionFormInput] =
+    useState<INewTransactionFormInput>({
+      amount: null,
+      dateOfTransaction: null,
+      type: "DEPOSIT",
+      comments: "",
+    });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.currentTarget.value && e.currentTarget.className === 'redBorder') {
-      e.currentTarget.style.borderColor = '#107C10';
-    } else if (e.currentTarget.className === 'redBorder') {
-      e.currentTarget.style.borderColor = '#E81123';
+  const handleInputChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    if (e.currentTarget.value && e.currentTarget.className === "redBorder") {
+      e.currentTarget.style.borderColor = "#107C10";
+    } else if (e.currentTarget.className === "redBorder") {
+      e.currentTarget.style.borderColor = "#E81123";
     }
 
     setNewTransactionFormInput({
@@ -27,17 +37,19 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
       !newTransactionFormInput.amount ||
       !newTransactionFormInput.dateOfTransaction
     ) {
-      toast.error('Please fill in missing data');
+      toast.error("Please fill in missing data");
     } else {
       submitNewTransaction(newTransactionFormInput);
     }
   }
 
-  async function submitNewTransaction(newTransactionFormInput: INewTransactionFormInput): Promise<void> {
-    const data: ITransactionDto  = {
+  async function submitNewTransaction(
+    newTransactionFormInput: INewTransactionFormInput
+  ): Promise<void> {
+    const data: ITransactionDto = {
       amount: newTransactionFormInput.amount!,
       date: newTransactionFormInput.dateOfTransaction!,
-      type: newTransactionFormInput.type === 'DEPOSIT' ? '0' : '1',
+      type: newTransactionFormInput.type === "DEPOSIT" ? "0" : "1",
       comments: newTransactionFormInput.comments,
       accountId: props.accountId,
     };
@@ -45,8 +57,11 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
     const response: Response = await PostNewTransaction(data);
 
     if (response.status === 401) {
-      props.setTransactionsMessage({ status: 'error', message: 'You are not logged in' });
-      RevokeToken();
+      props.setTransactionsMessage({
+        status: "error",
+        message: "You are not logged in",
+      });
+      revokeToken();
       props.closeModal();
       return;
     }
@@ -54,7 +69,10 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
     const json = await response.json();
 
     if (json.success === true) {
-      props.setTransactionsMessage({ status: 'success', message: 'Transaction recorded' });
+      props.setTransactionsMessage({
+        status: "success",
+        message: "Transaction recorded",
+      });
       props.closeModal();
     } else {
       toast.error(json.message);
@@ -64,7 +82,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   return (
     <div className="overlay">
       <div className="modal">
-        <button className="closeButton" onClick={props.closeModal}>
+        <button className="appButton closeButton" onClick={props.closeModal}>
           X
         </button>
         <h1>New Transaction</h1>
@@ -90,10 +108,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
           <div>
             <label>Type</label>
 
-            <select
-              name="type"
-              onChange={handleInputChange}
-            >
+            <select name="type" onChange={handleInputChange}>
               <option value="deposit">Deposit</option>
               <option value="withdrawal">Withdrawal</option>
             </select>
@@ -102,11 +117,12 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
             <label>Comments</label>
             <input
               className="redBorder"
-              type="text" 
-              name="comments" 
-              onChange={handleInputChange} />
+              type="text"
+              name="comments"
+              onChange={handleInputChange}
+            />
           </div>
-          <input type="submit" value="Submit" />
+          <input className="appButton" type="submit" value="Submit" />
         </form>
       </div>
     </div>

@@ -1,13 +1,13 @@
 import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
 import "./transactionsNav.css";
-import { LoggedIn } from "../../tokenService/TokenService";
+import { loggedIn } from "../../tokenService/tokenService";
 import { useNavigate } from "react-router-dom";
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
   const navigate = useNavigate();
 
   const handleOpenNewTransactionModal = (): void => {
-    if (!LoggedIn()) {
+    if (!loggedIn()) {
       navigate("/");
     }
     props.openNewTransactionModal();
@@ -15,9 +15,9 @@ function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
 
   return (
     <div className="subNav">
-      {localStorage.getItem("bearerToken") && (
+      {loggedIn() && (
         <button
-          className="subNavButton"
+          className="appButton subNavButton"
           onClick={handleOpenNewTransactionModal}
         >
           New Transaction

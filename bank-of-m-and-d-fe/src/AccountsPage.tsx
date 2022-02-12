@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "./Components/Header/Header";
+import Nav from "./Components/Nav/Nav";
 import AccountsList from "./Components/AccountsList/AccountsList";
 import AccountsNav from "./Components/AccountsNav/AccountsNav";
 import AccountsNewForm from "./Components/AccountsNewForm/AccountsNewForm";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { RevokeToken, LoggedIn } from "./tokenService/TokenService";
+import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import { IMessage } from "./Interfaces/IMessage";
 import { GetAllAccounts } from "./ApiService/ApiServiceAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";
@@ -16,7 +16,7 @@ function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
     useState<boolean>(false);
   const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
-  const [loggedIn] = useState<boolean>(LoggedIn);
+  const [isLoggedIn] = useState<boolean>(loggedIn);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [accountsData, setAccountsData] = useState<IAccount[]>([]);
@@ -31,7 +31,7 @@ function AccountsPage(): JSX.Element {
       navigate("/");
     };
 
-    if (!loggedIn) {
+    if (!isLoggedIn) {
       redirectToLoginPage();
     }
 
@@ -39,7 +39,7 @@ function AccountsPage(): JSX.Element {
       const response: Response = await GetAllAccounts();
 
       if (response.status === 401) {
-        RevokeToken();
+        revokeToken();
         setError(true);
         setLoading(false);
         setTimeout(redirectToLoginPage, 5000);
@@ -76,7 +76,7 @@ function AccountsPage(): JSX.Element {
         accountsMessage.status === "error" &&
         accountsMessage.message === "You are not logged in"
       ) {
-        RevokeToken();
+        revokeToken();
         toast.error("For your security, you have been logged out");
         setTimeout(redirectToLoginPage, 5000);
       } else if (
@@ -88,11 +88,11 @@ function AccountsPage(): JSX.Element {
         toast.error(accountsMessage.message);
       }
     }
-  }, [accountsMessage, loggedIn, navigate]);
+  }, [accountsMessage, isLoggedIn, navigate]);
 
   return (
     <div className="App">
-      <Header isTransactionsPage={false} />
+      <Nav isTransactionsPage={false} />
       <AccountsNav
         openNewAccountModal={() => setNewAccountModalVisibility(true)}
       />
@@ -108,7 +108,6 @@ function AccountsPage(): JSX.Element {
           closeModal={() => handleCloseModal()}
         />
       )}
-      <ToastContainer />
     </div>
   );
 }

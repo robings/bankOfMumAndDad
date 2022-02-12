@@ -60,7 +60,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
     return (
       <div className="overlay">
         <div className="modal">
-          <button className="closeButton" onClick={props.closeModal}>
+          <button className="appButton closeButton" onClick={props.closeModal}>
             X
           </button>
           <h1>New Account</h1>
@@ -92,7 +92,7 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
                 onChange={handleInputChange}
               />
             </div>
-            <input type="submit" value="Submit" />
+            <input className="appButton" type="submit" value="Submit" />
           </form>
         </div>
       </div>

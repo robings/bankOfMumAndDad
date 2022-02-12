@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import Header from "./Components/Header/Header";
+import Nav from "./Components/Nav/Nav";
 import TransactionsNav from "./Components/TranactionsNav/TransactionsNav";
 import Transactions from "./Components/Transactions/Transactions";
 import TransactionsNewForm from "./Components/TransactionsNewForm/TransactionsNewForm";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { RevokeToken, LoggedIn } from "./tokenService/TokenService";
+import { revokeToken, loggedIn } from "./tokenService/tokenService";
 import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage } from "./Interfaces/IMessage";
 import { GetTransactionsByAccountId } from "./ApiService/ApiServiceTransactions";
@@ -23,7 +23,7 @@ function TransactionsPage(): JSX.Element {
     useState<boolean>(false);
   const [transactionsMessage, setTransactionsMessage] =
     useState<IMessage | null>(null);
-  const [loggedIn] = useState<boolean>(LoggedIn);
+  const [isLoggedIn] = useState<boolean>(loggedIn);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<boolean>(false);
   const [noTransactions, setNoTransactions] = useState<boolean>(false);
@@ -66,7 +66,7 @@ function TransactionsPage(): JSX.Element {
       navigate("/");
     };
 
-    if (!loggedIn) {
+    if (!isLoggedIn) {
       redirectToLoginPage();
     }
 
@@ -75,7 +75,7 @@ function TransactionsPage(): JSX.Element {
 
       if (response.status === 401) {
         toast.error("You are not logged in.");
-        RevokeToken();
+        revokeToken();
         setErrors(true);
         setLoading(false);
         setTimeout(redirectToLoginPage, 5000);
@@ -126,18 +126,18 @@ function TransactionsPage(): JSX.Element {
         transactionsMessage.status === "error" &&
         transactionsMessage.message === "You are not logged in"
       ) {
-        RevokeToken();
+        revokeToken();
         toast.error("For your security, you have been logged out");
         setTimeout(redirectToLoginPage, 5000);
       } else if (transactionsMessage.status === "error") {
         toast.error(transactionsMessage.message);
       }
     }
-  }, [transactionsMessage, navigate, loggedIn, accountId]);
+  }, [transactionsMessage, navigate, isLoggedIn, accountId]);
 
   return (
     <div className="App">
-      <Header isTransactionsPage={true} />
+      <Nav isTransactionsPage={true} />
       <TransactionsNav
         openNewTransactionModal={() => setNewTransactionModalVisiblity(true)}
       />
@@ -155,7 +155,6 @@ function TransactionsPage(): JSX.Element {
           accountId={accountId}
         />
       )}
-      <ToastContainer />
     </div>
   );
 }

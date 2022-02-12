@@ -79,11 +79,15 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                   </td>
                 )}
                 <td>
-                  <button data-id={id} onClick={handleViewTransactions}>
+                  <button
+                    className="appButton thinnerButton"
+                    data-id={id}
+                    onClick={handleViewTransactions}
+                  >
                     View Transactions
                   </button>
                   <button
-                    className="deleteButton"
+                    className="appButton deleteButton thinnerButton"
                     data-id={id}
                     onClick={handleDelete}
                   >
@@ -95,9 +99,11 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
           </tbody>
         </table>
       )}
-      {error && <div className="error">Unable to display account details.</div>}
+      {error && (
+        <div className="error">Unable to display account details.</div>
+      )}
     </main>
-  );
+ );
 }
 
 export default AccountsList;
