@@ -1,18 +1,19 @@
 import { render, screen } from "@testing-library/react";
+import appStrings from "../../constants/app.strings";
 import Header from "./Header";
 
 describe("header", () => {
-    test("displays title", () => {
-      render(<Header />);
+  test("displays title", () => {
+    render(<Header />);
 
-      expect(
-        screen.getByRole("heading", { name: "Bank Of Mum And Dad" })
-      ).toBeInTheDocument();
-    });
+    expect(
+      screen.getByRole("heading", { name: appStrings.title })
+    ).toBeInTheDocument();
+  });
 
-    test("displays logo", () => {
-      render(<Header />);
+  test("displays logo", () => {
+    render(<Header />);
 
-      expect(screen.getByAltText("Fraught Mum and Dad")).toBeInTheDocument();
-    });
+    expect(screen.getByAltText(appStrings.logoAltText)).toBeInTheDocument();
+  });
 });

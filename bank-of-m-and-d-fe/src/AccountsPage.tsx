@@ -7,10 +7,11 @@ import AccountsNewForm from "./Components/AccountsNewForm/AccountsNewForm";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
-import { IMessage } from "./Interfaces/IMessage";
-import { getAllAccounts } from "./api/apiAccounts";
+import { IMessage, MessageStatus } from "./Interfaces/IMessage";
+import apiAccounts from "./api/apiAccounts";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import { IAccount } from "./Interfaces/Entities/IAccount";
+import appStrings from "./constants/app.strings";
 
 function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
@@ -36,7 +37,7 @@ function AccountsPage(): JSX.Element {
     }
 
     async function loadAccounts(): Promise<void> {
-      const response: Response = await getAllAccounts();
+      const response: Response = await apiAccounts.getAllAccounts();
 
       if (response.status === 401) {
         revokeToken();
@@ -70,18 +71,18 @@ function AccountsPage(): JSX.Element {
     loadAccounts();
 
     if (accountsMessage) {
-      if (accountsMessage.status === "success") {
+      if (accountsMessage.status === MessageStatus.success) {
         toast.success(accountsMessage.message);
       } else if (
-        accountsMessage.status === "error" &&
-        accountsMessage.message === "You are not logged in"
+        accountsMessage.status === MessageStatus.error &&
+        accountsMessage.message === appStrings.notLoggedIn
       ) {
         revokeToken();
-        toast.error("For your security, you have been logged out");
+        toast.error(appStrings.loggedOut);
         setTimeout(redirectToLoginPage, 5000);
       } else if (
-        accountsMessage.status === "accountDeleted" &&
-        accountsMessage.message === "Account Deleted"
+        accountsMessage.status === MessageStatus.accountDeleted &&
+        accountsMessage.message === appStrings.accounts.accountDeleted
       ) {
         toast.info(accountsMessage.message);
       } else {

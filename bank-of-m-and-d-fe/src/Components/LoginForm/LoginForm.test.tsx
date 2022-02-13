@@ -1,23 +1,30 @@
 import { render, screen } from '@testing-library/react';
-import LoginForm from './LoginForm';
+import appStrings from "../../constants/app.strings";
+import LoginForm from "./LoginForm";
 
-describe('login form', () => {
+describe("login form", () => {
   const renderLoginForm = () => {
-    render(<LoginForm setLoginMessage={() => {}}/>)
+    render(<LoginForm setLoginMessage={() => {}} />);
   };
 
-  test('displays title', () => {
+  test("displays title", () => {
     renderLoginForm();
-    expect(screen.getByRole("heading", { name: "Login" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: appStrings.loginForm.title })
+    ).toBeInTheDocument();
   });
-  
-  test('displays username input', () => {
+
+  test("displays username input", () => {
     renderLoginForm();
-    expect(screen.getByLabelText('Username')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(appStrings.loginForm.usernameLabel)
+    ).toBeInTheDocument();
   });
-  
-  test('displays password input', () => {
+
+  test("displays password input", () => {
     renderLoginForm();
-    expect(screen.getByLabelText('Password')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(appStrings.loginForm.passwordLabel)
+    ).toBeInTheDocument();
   });
 });

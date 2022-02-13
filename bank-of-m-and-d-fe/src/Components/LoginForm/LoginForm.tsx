@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import api from "../../api/apiUser";
+import apiUser from "../../api/apiUser";
+import appStrings from "../../constants/app.strings";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
+import { MessageStatus } from "../../Interfaces/IMessage";
 import { ILoginProps } from "../../Interfaces/Props/ILoginProps";
 import { revokeToken, setToken } from "../../tokenHelper/tokenHelper";
 
@@ -27,18 +29,18 @@ function LoginForm(props: ILoginProps): JSX.Element {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!loginFormInput.username || !loginFormInput.password) {
-      toast.error("Please fill in missing data");
+      toast.error(appStrings.missingInfoError);
     } else {
       submitLogin(loginFormInput);
     }
   }
 
   async function submitLogin(loginFormInput: ILoginDto) {
-    await api
+    await apiUser
       .login(loginFormInput)
       .then((response) => {
         setToken(response.token);
-        props.setLoginMessage({ status: "success", message: "" });
+        props.setLoginMessage({ status: MessageStatus.success, message: "" });
       })
       .catch(() => {
         revokeToken();
@@ -48,10 +50,12 @@ function LoginForm(props: ILoginProps): JSX.Element {
   return (
     <div className="overlay">
       <div className="modal">
-        <h1>Login</h1>
+        <h1>{appStrings.loginForm.title}</h1>
         <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">
+              {appStrings.loginForm.usernameLabel}
+            </label>
             <input
               className="redBorder"
               type="text"
@@ -61,7 +65,9 @@ function LoginForm(props: ILoginProps): JSX.Element {
             />
           </div>
           <div>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              {appStrings.loginForm.passwordLabel}
+            </label>
             <input
               className="redBorder"
               type="password"

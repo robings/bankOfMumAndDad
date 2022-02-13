@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../Header/header.css";
 import { revokeToken } from "../../tokenHelper/tokenHelper";
 import { IHeaderProps } from "../../Interfaces/Props/IHeaderProps";
+import appStrings from "../../constants/app.strings";
 
 function Nav(props: IHeaderProps): JSX.Element {
   const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
@@ -47,7 +48,9 @@ function Nav(props: IHeaderProps): JSX.Element {
             />
             <path d="M 24 10 L32 19 L24 27 L29 19 L24 10" fill="currentColor" />
           </svg>
-          <div style={{ float: "right", padding: "7px 5px" }}>Log Out</div>
+          <div style={{ float: "right", padding: "7px 5px" }}>
+            {appStrings.navButtons.logout}
+          </div>
         </button>
         {isTransactionsPage && (
           <button
@@ -93,14 +96,16 @@ function Nav(props: IHeaderProps): JSX.Element {
                 fill="transparent"
               />
             </svg>
-            <div style={{ float: "right", padding: "7px 5px" }}>Accounts</div>
+            <div style={{ float: "right", padding: "7px 5px" }}>
+              {appStrings.navButtons.accounts}
+            </div>
           </button>
         )}
       </div>
       <div>
         {localStorage.getItem("loginTime")
           ? localStorage.getItem("loginTime")
-          : "Not logged in"}
+          : appStrings.notLoggedIn}
       </div>
     </nav>
   );

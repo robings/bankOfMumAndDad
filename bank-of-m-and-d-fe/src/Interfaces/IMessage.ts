@@ -1,4 +1,10 @@
 export interface IMessage {
-    status: string;
+    status: MessageStatus;
     message: string;
 }
+
+export enum MessageStatus {
+    success,
+    error,
+    accountDeleted
+};

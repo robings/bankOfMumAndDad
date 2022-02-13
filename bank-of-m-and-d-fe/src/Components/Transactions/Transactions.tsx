@@ -1,6 +1,7 @@
 import "./transactions.css";
 import { ITransactionProps } from "../../Interfaces/Props/ITransactionsProps";
 import Loader from "../Loader/Loader";
+import appStrings from "../../constants/app.strings";
 
 function Transactions(props: ITransactionProps): JSX.Element {
   const dataToDisplay = props.transactionsData;
@@ -10,7 +11,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
 
   return (
     <main>
-      <h2>Transactions</h2>
+      <h2>{appStrings.transactions.title}</h2>
       {loading && !error ? (
         <Loader />
       ) : (
@@ -22,16 +23,22 @@ function Transactions(props: ITransactionProps): JSX.Element {
           <table>
             <thead>
               <tr>
-                <th>Date</th>
-                <th style={{ textAlign: "center" }}>Deposits</th>
-                <th style={{ textAlign: "center" }}>Withdrawals</th>
-                <th style={{ textAlign: "center" }}>Balance</th>
-                <th>Comments</th>
+                <th>{appStrings.transactions.listTableHeaders.date}</th>
+                <th style={{ textAlign: "center" }}>
+                  {appStrings.transactions.listTableHeaders.deposits}
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  {appStrings.transactions.listTableHeaders.withdrawals}
+                </th>
+                <th style={{ textAlign: "center" }}>
+                  {appStrings.transactions.listTableHeaders.balance}
+                </th>
+                <th>{appStrings.transactions.listTableHeaders.comments}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Start Balance</td>
+                <td>{appStrings.transactions.startBalance}</td>
                 <td></td>
                 <td></td>
                 {dataToDisplay.openingBalance < 0 ? (
@@ -47,7 +54,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
               </tr>
               {noTransactions ? (
                 <tr>
-                  <td colSpan={5}>No transactions to display</td>
+                  <td colSpan={5}>{appStrings.transactions.noTransactions}</td>
                 </tr>
               ) : (
                 dataToDisplay.transactions.map(
@@ -99,7 +106,7 @@ function Transactions(props: ITransactionProps): JSX.Element {
                 )
               )}
               <tr>
-                <td>End Balance</td>
+                <td>{appStrings.transactions.endBalance}</td>
                 <td></td>
                 <td></td>
                 {dataToDisplay.currentBalance < 0 ? (
