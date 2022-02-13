@@ -24,6 +24,10 @@ tr:nth-child(even) {
     background-color: #F2F2F2;
 }
 
+tr:hover {
+    background-color: #bdc3c7;
+}
+
 th, td {
     padding: 5px 10px;
     border-right: 1px solid #69797E;

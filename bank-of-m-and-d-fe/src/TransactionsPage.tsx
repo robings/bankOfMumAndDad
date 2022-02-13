@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
-import { ITransactionsPageParams } from "./Interfaces/Params/ITransactionsPageParams";
 import { IMessage, MessageStatus } from "./Interfaces/IMessage";
 import apiTransactions from "./api/apiTransactions";
 import { IResponse } from "./Interfaces/Entities/IResponse";
@@ -18,7 +17,7 @@ import {
 import appStrings from "./constants/app.strings";
 
 function TransactionsPage(): JSX.Element {
-  const { accountId }: ITransactionsPageParams = useParams();
+  const { accountId } = useParams();
   const navigate = useNavigate();
   const [newTransactionModalVisiblity, setNewTransactionModalVisiblity] =
     useState<boolean>(false);
