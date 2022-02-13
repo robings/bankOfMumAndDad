@@ -27,47 +27,33 @@ function AccountsPage(): JSX.Element {
     setNewAccountModalVisibility(false);
   };
 
-  useEffect((): void => {
+  useEffect(() => {
     const redirectToLoginPage = () => {
       navigate("/");
     };
+
+    const authErrorCallback = async () => {
+      revokeToken();
+      setError(true);
+      setLoading(false);
+      redirectToLoginPage();
+    };
+
+    apiAccounts.registerAuthErrorCallback(authErrorCallback);
 
     if (!isLoggedIn) {
       redirectToLoginPage();
     }
 
     async function loadAccounts(): Promise<void> {
-      const response: Response = await apiAccounts.getAllAccounts();
+      setLoading(true);
+      const response: IResponse<IAccount[]> =
+        await apiAccounts.getAllAccounts();
 
-      if (response.status === 401) {
-        revokeToken();
-        setError(true);
-        setLoading(false);
-        setTimeout(redirectToLoginPage, 5000);
-        return;
-      }
-
-      if (
-        !response.status ||
-        response.status === null ||
-        response.status === 500
-      ) {
-        setError(true);
-        setLoading(false);
-        return;
-      }
-
-      const json: IResponse<IAccount[]> = await response.json();
-
-      setAccountsData(json.data);
-      if (json.success === false) {
-        toast.error(json.message);
-        setError(true);
-      }
+      setAccountsData(response.data);
       setLoading(false);
     }
 
-    setLoading(true);
     loadAccounts();
 
     if (accountsMessage) {
@@ -89,6 +75,10 @@ function AccountsPage(): JSX.Element {
         toast.error(accountsMessage.message);
       }
     }
+
+    return () => {
+      apiAccounts.unregisterAuthErrorCallback();
+    };
   }, [accountsMessage, isLoggedIn, navigate]);
 
   return (

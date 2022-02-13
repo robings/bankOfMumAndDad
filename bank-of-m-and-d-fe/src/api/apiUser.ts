@@ -6,15 +6,19 @@ import { APIBaseUrl } from "./apiSettings";
 async function login(data: ILoginDto): Promise<{ token: string }> {
   const loginResponse = await toast.promise(
     async () => {
-      const response = await fetch(`${APIBaseUrl}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }).catch(() => {
+      let response;
+
+      try {
+        response = await fetch(`${APIBaseUrl}/api/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
         throw new Error(apiStrings.user.error);
-      });
+      }
 
       if (response.status >= 400 && response.status < 500) {
         throw new Error(apiStrings.user.incorrectCredentials);

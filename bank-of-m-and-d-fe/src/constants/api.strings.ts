@@ -5,6 +5,11 @@ const apiStrings = {
     pending: "logging in...",
     success: "You have been logged in.",
   },
+  accounts: {
+    allAccountsError:
+      "An error occured whilst attempting to retrieve accounts.",
+    noAccounts: "No accounts retrieved",
+  },
 };
 
 export default apiStrings;
