@@ -22,6 +22,7 @@ const appStrings = {
     accounts: "Accounts",
   },
   accounts: {
+    title: "Accounts",
     accountDeleted: "Account deleted.",
     listTableHeaders: {
       firstName: "First Name",

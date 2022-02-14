@@ -1,7 +1,7 @@
-import { IAccountsNavProps } from "../../Interfaces/Props/IAccountsNavProps";
-import { loggedIn } from "../../tokenHelper/tokenHelper";
+import { IAccountsNavProps } from "../../../Interfaces/Props/IAccountsNavProps";
+import { loggedIn } from "../../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
-import appStrings from "../../constants/app.strings";
+import appStrings from "../../../constants/app.strings";
 
 function AccountsNav(props: IAccountsNavProps): JSX.Element {
   const navigate = useNavigate();

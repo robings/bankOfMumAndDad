@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./accountsList.css";
-import { IAccount } from "../../Interfaces/Entities/IAccount";
-import apiAccounts from "../../api/apiAccounts";
-import { IAccountsListProps } from "../../Interfaces/Props/IAccountsListProps";
-import Loader from "../Loader/Loader";
-import appStrings from "../../constants/app.strings";
+import { IAccount } from "../../../Interfaces/Entities/IAccount";
+import apiAccounts from "../../../api/apiAccounts";
+import { IAccountsListProps } from "../../../Interfaces/Props/IAccountsListProps";
+import Loader from "../../Loader/Loader";
+import appStrings from "../../../constants/app.strings";
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
   const data: IAccount[] = props.accountsData;
@@ -24,8 +24,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
   }
 
   return (
-    <main>
-      <h2>Accounts</h2>
+    <>
       {loading && !error ? (
         <Loader />
       ) : (
@@ -76,7 +75,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
         </table>
       )}
       {error && <div className="error">{appStrings.accounts.error}</div>}
-    </main>
+    </>
   );
 }
 

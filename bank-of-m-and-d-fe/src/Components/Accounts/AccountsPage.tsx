@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "./Components/Nav/Nav";
-import AccountsList from "./Components/AccountsList/AccountsList";
-import AccountsNav from "./Components/AccountsNav/AccountsNav";
-import AccountsNewForm from "./Components/AccountsNewForm/AccountsNewForm";
+import Nav from "../Nav/Nav";
+import AccountsList from "./AccountsList/AccountsList";
+import AccountsNav from "./AccountsNav/AccountsNav";
+import AccountsNewForm from "./AccountsNewForm/AccountsNewForm";
 import "react-toastify/dist/ReactToastify.css";
-import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
-import apiAccounts from "./api/apiAccounts";
-import { IResponse } from "./Interfaces/Entities/IResponse";
-import { IAccount } from "./Interfaces/Entities/IAccount";
+import { revokeToken, loggedIn } from "../../tokenHelper/tokenHelper";
+import apiAccounts from "../../api/apiAccounts";
+import { IResponse } from "../../Interfaces/Entities/IResponse";
+import { IAccount } from "../../Interfaces/Entities/IAccount";
+import appStrings from "../../constants/app.strings";
 
 function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
@@ -62,11 +63,14 @@ function AccountsPage(): JSX.Element {
       <AccountsNav
         openNewAccountModal={() => setNewAccountModalVisibility(true)}
       />
-      <AccountsList
-        accountsData={accountsData}
-        accountsError={error}
-        accountsLoading={loading}
-      />
+      <main>
+        <h2>{appStrings.accounts.title}</h2>
+        <AccountsList
+          accountsData={accountsData}
+          accountsError={error}
+          accountsLoading={loading}
+        />
+      </main>
       {newAccountModalVisibility && (
         <AccountsNewForm closeModal={() => handleCloseModal()} />
       )}
