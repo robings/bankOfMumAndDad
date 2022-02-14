@@ -9,7 +9,6 @@ import {
 } from "../../Interfaces/INewAccountForm";
 import { IResponse } from "../../Interfaces/Entities/IResponse";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
-import { MessageStatus } from "../../Interfaces/IMessage";
 import appStrings from "../../constants/app.strings";
 
 function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
@@ -53,28 +52,10 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
       currentBalance: newAccountFormInput.openingBalance,
     };
 
-    const response: Response = await apiAccounts.saveNewAccount(data);
-
-    if (response.status === 401) {
-      props.setAccountsMessage({
-        status: MessageStatus.error,
-        message: appStrings.notLoggedIn,
-      });
+    try {
+      await apiAccounts.saveNewAccount(data);
       props.closeModal();
-      return;
-    }
-
-    const json: IResponse<IAccount> = await response.json();
-
-    if (json.success === true) {
-      props.setAccountsMessage({
-        status: MessageStatus.success,
-        message: appStrings.accounts.newForm.success,
-      });
-      props.closeModal();
-    } else {
-      toast.error(json.message);
-    }
+    } catch {}
   }
 
   return (

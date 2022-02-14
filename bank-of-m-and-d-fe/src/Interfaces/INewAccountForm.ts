@@ -1,12 +1,9 @@
-import { IMessage } from "./IMessage";
-
 export interface INewAccountFormProps {
-    closeModal(): void;
-    setAccountsMessage(message: IMessage): void;
+  closeModal(): void;
 }
 
 export interface INewAccountFormInput {
-    firstName: string;
-    lastName: string;
-    openingBalance: number | null;
+  firstName: string;
+  lastName: string;
+  openingBalance: number | null;
 }

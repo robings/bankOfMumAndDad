@@ -68,46 +68,96 @@ async function getAllAccounts(): Promise<IResponse<IAccount[]>> {
   return accountsResponse;
 }
 
-async function getAccountById(acId: string) {
-  const token: string = getToken();
+async function saveNewAccount(data: IAccountDto): Promise<void> {
+  await toast.promise(
+    async () => {
+      const token = getToken();
 
-  const accountUrl = `${APIBaseUrl}/api/Account/${acId.toString()}`;
-  return await fetch(accountUrl, {
-    headers: {
-      Authorization: token,
+      let response: Response;
+
+      try {
+        response = await fetch(`${APIBaseUrl}/api/Account`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        throw new Error(apiStrings.accounts.saveError);
+      }
+
+      if (response.status === 401) {
+        authErrorCallback();
+        throw new Error(appStrings.loggedOut);
+      }
+
+      if (response.status >= 400 && response.status < 501) {
+        throw new Error(apiStrings.accounts.saveError);
+      }
     },
-  });
+    {
+      pending: undefined,
+      success: apiStrings.accounts.saved,
+      error: {
+        render({ data }: any) {
+          return `${data.message}`;
+        },
+      },
+    }
+  );
 }
 
-async function saveNewAccount(data: IAccountDto) {
-  const token = getToken();
+async function deleteAccount(id: string): Promise<void> {
+  await toast.promise(
+    async () => {
+      const token = getToken();
 
-  return await fetch(`${APIBaseUrl}/api/Account`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
+      const data: IIdOnlyRequest = { id };
+
+      let response: Response;
+
+      try {
+        response = await fetch(`${APIBaseUrl}/api/Account`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        throw new Error(apiStrings.accounts.deleteError);
+      }
+
+      if (response.status === 401) {
+        authErrorCallback();
+        throw new Error(appStrings.loggedOut);
+      }
+
+      if (response.status >= 400 && response.status < 500) {
+        throw new Error(apiStrings.accounts.deleteAccountError);
+      }
+
+      if (response.status === 500) {
+        throw new Error(apiStrings.accounts.deleteError);
+      }
     },
-    body: JSON.stringify(data),
-  });
-}
-
-async function deleteAccount(data: IIdOnlyRequest): Promise<Response> {
-  const token = getToken();
-
-  return await fetch(`${APIBaseUrl}/api/Account`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
-    },
-    body: JSON.stringify(data),
-  });
+    {
+      pending: undefined,
+      success: apiStrings.accounts.deleted,
+      error: {
+        render({ data }: any) {
+          return `${data.message}`;
+        },
+      },
+    }
+  );
 }
 
 const apiAccounts = {
   getAllAccounts,
-  getAccountById,
   saveNewAccount,
   deleteAccount,
   registerAuthErrorCallback,

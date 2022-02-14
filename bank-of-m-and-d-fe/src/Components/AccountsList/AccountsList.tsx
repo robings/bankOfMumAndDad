@@ -1,15 +1,12 @@
-import React from 'react';
-import { toast } from 'react-toastify';
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "./accountsList.css";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
-import { IResponse } from "../../Interfaces/Entities/IResponse";
 import apiAccounts from "../../api/apiAccounts";
 import { IAccountsListProps } from "../../Interfaces/Props/IAccountsListProps";
 import Loader from "../Loader/Loader";
 import appStrings from "../../constants/app.strings";
-import { MessageStatus } from "../../Interfaces/IMessage";
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
   const data: IAccount[] = props.accountsData;
@@ -18,30 +15,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
   const navigate = useNavigate();
 
   async function handleDelete(e: React.BaseSyntheticEvent): Promise<void> {
-    var data = {
-      id: e.currentTarget.dataset.id,
-    };
-
-    const response: Response = await apiAccounts.deleteAccount(data);
-
-    if (response.status === 401) {
-      props.setAccountsMessage({
-        status: MessageStatus.error,
-        message: appStrings.notLoggedIn,
-      });
-      return;
-    }
-
-    const json: IResponse<any> = await response.json();
-
-    if (json.success === true) {
-      props.setAccountsMessage({
-        status: MessageStatus.accountDeleted,
-        message: appStrings.accounts.accountDeleted,
-      });
-    } else {
-      toast.error(json.message);
-    }
+    await apiAccounts.deleteAccount(e.currentTarget.dataset.id);
   }
 
   function handleViewTransactions(e: React.BaseSyntheticEvent): void {

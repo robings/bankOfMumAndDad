@@ -39,16 +39,7 @@ describe("login api call", () => {
       "Content-Type": "application/json",
     });
     expect(fetch.mock.calls[0][1]?.method).toBe("POST");
-  });
-
-  test("returns expected data on successful call", async () => {
-    const responseData = { token: "myToken" };
-
-    fetch.mockResponseOnce(JSON.stringify(responseData));
-
-    const response = await apiUser.login(data);
-
-    expect(response).toEqual(responseData);
+    expect(fetch.mock.calls[0][1]?.body).toBe(JSON.stringify(data));
   });
 
   test("sets token on successful call", async () => {
