@@ -1,6 +1,6 @@
-import LoginPage from './LoginPage';
-import AccountsPage from './AccountsPage';
-import TransactionsPage from './TransactionsPage';
+import LoginPage from "./Components/Login/LoginPage";
+import AccountsPage from "./AccountsPage";
+import TransactionsPage from "./TransactionsPage";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

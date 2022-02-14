@@ -99,7 +99,7 @@ describe("accounts api", () => {
     );
   });
 
-  const fourHundredCodes: number[] = [400, 401, 403, 404];
+  const fourHundredCodes: number[] = [400, 403, 404];
   test.each(fourHundredCodes)(
     "throws if a response is received with status code: %p",
     async (code) => {

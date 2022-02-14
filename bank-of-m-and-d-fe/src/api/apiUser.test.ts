@@ -3,10 +3,19 @@ import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
 import apiUser from "./apiUser";
 import { APIBaseUrl } from "./apiSettings";
 import apiStrings from "../constants/api.strings";
+import appStrings from "../constants/app.strings";
 
 beforeEach(() => {
   fetch.enableMocks();
   fetch.resetMocks();
+});
+
+beforeAll(() => {
+  localStorage.clear();
+});
+
+afterEach(() => {
+  localStorage.clear();
 });
 
 describe("login api call", () => {
@@ -40,6 +49,18 @@ describe("login api call", () => {
     const response = await apiUser.login(data);
 
     expect(response).toEqual(responseData);
+  });
+
+  test("sets token on successful call", async () => {
+    const responseData = { token: "myToken" };
+
+    fetch.mockResponseOnce(JSON.stringify(responseData));
+
+    await apiUser.login(data);
+
+    expect(localStorage.getItem(appStrings.localStorageKeys.bearerToken)).toBe(
+      responseData.token
+    );
   });
 
   test("throws if API unavailable", async () => {

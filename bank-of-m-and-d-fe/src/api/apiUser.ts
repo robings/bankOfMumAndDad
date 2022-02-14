@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 import apiStrings from "../constants/api.strings";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
+import { setToken } from "../tokenHelper/tokenHelper";
 import { APIBaseUrl } from "./apiSettings";
 
-async function login(data: ILoginDto): Promise<{ token: string }> {
+async function login(data: ILoginDto): Promise<void> {
   const loginResponse = await toast.promise(
     async () => {
       let response;
@@ -41,7 +42,9 @@ async function login(data: ILoginDto): Promise<{ token: string }> {
     }
   );
 
-  return loginResponse.json();
+  const returnedResponse: { token: string } = await loginResponse.json();
+
+  setToken(returnedResponse.token);
 }
 
 const apiUser = {

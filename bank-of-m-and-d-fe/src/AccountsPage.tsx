@@ -17,7 +17,6 @@ function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
     useState<boolean>(false);
   const [accountsMessage, setAccountsMessage] = useState<IMessage | null>(null);
-  const [isLoggedIn] = useState<boolean>(loggedIn);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [accountsData, setAccountsData] = useState<IAccount[]>([]);
@@ -32,7 +31,7 @@ function AccountsPage(): JSX.Element {
       navigate("/");
     };
 
-    const authErrorCallback = async () => {
+    const authErrorCallback = () => {
       revokeToken();
       setError(true);
       setLoading(false);
@@ -41,7 +40,7 @@ function AccountsPage(): JSX.Element {
 
     apiAccounts.registerAuthErrorCallback(authErrorCallback);
 
-    if (!isLoggedIn) {
+    if (!loggedIn()) {
       redirectToLoginPage();
     }
 
@@ -65,7 +64,6 @@ function AccountsPage(): JSX.Element {
       ) {
         revokeToken();
         toast.error(appStrings.loggedOut);
-        setTimeout(redirectToLoginPage, 5000);
       } else if (
         accountsMessage.status === MessageStatus.accountDeleted &&
         accountsMessage.message === appStrings.accounts.accountDeleted
@@ -79,7 +77,7 @@ function AccountsPage(): JSX.Element {
     return () => {
       apiAccounts.unregisterAuthErrorCallback();
     };
-  }, [accountsMessage, isLoggedIn, navigate]);
+  }, [accountsMessage, navigate]);
 
   return (
     <div className="App">

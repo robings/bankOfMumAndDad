@@ -3,7 +3,7 @@ const appStrings = {
   logoAltText: "Fraught Mum and Dad",
   missingInfoError: "Please fill in missing data.",
   notLoggedIn: "You are not logged in.",
-  loggedOut: "For your security, you have been logged out.",
+  loggedOut: "You have been logged out.",
   loggedInAt: "Logged in at:",
   submit: "Submit",
   closeButton: "X",

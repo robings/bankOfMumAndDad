@@ -11,9 +11,9 @@ import { APIBaseUrl } from "./apiSettings";
 const emptyAuthErrorCallback = async () => {
   Promise.resolve();
 };
-let authErrorCallback: () => Promise<void> = emptyAuthErrorCallback;
+let authErrorCallback: () => void = emptyAuthErrorCallback;
 
-const registerAuthErrorCallback = (callback: () => Promise<void>) => {
+const registerAuthErrorCallback = (callback: () => void) => {
   authErrorCallback = callback;
 };
 
