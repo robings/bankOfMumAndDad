@@ -233,7 +233,7 @@ tr:nth-child(even) {
   background-color: var(--table-accent-colour);
 }
 
-tr:hover {
+.hoverRow tr:hover {
   background-color: var(--table-hover-colour);
 }
 

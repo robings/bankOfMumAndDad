@@ -32,7 +32,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
       {loading && !error ? (
         <Loader />
       ) : (
-        <table>
+        <table className="hoverRow">
           <thead>
             <tr>
               <th>{appStrings.accounts.listTableHeaders.lastName}</th>
