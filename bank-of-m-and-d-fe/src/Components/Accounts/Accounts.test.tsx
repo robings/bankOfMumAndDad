@@ -197,8 +197,35 @@ describe("accounts page", () => {
 
     userEvent.click(deleteButton);
 
-    expect(deleteAccountMock).toHaveBeenCalledWith(
-      accountsResponse.data[1].id?.toString()
+    expect(deleteAccountMock).toHaveBeenCalledWith(accountsResponse.data[1].id);
+  });
+
+  test("calls getAllAccounts after loading", async () => {
+    const deleteAccountMock = apiAccounts.deleteAccount as jest.MockedFunction<
+      typeof apiAccounts.deleteAccount
+    >;
+    deleteAccountMock.mockResolvedValue();
+
+    const getAllAccountsMock =
+      apiAccounts.getAllAccounts as jest.MockedFunction<
+        typeof apiAccounts.getAllAccounts
+      >;
+    getAllAccountsMock.mockResolvedValue(accountsResponse);
+
+    render(
+      <MemoryRouter initialEntries={["/accounts"]}>
+        <AccountsPage />
+      </MemoryRouter>
     );
+
+    const rows = await screen.findAllByRole("row");
+    const buttonsCellRow2 = within(rows[2]).getAllByRole("cell")[3];
+    const deleteButton = within(buttonsCellRow2).getByRole("button", {
+      name: appStrings.accounts.listButtons.delete,
+    });
+
+    userEvent.click(deleteButton);
+
+    expect(getAllAccountsMock).toHaveBeenCalledTimes(2);
   });
 });

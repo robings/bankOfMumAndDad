@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav from "../Nav/Nav";
 import AccountsList from "./AccountsList";
@@ -23,6 +23,25 @@ function AccountsPage(): JSX.Element {
     setNewAccountModalVisibility(false);
   };
 
+  async function onDelete(id: number | null): Promise<void> {
+    if (id) {
+      await apiAccounts.deleteAccount(id);
+      await loadAccounts();
+    }
+  }
+
+  function onViewTransactions(id: number | null): void {
+    navigate(`/transactions/${id}`);
+  }
+
+  const loadAccounts = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    const response: IResponse<IAccount[]> = await apiAccounts.getAllAccounts();
+
+    setAccountsData(response.data);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     const redirectToLoginPage = () => {
       navigate("/");
@@ -41,21 +60,12 @@ function AccountsPage(): JSX.Element {
       redirectToLoginPage();
     }
 
-    async function loadAccounts(): Promise<void> {
-      setLoading(true);
-      const response: IResponse<IAccount[]> =
-        await apiAccounts.getAllAccounts();
-
-      setAccountsData(response.data);
-      setLoading(false);
-    }
-
     loadAccounts();
 
     return () => {
       apiAccounts.unregisterAuthErrorCallback();
     };
-  }, [navigate]);
+  }, [navigate, loadAccounts]);
 
   return (
     <div className="App">
@@ -69,6 +79,8 @@ function AccountsPage(): JSX.Element {
           accountsData={accountsData}
           accountsError={error}
           accountsLoading={loading}
+          onDelete={onDelete}
+          onViewTransactions={onViewTransactions}
         />
       </main>
       {newAccountModalVisibility && (

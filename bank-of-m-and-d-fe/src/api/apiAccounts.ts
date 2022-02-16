@@ -109,12 +109,12 @@ async function saveNewAccount(data: IAccountDto): Promise<void> {
   );
 }
 
-async function deleteAccount(id: string): Promise<void> {
+async function deleteAccount(id: number): Promise<void> {
   await toast.promise(
     async () => {
       const token = getToken();
 
-      const data: IIdOnlyRequest = { id };
+      const data: IIdOnlyRequest = { id: id.toString() };
 
       let response: Response;
 

@@ -166,11 +166,11 @@ describe("accounts api", () => {
 
       fetch.mockResponseOnce(JSON.stringify(responseData));
 
-      const id = "myId";
+      const id = 10003;
 
       await apiAccounts.deleteAccount(id);
 
-      const expectedBody = JSON.stringify({ id });
+      const expectedBody = JSON.stringify({ id: id.toString() });
 
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(fetch.mock.calls[0][0]).toBe(`${APIBaseUrl}/api/Account`);
@@ -185,7 +185,7 @@ describe("accounts api", () => {
     test("throws if API unavailable", async () => {
       fetch.mockReject(new Error("API not available."));
 
-      await expect(() => apiAccounts.deleteAccount("id")).rejects.toThrow(
+      await expect(() => apiAccounts.deleteAccount(10004)).rejects.toThrow(
         apiStrings.accounts.deleteError
       );
     });
@@ -196,7 +196,7 @@ describe("accounts api", () => {
       async (code) => {
         fetch.mockResponseOnce("Error", { status: code });
 
-        await expect(() => apiAccounts.deleteAccount("id")).rejects.toThrow(
+        await expect(() => apiAccounts.deleteAccount(10004)).rejects.toThrow(
           apiStrings.accounts.deleteAccountError
         );
       }
@@ -210,7 +210,7 @@ describe("accounts api", () => {
       fetch.mockResponseOnce("Error", { status: 401 });
 
       try {
-        await apiAccounts.deleteAccount("id");
+        await apiAccounts.deleteAccount(10004);
       } catch {}
 
       expect(callbackToRegister).toHaveBeenCalledTimes(1);
@@ -219,7 +219,7 @@ describe("accounts api", () => {
     test("throws if a response is received with a 500 status code", async () => {
       fetch.mockResponseOnce("Error", { status: 500 });
 
-      await expect(() => apiAccounts.deleteAccount("id")).rejects.toThrow(
+      await expect(() => apiAccounts.deleteAccount(10004)).rejects.toThrow(
         apiStrings.accounts.deleteError
       );
     });

@@ -1,8 +1,4 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
-import apiAccounts from "../../api/apiAccounts";
 import Loader from "../Loader/Loader";
 import appStrings from "../../constants/app.strings";
 
@@ -10,22 +6,18 @@ interface IAccountsListProps {
   accountsData: IAccount[];
   accountsError: boolean;
   accountsLoading: boolean;
+  onDelete: (id: number | null) => void;
+  onViewTransactions: (id: number | null) => void;
 }
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
-  const data: IAccount[] = props.accountsData;
-  const error: boolean = props.accountsError;
-  const loading: boolean = props.accountsLoading;
-  const navigate = useNavigate();
-
-  async function handleDelete(e: React.BaseSyntheticEvent): Promise<void> {
-    await apiAccounts.deleteAccount(e.currentTarget.dataset.id);
-  }
-
-  function handleViewTransactions(e: React.BaseSyntheticEvent): void {
-    let urlParam = e.currentTarget.dataset.id;
-    navigate(`/transactions/${urlParam}`);
-  }
+  const {
+    accountsData: data,
+    accountsError: error,
+    accountsLoading: loading,
+    onDelete,
+    onViewTransactions,
+  } = props;
 
   return (
     <>
@@ -60,15 +52,13 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                 <td>
                   <button
                     className="appButton thinnerButton"
-                    data-id={id}
-                    onClick={handleViewTransactions}
+                    onClick={() => onViewTransactions(id)}
                   >
                     {appStrings.accounts.listButtons.viewTransactions}
                   </button>
                   <button
                     className="appButton deleteButton thinnerButton"
-                    data-id={id}
-                    onClick={handleDelete}
+                    onClick={() => onDelete(id)}
                   >
                     {appStrings.accounts.listButtons.delete}
                   </button>
