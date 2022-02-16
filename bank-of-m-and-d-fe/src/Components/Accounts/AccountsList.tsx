@@ -1,12 +1,16 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import "./accountsList.css";
-import { IAccount } from "../../../Interfaces/Entities/IAccount";
-import apiAccounts from "../../../api/apiAccounts";
-import { IAccountsListProps } from "../../../Interfaces/Props/IAccountsListProps";
-import Loader from "../../Loader/Loader";
-import appStrings from "../../../constants/app.strings";
+import { IAccount } from "../../Interfaces/Entities/IAccount";
+import apiAccounts from "../../api/apiAccounts";
+import Loader from "../Loader/Loader";
+import appStrings from "../../constants/app.strings";
+
+interface IAccountsListProps {
+  accountsData: IAccount[];
+  accountsError: boolean;
+  accountsLoading: boolean;
+}
 
 function AccountsList(props: IAccountsListProps): JSX.Element {
   const data: IAccount[] = props.accountsData;

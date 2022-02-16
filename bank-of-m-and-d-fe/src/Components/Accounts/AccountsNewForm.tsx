@@ -1,13 +1,12 @@
 import React, { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./AccountsNewForm.css";
-import apiAccounts from "../../../api/apiAccounts";
+import apiAccounts from "../../api/apiAccounts";
 import {
   INewAccountFormInput,
   INewAccountFormProps,
-} from "../../../Interfaces/INewAccountForm";
-import appStrings from "../../../constants/app.strings";
+} from "../../Interfaces/INewAccountForm";
+import appStrings from "../../constants/app.strings";
 
 function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
   const [newAccountFormInput, setNewAccountFormInput] =

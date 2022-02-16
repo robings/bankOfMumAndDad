@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav from "../Nav/Nav";
-import AccountsList from "./AccountsList/AccountsList";
-import AccountsNav from "./AccountsNav/AccountsNav";
-import AccountsNewForm from "./AccountsNewForm/AccountsNewForm";
+import AccountsList from "./AccountsList";
+import AccountsNav from "./AccountsNav";
+import AccountsNewForm from "./AccountsNewForm";
 import "react-toastify/dist/ReactToastify.css";
 import { revokeToken, loggedIn } from "../../tokenHelper/tokenHelper";
 import apiAccounts from "../../api/apiAccounts";

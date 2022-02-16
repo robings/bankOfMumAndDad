@@ -1,4 +1,3 @@
-import "./transactions.css";
 import { ITransactionProps } from "../../Interfaces/Props/ITransactionsProps";
 import Loader from "../Loader/Loader";
 import appStrings from "../../constants/app.strings";
