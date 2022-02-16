@@ -228,4 +228,54 @@ describe("accounts page", () => {
 
     expect(getAllAccountsMock).toHaveBeenCalledTimes(2);
   });
+
+  test("opens new account form on clicking new account button", async () => {
+    renderAccountsPage();
+
+    userEvent.click(
+      await screen.findByRole("button", {
+        name: appStrings.accounts.navButtons.newAccount,
+      })
+    );
+
+    expect(
+      screen.getByRole("heading", { name: appStrings.accounts.newForm.title })
+    ).toBeInTheDocument();
+  });
+
+  describe("new account form", () => {
+    test("displays submit button, which is disabled", async () => {
+      renderAccountsPage();
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.accounts.navButtons.newAccount,
+        })
+      );
+
+      expect(
+        screen.getByRole("button", { name: appStrings.submit })
+      ).toBeDisabled();
+    });
+
+    test("displays expected form inputs", async () => {
+      renderAccountsPage();
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.accounts.navButtons.newAccount,
+        })
+      );
+
+      expect(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
+      ).toBeInTheDocument();
+    });
+  });
 });

@@ -58,10 +58,10 @@ h3 {
   min-width: 40px;
   padding: 0px 20px;
   outline: none;
+  cursor: pointer;
 }
 
 .appButton:hover {
-  cursor: pointer;
   background-color: var(--all-go-colour);
   color: var(--default-bg-colour);
 }
@@ -271,6 +271,7 @@ input, select {
   margin: 5px;
   padding: 5px 10px;
   border: 1px solid var(--border-colour);
+  border-radius: 4px;
 }
 
 input[type=text], input[type=password] {
@@ -278,7 +279,7 @@ input[type=text], input[type=password] {
   float: right;
 }
 
-input[type=submit] {
+input[type=submit], button[type=submit] {
   float: right;
 }
 
@@ -289,4 +290,16 @@ input[type=submit] {
 label {
   padding-top: 9px;
   float: left;
+}
+
+button[type=submit]:disabled {
+  border-color: var(--border-colour);
+  color: var(--border-colour);
+  cursor:default;
+  background-color: var(--default-bg-colour);
+}
+
+.error {
+  float: none;
+  color: var(--exclamation-colour);
 }

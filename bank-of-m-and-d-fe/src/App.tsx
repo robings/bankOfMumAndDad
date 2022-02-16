@@ -3,8 +3,8 @@ import AccountsPage from "./Components/Accounts/AccountsPage";
 import TransactionsPage from "./TransactionsPage";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "./Components/Header/Header";
 
 function App(): JSX.Element {

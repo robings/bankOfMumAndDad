@@ -1,59 +1,34 @@
-import React, { FormEvent, useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import apiAccounts from "../../api/apiAccounts";
-import {
-  INewAccountFormInput,
-  INewAccountFormProps,
-} from "../../Interfaces/INewAccountForm";
+import { INewAccountFormProps } from "../../Interfaces/INewAccountForm";
 import appStrings from "../../constants/app.strings";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as yup from "yup";
+
+const newAccountSchema = yup.object().shape({
+  firstName: yup.string().required("Please enter a first name."),
+  lastName: yup.string().required("Please enter a last name."),
+  openingBalance: yup.number(),
+});
 
 function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
-  const [newAccountFormInput, setNewAccountFormInput] =
-    useState<INewAccountFormInput>({
-      firstName: "",
-      lastName: "",
-      openingBalance: null,
-    });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value && e.currentTarget.className === "redBorder") {
-      e.currentTarget.style.borderColor = "#107C10";
-    } else if (e.currentTarget.className === "redBorder") {
-      e.currentTarget.style.borderColor = "#E81123";
-    }
-    setNewAccountFormInput({
-      ...newAccountFormInput,
-      [e.currentTarget.name]: e.currentTarget.value,
-    });
+  const initialValues = {
+    firstName: "",
+    lastName: "",
+    openingBalance: 0,
   };
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (
-      !newAccountFormInput.firstName ||
-      !newAccountFormInput.lastName ||
-      !newAccountFormInput.openingBalance
-    ) {
-      toast.error(appStrings.missingInfoError);
-    } else {
-      submitNewAccount(newAccountFormInput);
-    }
-  }
+  // async function submitNewAccount(newAccountFormInput: INewAccountFormInput) {
+  //   const data: any = {
+  //     firstName: newAccountFormInput.firstName,
+  //     lastName: newAccountFormInput.lastName,
+  //     openingBalance: newAccountFormInput.openingBalance,
+  //     currentBalance: newAccountFormInput.openingBalance,
+  //   };
 
-  async function submitNewAccount(newAccountFormInput: INewAccountFormInput) {
-    const data: any = {
-      firstName: newAccountFormInput.firstName,
-      lastName: newAccountFormInput.lastName,
-      openingBalance: newAccountFormInput.openingBalance,
-      currentBalance: newAccountFormInput.openingBalance,
-    };
-
-    try {
-      await apiAccounts.saveNewAccount(data);
-      props.closeModal();
-    } catch {}
-  }
+  //   try {
+  //     await apiAccounts.saveNewAccount(data);
+  //     props.closeModal();
+  //   } catch {}
+  // }
 
   return (
     <div className="overlay">
@@ -62,40 +37,59 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
           {appStrings.closeButton}
         </button>
         <h1>{appStrings.accounts.newForm.title}</h1>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>{appStrings.accounts.newForm.firstName}</label>
-            <input
-              className="redBorder"
-              type="text"
-              name="firstName"
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>{appStrings.accounts.newForm.lastName}</label>
-            <input
-              className="redBorder"
-              type="text"
-              name="lastName"
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>{appStrings.accounts.newForm.openingBalance}</label>
-            <input
-              className="redBorder"
-              type="number"
-              name="openingBalance"
-              onChange={handleInputChange}
-            />
-          </div>
-          <input
-            className="appButton"
-            type="submit"
-            value={appStrings.submit}
-          />
-        </form>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={newAccountSchema}
+          onSubmit={() => {}}
+        >
+          {({ isValid, dirty, touched }) => (
+            <Form>
+              <div>
+                <label htmlFor="firstName">
+                  {appStrings.accounts.newForm.firstName}
+                </label>
+                <Field type="text" name="firstName" id="firstName" />
+              </div>
+              {touched.firstName && (
+                <ErrorMessage
+                  name="firstName"
+                  component="div"
+                  className="error"
+                />
+              )}
+              <div>
+                <label htmlFor="lastName">
+                  {appStrings.accounts.newForm.lastName}
+                </label>
+                <Field type="text" name="lastName" id="lastName" />
+              </div>
+              {touched.lastName && (
+                <ErrorMessage
+                  name="lastName"
+                  component="div"
+                  className="error"
+                />
+              )}
+              <div>
+                <label htmlFor="openingBalance">
+                  {appStrings.accounts.newForm.openingBalance}
+                </label>
+                <Field
+                  type="number"
+                  name="openingBalance"
+                  id="openingBalance"
+                />
+              </div>
+              <button
+                className="appButton"
+                type="submit"
+                disabled={!dirty || !isValid}
+              >
+                {appStrings.submit}
+              </button>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import TransactionsNav from "./Components/TranactionsNav/TransactionsNav";
 import Transactions from "./Components/Transactions/Transactions";
 import TransactionsNewForm from "./Components/TransactionsNewForm/TransactionsNewForm";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "./tokenHelper/tokenHelper";
 import { IMessage, MessageStatus } from "./Interfaces/IMessage";

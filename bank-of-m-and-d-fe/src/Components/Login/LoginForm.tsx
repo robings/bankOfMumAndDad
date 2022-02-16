@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import apiUser from "../../api/apiUser";
 import appStrings from "../../constants/app.strings";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
