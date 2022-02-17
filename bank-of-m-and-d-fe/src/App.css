@@ -104,9 +104,9 @@ h1 {
 }
 
 .subNav {
+  width: 100%;
   padding: 10px;
   overflow: auto;
-  float: right;
 }
 
 .subNavButton {

@@ -90,6 +90,7 @@ function AccountsPage(): JSX.Element {
         openNewAccountModal={() => setNewAccountModalVisibility(true)}
       />
       <main>
+        <h2>{appStrings.accounts.title}</h2>
         <AccountsList
           accountsData={accountsData}
           accountsError={error}
