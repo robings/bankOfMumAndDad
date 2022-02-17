@@ -9,6 +9,8 @@ import apiAccounts from "../../api/apiAccounts";
 import { IResponse } from "../../Interfaces/Entities/IResponse";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
 import appStrings from "../../constants/app.strings";
+import { IAccountDto } from "../../Interfaces/Entities/IAccountDto";
+import { INewAccountFormInput } from "../../Interfaces/INewAccountForm";
 
 function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
@@ -31,6 +33,20 @@ function AccountsPage(): JSX.Element {
 
   function onViewTransactions(id: number | null): void {
     navigate(`/transactions/${id}`);
+  }
+
+  async function onSaveNew(data: INewAccountFormInput): Promise<void> {
+    const dataToSend: IAccountDto = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      openingBalance: data.openingBalance,
+      currentBalance: data.openingBalance,
+    };
+
+    try {
+      await apiAccounts.saveNewAccount(dataToSend);
+      handleCloseModal();
+    } catch {}
   }
 
   const loadAccounts = useCallback(async (): Promise<void> => {
@@ -83,7 +99,10 @@ function AccountsPage(): JSX.Element {
         />
       </main>
       {newAccountModalVisibility && (
-        <AccountsNewForm closeModal={() => handleCloseModal()} />
+        <AccountsNewForm
+          closeModal={() => handleCloseModal()}
+          onSave={onSaveNew}
+        />
       )}
     </div>
   );

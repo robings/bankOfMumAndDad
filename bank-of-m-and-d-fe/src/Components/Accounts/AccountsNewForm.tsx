@@ -1,46 +1,42 @@
-import { INewAccountFormProps } from "../../Interfaces/INewAccountForm";
 import appStrings from "../../constants/app.strings";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as yup from "yup";
+import { INewAccountFormInput } from "../../Interfaces/INewAccountForm";
 
 const newAccountSchema = yup.object().shape({
-  firstName: yup.string().required("Please enter a first name."),
-  lastName: yup.string().required("Please enter a last name."),
-  openingBalance: yup.number(),
+  firstName: yup.string().required(appStrings.accounts.newForm.firstNameError),
+  lastName: yup.string().required(appStrings.accounts.newForm.lastNameError),
+  openingBalance: yup
+    .number()
+    .typeError(appStrings.accounts.newForm.openingBalanceError)
+    .required(appStrings.accounts.newForm.openingBalanceError),
 });
 
-function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
-  const initialValues = {
+export interface NewAccountFormProps {
+  closeModal(): void;
+  onSave: (data: INewAccountFormInput) => void;
+}
+
+function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
+  const initialValues: INewAccountFormInput = {
     firstName: "",
     lastName: "",
-    openingBalance: 0,
+    openingBalance: "0",
   };
 
-  // async function submitNewAccount(newAccountFormInput: INewAccountFormInput) {
-  //   const data: any = {
-  //     firstName: newAccountFormInput.firstName,
-  //     lastName: newAccountFormInput.lastName,
-  //     openingBalance: newAccountFormInput.openingBalance,
-  //     currentBalance: newAccountFormInput.openingBalance,
-  //   };
-
-  //   try {
-  //     await apiAccounts.saveNewAccount(data);
-  //     props.closeModal();
-  //   } catch {}
-  // }
+  const { closeModal, onSave } = props;
 
   return (
     <div className="overlay">
       <div className="modal">
-        <button className="appButton closeButton" onClick={props.closeModal}>
+        <button className="appButton closeButton" onClick={closeModal}>
           {appStrings.closeButton}
         </button>
         <h1>{appStrings.accounts.newForm.title}</h1>
         <Formik
           initialValues={initialValues}
           validationSchema={newAccountSchema}
-          onSubmit={() => {}}
+          onSubmit={(values) => onSave(values)}
         >
           {({ isValid, dirty, touched }) => (
             <Form>
@@ -75,11 +71,20 @@ function AccountsNewForm(props: INewAccountFormProps): JSX.Element {
                   {appStrings.accounts.newForm.openingBalance}
                 </label>
                 <Field
-                  type="number"
+                  type="text"
                   name="openingBalance"
                   id="openingBalance"
+                  className="numberField"
                 />
               </div>
+              {touched.lastName && (
+                <ErrorMessage
+                  name="openingBalance"
+                  component="div"
+                  className="error"
+                />
+              )}
+
               <button
                 className="appButton"
                 type="submit"

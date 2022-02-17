@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import apiUser from "../../api/apiUser";
@@ -58,6 +58,9 @@ describe("login form", () => {
 
     userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
 
-    expect(loginMock).toHaveBeenCalledWith({ username, password });
+    // avoiding console warning due to Formik changes using waitFor
+    await waitFor(() => {
+      expect(loginMock).toHaveBeenCalledWith({ username, password });
+    });
   });
 });

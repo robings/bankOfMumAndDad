@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import appStrings from "../../constants/app.strings";
 import { IAccount } from "../../Interfaces/Entities/IAccount";
@@ -6,6 +6,7 @@ import { IResponse } from "../../Interfaces/Entities/IResponse";
 import AccountsPage from "./AccountsPage";
 import apiAccounts from "../../api/apiAccounts";
 import userEvent from "@testing-library/user-event";
+import { IAccountDto } from "../../Interfaces/Entities/IAccountDto";
 
 jest.mock("../../api/apiAccounts");
 
@@ -196,11 +197,14 @@ describe("accounts page", () => {
     });
 
     userEvent.click(deleteButton);
-
-    expect(deleteAccountMock).toHaveBeenCalledWith(accountsResponse.data[1].id);
+    await waitFor(() => {
+      expect(deleteAccountMock).toHaveBeenCalledWith(
+        accountsResponse.data[1].id
+      );
+    });
   });
 
-  test("calls getAllAccounts after loading", async () => {
+  test("calls getAllAccounts after deleting", async () => {
     const deleteAccountMock = apiAccounts.deleteAccount as jest.MockedFunction<
       typeof apiAccounts.deleteAccount
     >;
@@ -226,7 +230,9 @@ describe("accounts page", () => {
 
     userEvent.click(deleteButton);
 
-    expect(getAllAccountsMock).toHaveBeenCalledTimes(2);
+    await waitFor(() => {
+      expect(getAllAccountsMock).toHaveBeenCalledTimes(2);
+    });
   });
 
   test("opens new account form on clicking new account button", async () => {
@@ -244,7 +250,7 @@ describe("accounts page", () => {
   });
 
   describe("new account form", () => {
-    test("displays submit button, which is disabled", async () => {
+    const renderAccountsPageWithNewFormOpen = async () => {
       renderAccountsPage();
 
       userEvent.click(
@@ -252,6 +258,10 @@ describe("accounts page", () => {
           name: appStrings.accounts.navButtons.newAccount,
         })
       );
+    };
+
+    test("displays submit button, which is disabled", async () => {
+      await renderAccountsPageWithNewFormOpen();
 
       expect(
         screen.getByRole("button", { name: appStrings.submit })
@@ -259,13 +269,7 @@ describe("accounts page", () => {
     });
 
     test("displays expected form inputs", async () => {
-      renderAccountsPage();
-
-      userEvent.click(
-        await screen.findByRole("button", {
-          name: appStrings.accounts.navButtons.newAccount,
-        })
-      );
+      await renderAccountsPageWithNewFormOpen();
 
       expect(
         screen.getByLabelText(appStrings.accounts.newForm.firstName)
@@ -276,6 +280,181 @@ describe("accounts page", () => {
       expect(
         screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
       ).toBeInTheDocument();
+    });
+
+    test("displays error if no first name entered", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.click(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName)
+      );
+      // tab out of field to trigger error
+      userEvent.tab();
+
+      expect(
+        await screen.findByText(appStrings.accounts.newForm.firstNameError)
+      ).toBeInTheDocument();
+    });
+
+    test("displays error if no last name entered", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        "name"
+      );
+      // click in last name field
+      userEvent.click(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName)
+      );
+      // tab out of field to trigger error
+      userEvent.tab();
+
+      expect(
+        await screen.findByText(appStrings.accounts.newForm.lastNameError)
+      ).toBeInTheDocument();
+    });
+
+    test("displays error if there is no value for opening balance", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        "name"
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName),
+        "surname"
+      );
+      // clear balance field
+      userEvent.clear(
+        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
+      );
+      // tab out of field to trigger error
+      userEvent.tab();
+
+      expect(
+        await screen.findByText(appStrings.accounts.newForm.openingBalanceError)
+      ).toBeInTheDocument();
+    });
+
+    const dodgyNumbers = ["word", "3word", "word3", "w0rd"];
+    test.each(dodgyNumbers)(
+      "displays error if there value is not a number for opening balance: %p",
+      async (dodgyNumber) => {
+        await renderAccountsPageWithNewFormOpen();
+
+        userEvent.type(
+          screen.getByLabelText(appStrings.accounts.newForm.firstName),
+          "name"
+        );
+        userEvent.type(
+          screen.getByLabelText(appStrings.accounts.newForm.lastName),
+          "surname"
+        );
+
+        const openingBalanceField = screen.getByLabelText(
+          appStrings.accounts.newForm.openingBalance
+        );
+        // clear balance field
+        userEvent.clear(openingBalanceField);
+        // type in field
+        userEvent.type(openingBalanceField, dodgyNumber);
+
+        // tab out of field to trigger error
+        userEvent.tab();
+
+        expect(
+          await screen.findByText(
+            appStrings.accounts.newForm.openingBalanceError
+          )
+        ).toBeInTheDocument();
+      }
+    );
+
+    test("enables submit button with valid inputs", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        "person"
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName),
+        "name"
+      );
+
+      // await to avoid console warning due to Formik updates
+      expect(
+        await screen.findByRole("button", { name: appStrings.submit })
+      ).toBeEnabled();
+    });
+
+    test("closes when close button clicked", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.click(
+        screen.getByRole("button", { name: appStrings.closeButton })
+      );
+
+      expect(
+        screen.queryByRole("heading", {
+          name: appStrings.accounts.newForm.title,
+        })
+      ).not.toBeInTheDocument();
+    });
+
+    test("calls saveAccount api endpoint with expected data", async () => {
+      const saveNewAccountMock =
+        apiAccounts.saveNewAccount as jest.MockedFunction<
+          typeof apiAccounts.saveNewAccount
+        >;
+      saveNewAccountMock.mockResolvedValue();
+
+      await renderAccountsPageWithNewFormOpen();
+
+      const firstName = "Bob";
+      const lastName = "Dennis";
+      const openingBalance = "100";
+
+      const expectedData: IAccountDto = {
+        firstName,
+        lastName,
+        openingBalance,
+        currentBalance: openingBalance,
+      };
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        firstName
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName),
+        lastName
+      );
+
+      userEvent.clear(
+        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.openingBalance),
+        openingBalance
+      );
+
+      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+
+      // test needed this to be a wait for to work, and avoid console warnings
+      // due to Formik updates
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("heading", {
+            name: appStrings.accounts.newForm.title,
+          })
+        ).not.toBeInTheDocument();
+      });
+
+      expect(saveNewAccountMock).toHaveBeenCalledWith(expectedData);
     });
   });
 });

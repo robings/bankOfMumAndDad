@@ -283,6 +283,10 @@ input[type=submit], button[type=submit] {
   float: right;
 }
 
+input.numberField {
+  min-width: 225px;
+}
+
 .modal div:first-child {
   margin-top: 20px;
 }
