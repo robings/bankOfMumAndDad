@@ -104,9 +104,9 @@ h1 {
 }
 
 .subNav {
-  width: 100%;
   padding: 10px;
   overflow: auto;
+  float: right;
 }
 
 .subNavButton {
@@ -257,13 +257,13 @@ form {
 }
 
 form div {
-  padding: 5px;
+  padding: 5px 0;
   margin-bottom: 10px;
   overflow: auto;
 }
 
 input, select {
-  margin: 5px;
+  margin: 5px 0 5px 5px;
   padding: 5px 10px;
   border: 1px solid var(--border-colour);
   border-radius: 4px;
@@ -302,6 +302,17 @@ button[type=submit]:disabled {
 .error {
   float: none;
   color: var(--exclamation-colour);
+}
+
+.errorBox {
+  border: 1px solid var(--exclamation-colour);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.errorBox h4 {
+  margin: 0;
+  padding-top: 10px;
 }
 
 .errorBorder {

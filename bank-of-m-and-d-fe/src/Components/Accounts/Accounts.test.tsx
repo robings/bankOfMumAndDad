@@ -311,6 +311,20 @@ describe("accounts page", () => {
       expect(firstNameInput).toHaveClass(appliedClasses.errorBorder);
     });
 
+    test("displays error heading if there is an error", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.click(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName)
+      );
+      // tab out of field to trigger error
+      userEvent.tab();
+
+      expect(
+        await screen.findByRole("heading", { name: appStrings.errorBoxTitle })
+      ).toBeInTheDocument();
+    });
+
     test("displays error if no last name entered", async () => {
       await renderAccountsPageWithNewFormOpen();
 
@@ -333,7 +347,7 @@ describe("accounts page", () => {
       expect(lastNameInput).toHaveClass(appliedClasses.errorBorder);
     });
 
-    test("does not display error indicating border if another field is erroring, but focused filed is untouched", async () => {
+    test("does not display error indicating border if another field is erroring, but focused field is untouched", async () => {
       await renderAccountsPageWithNewFormOpen();
 
       // click in first name field
@@ -376,14 +390,16 @@ describe("accounts page", () => {
       userEvent.tab();
 
       expect(
-        await screen.findByText(appStrings.accounts.newForm.openingBalanceError)
+        await screen.findByText(
+          appStrings.accounts.newForm.openingBalanceRequired
+        )
       ).toBeInTheDocument();
       expect(openingBalanceInput).toHaveClass(appliedClasses.errorBorder);
     });
 
     const dodgyNumbers = ["word", "3word", "word3", "w0rd"];
     test.each(dodgyNumbers)(
-      "displays error if there value is not a number for opening balance: %p",
+      "displays error if value is not a number for opening balance: %p",
       async (dodgyNumber) => {
         await renderAccountsPageWithNewFormOpen();
 

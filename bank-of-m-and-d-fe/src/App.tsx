@@ -10,6 +10,7 @@ import Header from "./Components/Header/Header";
 function App(): JSX.Element {
   return (
     <>
+      <ToastContainer transition={Slide} />
       <Header />
       <Routes>
         <Route path="/" element={<LoginPage />} />
@@ -17,7 +18,6 @@ function App(): JSX.Element {
         <Route path="/transactions/:accountId" element={<TransactionsPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      <ToastContainer transition={Slide} />
     </>
   );
 }

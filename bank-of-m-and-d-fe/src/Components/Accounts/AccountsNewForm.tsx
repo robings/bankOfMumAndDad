@@ -10,7 +10,7 @@ const newAccountSchema = yup.object().shape({
   openingBalance: yup
     .number()
     .typeError(appStrings.accounts.newForm.openingBalanceError)
-    .required(appStrings.accounts.newForm.openingBalanceError),
+    .required(appStrings.accounts.newForm.openingBalanceRequired),
 });
 
 export interface NewAccountFormProps {
@@ -62,6 +62,16 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
         >
           {({ isValid, dirty, touched, errors }) => (
             <Form>
+              {!isValid && errors && (
+                <div className="errorBox">
+                  <h4>{appStrings.errorBoxTitle}</h4>
+                  <ul>
+                    <ErrorMessage name="firstName" component="li" />
+                    <ErrorMessage name="lastName" component="li" />
+                    <ErrorMessage name="openingBalance" component="li" />
+                  </ul>
+                </div>
+              )}
               <div>
                 <label htmlFor="firstName">
                   {appStrings.accounts.newForm.firstName}
@@ -78,11 +88,6 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   )}
                 />
               </div>
-              <ErrorMessage
-                name="firstName"
-                component="div"
-                className="error"
-              />
               <div>
                 <label htmlFor="lastName">
                   {appStrings.accounts.newForm.lastName}
@@ -99,7 +104,6 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   )}
                 />
               </div>
-              <ErrorMessage name="lastName" component="div" className="error" />
               <div>
                 <label htmlFor="openingBalance">
                   {appStrings.accounts.newForm.openingBalance}
@@ -116,11 +120,6 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   )}`}
                 />
               </div>
-              <ErrorMessage
-                name="openingBalance"
-                component="div"
-                className="error"
-              />
               <button
                 className="appButton"
                 type="submit"

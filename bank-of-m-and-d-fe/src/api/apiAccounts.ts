@@ -61,6 +61,7 @@ async function getAllAccounts(): Promise<IResponse<IAccount[]>> {
         render({ data }: any) {
           return `${data.message}`;
         },
+        autoClose: false,
       },
     }
   );
