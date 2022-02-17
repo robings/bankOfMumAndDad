@@ -2,6 +2,7 @@ import appStrings from "../../constants/app.strings";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as yup from "yup";
 import { INewAccountFormInput } from "../../Interfaces/INewAccountForm";
+import appliedClasses from "../../constants/appliedClasses";
 
 const newAccountSchema = yup.object().shape({
   firstName: yup.string().required(appStrings.accounts.newForm.firstNameError),
@@ -16,6 +17,27 @@ export interface NewAccountFormProps {
   closeModal(): void;
   onSave: (data: INewAccountFormInput) => void;
 }
+
+const determineInputBorderClass = (
+  error: boolean,
+  touched: boolean,
+  dirty: boolean,
+  isValid: boolean
+) => {
+  if (touched && error) {
+    return appliedClasses.errorBorder;
+  }
+
+  if (touched && !error) {
+    return appliedClasses.validBorder;
+  }
+
+  if (dirty && isValid) {
+    return appliedClasses.validBorder;
+  }
+
+  return "";
+};
 
 function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
   const initialValues: INewAccountFormInput = {
@@ -38,34 +60,46 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
           validationSchema={newAccountSchema}
           onSubmit={(values) => onSave(values)}
         >
-          {({ isValid, dirty, touched }) => (
+          {({ isValid, dirty, touched, errors }) => (
             <Form>
               <div>
                 <label htmlFor="firstName">
                   {appStrings.accounts.newForm.firstName}
                 </label>
-                <Field type="text" name="firstName" id="firstName" />
-              </div>
-              {touched.firstName && (
-                <ErrorMessage
+                <Field
+                  type="text"
                   name="firstName"
-                  component="div"
-                  className="error"
+                  id="firstName"
+                  className={determineInputBorderClass(
+                    errors.firstName ? true : false,
+                    touched.firstName || false,
+                    dirty,
+                    isValid
+                  )}
                 />
-              )}
+              </div>
+              <ErrorMessage
+                name="firstName"
+                component="div"
+                className="error"
+              />
               <div>
                 <label htmlFor="lastName">
                   {appStrings.accounts.newForm.lastName}
                 </label>
-                <Field type="text" name="lastName" id="lastName" />
-              </div>
-              {touched.lastName && (
-                <ErrorMessage
+                <Field
+                  type="text"
                   name="lastName"
-                  component="div"
-                  className="error"
+                  id="lastName"
+                  className={determineInputBorderClass(
+                    errors.lastName ? true : false,
+                    touched.lastName || false,
+                    dirty,
+                    isValid
+                  )}
                 />
-              )}
+              </div>
+              <ErrorMessage name="lastName" component="div" className="error" />
               <div>
                 <label htmlFor="openingBalance">
                   {appStrings.accounts.newForm.openingBalance}
@@ -74,17 +108,19 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   type="text"
                   name="openingBalance"
                   id="openingBalance"
-                  className="numberField"
+                  className={`numberField ${determineInputBorderClass(
+                    errors.openingBalance ? true : false,
+                    touched.openingBalance || false,
+                    dirty,
+                    isValid
+                  )}`}
                 />
               </div>
-              {touched.lastName && (
-                <ErrorMessage
-                  name="openingBalance"
-                  component="div"
-                  className="error"
-                />
-              )}
-
+              <ErrorMessage
+                name="openingBalance"
+                component="div"
+                className="error"
+              />
               <button
                 className="appButton"
                 type="submit"

@@ -198,13 +198,8 @@ h1 {
   display: block;
 }
 
-.redBorder {
+.errorBorder {
   border-color: var(--exclamation-colour);
-}
-
-.error {
-  color: var(--exclamation-colour);
-  font-weight: 700;
 }
 
 main {
@@ -272,6 +267,7 @@ input, select {
   padding: 5px 10px;
   border: 1px solid var(--border-colour);
   border-radius: 4px;
+  outline: none;
 }
 
 input[type=text], input[type=password] {
@@ -306,4 +302,12 @@ button[type=submit]:disabled {
 .error {
   float: none;
   color: var(--exclamation-colour);
+}
+
+.errorBorder {
+  border-color: var(--exclamation-colour);
+}
+
+.validBorder {
+  border-color: var(--all-go-colour);
 }

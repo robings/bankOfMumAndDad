@@ -7,6 +7,7 @@ import AccountsPage from "./AccountsPage";
 import apiAccounts from "../../api/apiAccounts";
 import userEvent from "@testing-library/user-event";
 import { IAccountDto } from "../../Interfaces/Entities/IAccountDto";
+import appliedClasses from "../../constants/appliedClasses";
 
 jest.mock("../../api/apiAccounts");
 
@@ -271,29 +272,43 @@ describe("accounts page", () => {
     test("displays expected form inputs", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      expect(
-        screen.getByLabelText(appStrings.accounts.newForm.firstName)
-      ).toBeInTheDocument();
-      expect(
-        screen.getByLabelText(appStrings.accounts.newForm.lastName)
-      ).toBeInTheDocument();
-      expect(
-        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
-      ).toBeInTheDocument();
+      const firstNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.firstName
+      );
+      expect(firstNameInput).toBeInTheDocument();
+      expect(firstNameInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(firstNameInput).not.toHaveClass(appliedClasses.validBorder);
+
+      const lastNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.lastName
+      );
+      expect(lastNameInput).toBeInTheDocument();
+      expect(lastNameInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(lastNameInput).not.toHaveClass(appliedClasses.validBorder);
+
+      const openingBalanceInput = screen.getByLabelText(
+        appStrings.accounts.newForm.openingBalance
+      );
+      expect(openingBalanceInput).toBeInTheDocument();
+      expect(openingBalanceInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(lastNameInput).not.toHaveClass(appliedClasses.validBorder);
     });
 
     test("displays error if no first name entered", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.click(
-        screen.getByLabelText(appStrings.accounts.newForm.firstName)
+      const firstNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.firstName
       );
+
+      userEvent.click(firstNameInput);
       // tab out of field to trigger error
       userEvent.tab();
 
       expect(
         await screen.findByText(appStrings.accounts.newForm.firstNameError)
       ).toBeInTheDocument();
+      expect(firstNameInput).toHaveClass(appliedClasses.errorBorder);
     });
 
     test("displays error if no last name entered", async () => {
@@ -303,16 +318,41 @@ describe("accounts page", () => {
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "name"
       );
-      // click in last name field
-      userEvent.click(
-        screen.getByLabelText(appStrings.accounts.newForm.lastName)
+
+      const lastNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.lastName
       );
+      // click in last name field
+      userEvent.click(lastNameInput);
       // tab out of field to trigger error
       userEvent.tab();
 
       expect(
         await screen.findByText(appStrings.accounts.newForm.lastNameError)
       ).toBeInTheDocument();
+      expect(lastNameInput).toHaveClass(appliedClasses.errorBorder);
+    });
+
+    test("does not display error indicating border if another field is erroring, but focused filed is untouched", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      // click in first name field
+      userEvent.click(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName)
+      );
+
+      const lastNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.lastName
+      );
+      // click in last name field so there is an error in the first name field
+      userEvent.click(lastNameInput);
+
+      // wait for the error text to appear
+      expect(
+        await screen.findByText(appStrings.accounts.newForm.firstNameError)
+      ).toBeInTheDocument();
+
+      expect(lastNameInput).not.toHaveClass(appliedClasses.errorBorder);
     });
 
     test("displays error if there is no value for opening balance", async () => {
@@ -326,16 +366,19 @@ describe("accounts page", () => {
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         "surname"
       );
-      // clear balance field
-      userEvent.clear(
-        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
+
+      const openingBalanceInput = screen.getByLabelText(
+        appStrings.accounts.newForm.openingBalance
       );
+      // clear balance field
+      userEvent.clear(openingBalanceInput);
       // tab out of field to trigger error
       userEvent.tab();
 
       expect(
         await screen.findByText(appStrings.accounts.newForm.openingBalanceError)
       ).toBeInTheDocument();
+      expect(openingBalanceInput).toHaveClass(appliedClasses.errorBorder);
     });
 
     const dodgyNumbers = ["word", "3word", "word3", "w0rd"];
@@ -371,6 +414,32 @@ describe("accounts page", () => {
         ).toBeInTheDocument();
       }
     );
+
+    test("displays borders indicating valid inputs with valid inputs", async () => {
+      await renderAccountsPageWithNewFormOpen();
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        "person"
+      );
+
+      const lastNameInput = screen.getByLabelText(
+        appStrings.accounts.newForm.lastName
+      );
+
+      userEvent.type(lastNameInput, "name");
+      // trigger validation
+      userEvent.tab();
+
+      // await to avoid console warning due to Formik updates
+      expect(
+        await screen.findByLabelText(appStrings.accounts.newForm.firstName)
+      ).toHaveClass(appliedClasses.validBorder);
+      expect(lastNameInput).toHaveClass(appliedClasses.validBorder);
+      expect(
+        screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
+      ).toHaveClass(appliedClasses.validBorder);
+    });
 
     test("enables submit button with valid inputs", async () => {
       await renderAccountsPageWithNewFormOpen();
