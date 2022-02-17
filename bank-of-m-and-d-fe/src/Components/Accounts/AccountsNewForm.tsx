@@ -1,5 +1,12 @@
 import appStrings from "../../constants/app.strings";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FormikErrors,
+  FormikTouched,
+} from "formik";
 import * as yup from "yup";
 import { INewAccountFormInput } from "../../Interfaces/INewAccountForm";
 import appliedClasses from "../../constants/appliedClasses";
@@ -39,6 +46,21 @@ const determineInputBorderClass = (
   return "";
 };
 
+const showErrorBox = (
+  errors: FormikErrors<INewAccountFormInput>,
+  touched: FormikTouched<INewAccountFormInput>
+): boolean => {
+  if (
+    (errors.firstName && touched.firstName) ||
+    (errors.lastName && touched.lastName) ||
+    (errors.openingBalance && touched.openingBalance)
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
   const initialValues: INewAccountFormInput = {
     firstName: "",
@@ -62,7 +84,7 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
         >
           {({ isValid, dirty, touched, errors }) => (
             <Form>
-              {!isValid && errors && (
+              {showErrorBox(errors, touched) && (
                 <div className="errorBox">
                   <h4>{appStrings.errorBoxTitle}</h4>
                   <ul>
