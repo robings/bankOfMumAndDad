@@ -46,6 +46,7 @@ function AccountsPage(): JSX.Element {
     try {
       await apiAccounts.saveNewAccount(dataToSend);
       handleCloseModal();
+      await loadAccounts();
     } catch {}
   }
 

@@ -525,5 +525,67 @@ describe("accounts page", () => {
 
       expect(saveNewAccountMock).toHaveBeenCalledWith(expectedData);
     });
+
+    test("calls getAllAccounts api endpoint after saving", async () => {
+      const saveNewAccountMock =
+        apiAccounts.saveNewAccount as jest.MockedFunction<
+          typeof apiAccounts.saveNewAccount
+        >;
+      saveNewAccountMock.mockResolvedValue();
+
+      localStorage.setItem(appStrings.localStorageKeys.bearerToken, "myToken");
+
+      const getAllAccountsMock =
+        apiAccounts.getAllAccounts as jest.MockedFunction<
+          typeof apiAccounts.getAllAccounts
+        >;
+      getAllAccountsMock.mockResolvedValue(accountsResponse);
+
+      render(
+        <MemoryRouter initialEntries={["/accounts"]}>
+          <AccountsPage />
+        </MemoryRouter>
+      );
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.accounts.navButtons.newAccount,
+        })
+      );
+
+      const firstName = "Bob";
+      const lastName = "Dennis";
+      const openingBalance = "100";
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        firstName
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName),
+        lastName
+      );
+
+      const openingBalanceInput = screen.getByLabelText(
+        appStrings.accounts.newForm.openingBalance
+      );
+      userEvent.clear(openingBalanceInput);
+      userEvent.type(openingBalanceInput, openingBalance);
+
+      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+
+      // test needed this to be a wait for to work, and avoid console warnings
+      // due to Formik updates
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("heading", {
+            name: appStrings.accounts.newForm.title,
+          })
+        ).not.toBeInTheDocument();
+      });
+
+      expect(getAllAccountsMock).toHaveBeenCalledTimes(2);
+    });
   });
 });

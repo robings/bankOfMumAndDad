@@ -72,7 +72,7 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   id="firstName"
                   className={determineInputBorderClass(
                     errors.firstName ? true : false,
-                    touched.firstName || false,
+                    touched.firstName ?? false,
                     dirty,
                     isValid
                   )}
@@ -93,7 +93,7 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   id="lastName"
                   className={determineInputBorderClass(
                     errors.lastName ? true : false,
-                    touched.lastName || false,
+                    touched.lastName ?? false,
                     dirty,
                     isValid
                   )}
@@ -110,7 +110,7 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   id="openingBalance"
                   className={`numberField ${determineInputBorderClass(
                     errors.openingBalance ? true : false,
-                    touched.openingBalance || false,
+                    touched.openingBalance ?? false,
                     dirty,
                     isValid
                   )}`}
