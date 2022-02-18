@@ -7,6 +7,7 @@ import {
 } from "../../Interfaces/Entities/ITransaction";
 import TransactionsPage from "./TransactionsPage";
 import apiTransactions from "../../api/apiTransactions";
+import appliedClasses from "../../constants/appliedClasses";
 
 jest.mock("../../api/apiTransactions");
 
@@ -56,14 +57,16 @@ describe("transactions page", () => {
     ],
   };
 
-  const renderTransactionsPage = () => {
+  const renderTransactionsPage = (
+    transactionsResponse: IListOfTransactionsForAccount = testTransactionsResponse
+  ) => {
     localStorage.setItem(appStrings.localStorageKeys.bearerToken, "myToken");
 
     const mockGetTransactionsByAccountId =
       apiTransactions.getTransactionsByAccountId as jest.MockedFunction<
         typeof apiTransactions.getTransactionsByAccountId
       >;
-    mockGetTransactionsByAccountId.mockResolvedValue(testTransactionsResponse);
+    mockGetTransactionsByAccountId.mockResolvedValue(transactionsResponse);
 
     render(
       <MemoryRouter initialEntries={[`/transactions/${id}`]}>
@@ -110,16 +113,129 @@ describe("transactions page", () => {
   test("displays table headings", async () => {
     renderTransactionsPage();
 
-    const tableHeaders = await screen.findAllByRole("row");
+    const rows = await screen.findAllByRole("row");
 
     Object.keys(appStrings.transactions.listTableHeaders).forEach((key) => {
       expect(
-        within(tableHeaders[0]).getByRole("columnheader", {
+        within(rows[0]).getByRole("columnheader", {
           name: appStrings.transactions.listTableHeaders[
             key as keyof typeof appStrings.transactions.listTableHeaders
           ],
         })
       ).toBeInTheDocument();
     });
+  });
+
+  test("displays transactions data received", async () => {
+    renderTransactionsPage();
+
+    const testTransactions = testTransactionsResponse.transactions;
+
+    const rows = await screen.findAllByRole("row");
+
+    const cellsInStartBalanceRow = within(rows[1]).getAllByRole("cell");
+    expect(cellsInStartBalanceRow[0]).toHaveTextContent(
+      appStrings.transactions.startBalance
+    );
+    expect(cellsInStartBalanceRow[3]).toHaveTextContent(
+      `${appStrings.currencySymbol}${testTransactionsResponse.openingBalance}`
+    );
+    expect(cellsInStartBalanceRow[3]).toHaveClass(
+      appliedClasses.positiveAmount
+    );
+
+    for (let i = 2; i < rows.length - 1; i += 1) {
+      const cellsInRow = within(rows[i]).getAllByRole("cell");
+      expect(cellsInRow[0]).toHaveTextContent(testTransactions[i - 2].date);
+      if (testTransactions[i - 2].type === TransactionType.deposit) {
+        expect(cellsInRow[1]).toHaveTextContent(
+          `${appStrings.currencySymbol}${testTransactions[i - 2].amount}`
+        );
+      } else {
+        expect(cellsInRow[1]).toBeEmptyDOMElement();
+      }
+      if (testTransactions[i - 2].type === TransactionType.withdrawal) {
+        expect(cellsInRow[2]).toHaveTextContent(
+          `${appStrings.currencySymbol}${testTransactions[i - 2].amount}`
+        );
+      } else {
+        expect(cellsInRow[2]).toBeEmptyDOMElement();
+      }
+      expect(cellsInRow[3]).toHaveTextContent(
+        `${appStrings.currencySymbol}${testTransactions[i - 2].balance}`
+      );
+      expect(cellsInRow[3]).toHaveClass(appliedClasses.positiveAmount);
+      expect(cellsInRow[4]).toHaveTextContent(testTransactions[i - 2].comments);
+    }
+
+    const cellsInEndBalanceRow = within(rows[5]).getAllByRole("cell");
+    expect(cellsInEndBalanceRow[0]).toHaveTextContent(
+      appStrings.transactions.endBalance
+    );
+    expect(cellsInEndBalanceRow[3]).toHaveTextContent(
+      `${appStrings.currencySymbol}${testTransactionsResponse.currentBalance}`
+    );
+    expect(cellsInEndBalanceRow[3]).toHaveClass(appliedClasses.positiveAmount);
+  });
+
+  test("handles negative amounts", async () => {
+    const transactionsResponseWithNegatives: IListOfTransactionsForAccount = {
+      accountId: 10023,
+      firstName,
+      lastName,
+      openingBalance: -100,
+      currentBalance: -200,
+      transactions: [
+        {
+          amount: 25,
+          balance: -75,
+          date: "2022-02-16",
+          type: TransactionType.deposit,
+          comments: "Deposit 1",
+        },
+        {
+          amount: 125,
+          balance: -200,
+          date: "2022-02-18",
+          type: TransactionType.withdrawal,
+          comments: "Withdrawal",
+        },
+      ],
+    };
+
+    renderTransactionsPage(transactionsResponseWithNegatives);
+    const testTransactions = transactionsResponseWithNegatives.transactions;
+
+    const rows = await screen.findAllByRole("row");
+
+    const cellsInStartBalanceRow = within(rows[1]).getAllByRole("cell");
+    expect(cellsInStartBalanceRow[3]).toHaveTextContent(
+      `-${appStrings.currencySymbol}${
+        transactionsResponseWithNegatives.openingBalance * -1
+      }`
+    );
+    expect(cellsInStartBalanceRow[3]).toHaveClass(
+      appliedClasses.negativeAmount
+    );
+
+    const cellsInDepositRow = within(rows[2]).getAllByRole("cell");
+    expect(cellsInDepositRow[3]).toHaveTextContent(
+      `-${appStrings.currencySymbol}${testTransactions[0].balance * -1}`
+    );
+    expect(cellsInDepositRow[3]).toHaveClass(appliedClasses.negativeAmount);
+
+    const cellsInWithdrawalRow = within(rows[3]).getAllByRole("cell");
+    expect(cellsInWithdrawalRow[3]).toHaveTextContent(
+      `-${appStrings.currencySymbol}${testTransactions[1].balance * -1}`
+    );
+    expect(cellsInWithdrawalRow[3]).toHaveClass(appliedClasses.negativeAmount);
+
+    const cellsInEndBalanceRow = within(rows[4]).getAllByRole("cell");
+    expect(cellsInEndBalanceRow[3]).toHaveTextContent(
+      `-${appStrings.currencySymbol}${
+        transactionsResponseWithNegatives.currentBalance * -1
+      }`
+    );
+    expect(cellsInEndBalanceRow[3]).toHaveClass(appliedClasses.negativeAmount);
   });
 });

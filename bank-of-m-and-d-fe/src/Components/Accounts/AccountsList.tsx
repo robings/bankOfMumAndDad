@@ -1,6 +1,7 @@
 import { IAccount } from "../../Interfaces/Entities/IAccount";
 import Loader from "../Loader/Loader";
 import appStrings from "../../constants/app.strings";
+import appliedClasses from "../../constants/appliedClasses";
 
 interface IAccountsListProps {
   accountsData: IAccount[];
@@ -29,7 +30,7 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
             <tr>
               <th>{appStrings.accounts.listTableHeaders.lastName}</th>
               <th>{appStrings.accounts.listTableHeaders.firstName}</th>
-              <th style={{ width: "150px", textAlign: "center" }}>
+              <th className="currencyHeader">
                 {appStrings.accounts.listTableHeaders.currentBalance}
               </th>
               <th></th>
@@ -41,11 +42,11 @@ function AccountsList(props: IAccountsListProps): JSX.Element {
                 <td>{lastName}</td>
                 <td>{firstName}</td>
                 {currentBalance < 0 ? (
-                  <td style={{ textAlign: "right", color: "#FF0000" }}>
+                  <td className={appliedClasses.negativeAmount}>
                     -£{(currentBalance * -1).toFixed(2)}
                   </td>
                 ) : (
-                  <td style={{ textAlign: "right", color: "#009900" }}>
+                  <td className={appliedClasses.positiveAmount}>
                     £{currentBalance.toFixed(2)}
                   </td>
                 )}

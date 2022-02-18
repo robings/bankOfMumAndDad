@@ -8,6 +8,7 @@ const appStrings = {
   loggedInAt: "Logged in at:",
   submit: "Submit",
   closeButton: "X",
+  currencySymbol: "£",
   localStorageKeys: {
     bearerToken: "bearerToken",
     loginTime: "loginTime",

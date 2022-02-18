@@ -19,6 +19,8 @@
   --table-accent-colour: #F2F2F2;
   --table-hover-colour: #BDC3C7;
   --dark-header-colour: #4C4A48;
+  --positive-amount-colour: #009900;
+  --negative-amount-colour: #FF0000;
 }
 
 * {
@@ -243,12 +245,27 @@ th {
   text-align: left;
 }
 
+th.currencyHeader {
+  width: 150px;
+  text-align: center;
+}
+
 td {
   color: var(--default-dark-colour);
 }
 
 td:last-child {
   text-align: right;
+}
+
+td.positiveAmount {
+  text-align: right;
+  color: var(--positive-amount-colour);
+}
+
+td.negativeAmount {
+  text-align: right;
+  color: var(--negative-amount-colour);
 }
 
 /* form */

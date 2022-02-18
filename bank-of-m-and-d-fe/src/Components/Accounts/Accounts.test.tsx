@@ -84,23 +84,17 @@ describe("accounts page", () => {
   test("displays table headings", async () => {
     renderAccountsPage();
 
-    const tableHeaders = await screen.findAllByRole("row");
+    const rows = await screen.findAllByRole("row");
 
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.currentBalance,
-      })
-    ).toBeInTheDocument();
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.firstName,
-      })
-    ).toBeInTheDocument();
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.lastName,
-      })
-    ).toBeInTheDocument();
+    Object.keys(appStrings.accounts.listTableHeaders).forEach((key) => {
+      expect(
+        within(rows[0]).getByRole("columnheader", {
+          name: appStrings.accounts.listTableHeaders[
+            key as keyof typeof appStrings.accounts.listTableHeaders
+          ],
+        })
+      ).toBeInTheDocument();
+    });
   });
 
   test("displays accounts data retrieved", async () => {
