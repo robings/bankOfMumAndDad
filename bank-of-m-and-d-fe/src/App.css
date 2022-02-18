@@ -254,12 +254,23 @@ td:last-child {
 /* form */
 form {
   margin: 0 auto;
+  overflow: auto;
 }
 
 form div {
   padding: 5px 0;
   margin-bottom: 10px;
   overflow: auto;
+}
+
+form div:last-child {
+  margin-bottom: 0;
+}
+
+.checkboxGroup {
+  float: right;
+  margin: 0;
+  padding-top: 0;
 }
 
 input, select {
@@ -279,6 +290,11 @@ input[type=submit], button[type=submit] {
   float: right;
 }
 
+input[type=checkbox] {
+  width: 20px;
+  height: 20px;
+}
+
 input.numberField {
   min-width: 225px;
 }
@@ -290,6 +306,15 @@ input.numberField {
 label {
   padding-top: 9px;
   float: left;
+}
+
+input[type=checkbox] ~ label {
+  padding-top: 5px;
+}
+
+.buttonContainer {
+  width: 100%;
+  padding: 15px 0 0 0;
 }
 
 button[type=submit]:disabled {
