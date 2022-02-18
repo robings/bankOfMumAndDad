@@ -291,7 +291,7 @@ describe("accounts page", () => {
       );
       expect(openingBalanceInput).toBeInTheDocument();
       expect(openingBalanceInput).not.toHaveClass(appliedClasses.errorBorder);
-      expect(lastNameInput).not.toHaveClass(appliedClasses.validBorder);
+      expect(openingBalanceInput).not.toHaveClass(appliedClasses.validBorder);
     });
 
     test("displays error if no first name entered", async () => {
@@ -305,9 +305,10 @@ describe("accounts page", () => {
       // tab out of field to trigger error
       userEvent.tab();
 
-      expect(
-        await screen.findByText(appStrings.accounts.newForm.firstNameError)
-      ).toBeInTheDocument();
+      expect(await screen.findByRole("listitem")).toHaveTextContent(
+        appStrings.accounts.newForm.firstNameError
+      );
+
       expect(firstNameInput).toHaveClass(appliedClasses.errorBorder);
     });
 
@@ -341,9 +342,9 @@ describe("accounts page", () => {
       // tab out of field to trigger error
       userEvent.tab();
 
-      expect(
-        await screen.findByText(appStrings.accounts.newForm.lastNameError)
-      ).toBeInTheDocument();
+      expect(await screen.findByRole("listitem")).toHaveTextContent(
+        appStrings.accounts.newForm.lastNameError
+      );
       expect(lastNameInput).toHaveClass(appliedClasses.errorBorder);
     });
 
@@ -389,11 +390,9 @@ describe("accounts page", () => {
       // tab out of field to trigger error
       userEvent.tab();
 
-      expect(
-        await screen.findByText(
-          appStrings.accounts.newForm.openingBalanceRequired
-        )
-      ).toBeInTheDocument();
+      expect(await screen.findByRole("listitem")).toHaveTextContent(
+        appStrings.accounts.newForm.openingBalanceRequired
+      );
       expect(openingBalanceInput).toHaveClass(appliedClasses.errorBorder);
     });
 
@@ -423,11 +422,9 @@ describe("accounts page", () => {
         // tab out of field to trigger error
         userEvent.tab();
 
-        expect(
-          await screen.findByText(
-            appStrings.accounts.newForm.openingBalanceError
-          )
-        ).toBeInTheDocument();
+        expect(await screen.findByRole("listitem")).toHaveTextContent(
+          appStrings.accounts.newForm.openingBalanceError
+        );
       }
     );
 
