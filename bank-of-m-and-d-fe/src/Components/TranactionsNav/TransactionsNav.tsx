@@ -1,5 +1,4 @@
 import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
-import "./transactionsNav.css";
 import { loggedIn } from "../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
 import appStrings from "../../constants/app.strings";

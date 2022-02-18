@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 import apiUser from "../../api/apiUser";
 import appStrings from "../../constants/app.strings";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
 import { MessageStatus } from "../../Interfaces/IMessage";
 import { ILoginProps } from "../../Interfaces/Props/ILoginProps";
-import { revokeToken, setToken } from "../../tokenHelper/tokenHelper";
+import { revokeToken } from "../../tokenHelper/tokenHelper";
 
 function LoginForm(props: ILoginProps): JSX.Element {
   const [loginFormInput, setLoginFormInput] = useState<ILoginDto>({
@@ -36,15 +35,12 @@ function LoginForm(props: ILoginProps): JSX.Element {
   }
 
   async function submitLogin(loginFormInput: ILoginDto) {
-    await apiUser
-      .login(loginFormInput)
-      .then((response) => {
-        setToken(response.token);
-        props.setLoginMessage({ status: MessageStatus.success, message: "" });
-      })
-      .catch(() => {
-        revokeToken();
-      });
+    try {
+      await apiUser.login(loginFormInput);
+      props.setLoginMessage({ status: MessageStatus.success, message: "" });
+    } catch {
+      revokeToken();
+    }
   }
 
   return (

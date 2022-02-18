@@ -2,8 +2,9 @@ const appStrings = {
   title: "Bank of Mum and Dad",
   logoAltText: "Fraught Mum and Dad",
   missingInfoError: "Please fill in missing data.",
+  errorBoxTitle: "Correct the following:",
   notLoggedIn: "You are not logged in.",
-  loggedOut: "For your security, you have been logged out.",
+  loggedOut: "You have been logged out.",
   loggedInAt: "Logged in at:",
   submit: "Submit",
   closeButton: "X",
@@ -22,6 +23,7 @@ const appStrings = {
     accounts: "Accounts",
   },
   accounts: {
+    title: "Accounts",
     accountDeleted: "Account deleted.",
     listTableHeaders: {
       firstName: "First Name",
@@ -40,8 +42,12 @@ const appStrings = {
       title: "New Account",
       success: "Account Created",
       firstName: "First Name",
+      firstNameError: "Please enter a first name",
       lastName: "Last Name",
+      lastNameError: "Please enter a last name",
       openingBalance: "Opening Balance",
+      openingBalanceError: "Opening balance must be a number",
+      openingBalanceRequired: "Please enter an opening balance",
     },
   },
   transactions: {
