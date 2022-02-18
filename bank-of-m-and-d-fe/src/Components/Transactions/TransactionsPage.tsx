@@ -14,8 +14,7 @@ function TransactionsPage(): JSX.Element {
   const [newTransactionModalVisiblity, setNewTransactionModalVisiblity] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errors, setErrors] = useState<boolean>(false);
-  const [noTransactions, setNoTransactions] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
   const [transactionsData, setTransactionsData] =
     useState<IListOfTransactionsForAccount>({
       accountId: null,
@@ -35,7 +34,6 @@ function TransactionsPage(): JSX.Element {
         response = await apiTransactions.getTransactionsByAccountId(accountId);
 
         setTransactionsData(response);
-        setNoTransactions(false);
       } catch {
       } finally {
         setLoading(false);
@@ -59,7 +57,7 @@ function TransactionsPage(): JSX.Element {
 
     const authErrorCallback = () => {
       revokeToken();
-      setErrors(true);
+      setError(true);
       setLoading(false);
       redirectToLoginPage();
     };
@@ -81,13 +79,7 @@ function TransactionsPage(): JSX.Element {
       <TransactionsNav
         openNewTransactionModal={() => setNewTransactionModalVisiblity(true)}
       />
-      <Transactions
-        transactionsData={transactionsData}
-        transactionsError={errors}
-        noTransactions={noTransactions}
-        transactionsLoading={loading}
-        setTransactionsMessage={() => {}}
-      />
+      <Transactions data={transactionsData} error={error} loading={loading} />
       {newTransactionModalVisiblity && (
         <TransactionsNewForm
           setTransactionsMessage={() => {}}

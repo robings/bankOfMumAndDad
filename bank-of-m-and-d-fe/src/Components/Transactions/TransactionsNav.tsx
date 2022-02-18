@@ -1,7 +1,10 @@
-import { ITransactionsNavProps } from "../../Interfaces/Props/ITransactionsNavProps";
 import { loggedIn } from "../../tokenHelper/tokenHelper";
 import { useNavigate } from "react-router-dom";
 import appStrings from "../../constants/app.strings";
+
+export interface ITransactionsNavProps {
+  openNewTransactionModal(): void;
+}
 
 function TransactionsNav(props: ITransactionsNavProps): JSX.Element {
   const navigate = useNavigate();

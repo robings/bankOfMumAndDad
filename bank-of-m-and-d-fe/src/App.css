@@ -258,6 +258,14 @@ td:last-child {
   text-align: right;
 }
 
+td.date {
+  width: 15%;
+}
+
+td.currency {
+  width: 150px;
+}
+
 td.positiveAmount {
   text-align: right;
   color: var(--positive-amount-colour);
@@ -266,6 +274,10 @@ td.positiveAmount {
 td.negativeAmount {
   text-align: right;
   color: var(--negative-amount-colour);
+}
+
+td.comments {
+  text-align: left;
 }
 
 /* form */
