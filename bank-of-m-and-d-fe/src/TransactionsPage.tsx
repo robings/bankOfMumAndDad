@@ -49,23 +49,6 @@ function TransactionsPage(): JSX.Element {
       const response: IListOfTransactionsForAccount =
         await apiTransactions.getTransactionsByAccountId(acId);
 
-      // to be put in the api processing
-      // if (
-      //   json.success === false &&
-      //   json.message !== appStrings.transactions.error
-      // ) {
-      //   toast.error(appStrings.transactions.accountError);
-      //   setErrors(true);
-      // }
-
-      // if (
-      //   json.success === false &&
-      //   json.message === appStrings.transactions.error
-      // ) {
-      //   toast.info(json.message);
-      //   setNoTransactions(true);
-      // }
-
       setTransactionsData(response);
 
       setLoading(false);
