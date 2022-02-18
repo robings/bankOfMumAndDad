@@ -17,6 +17,9 @@ const appStrings = {
     title: "Log In",
     usernameLabel: "Username",
     passwordLabel: "Password",
+    usernameRequired: "Please enter your username.",
+    passwordRequired: "Please enter your password.",
+    showPassword: "Show password",
   },
   navButtons: {
     logout: "Log out",

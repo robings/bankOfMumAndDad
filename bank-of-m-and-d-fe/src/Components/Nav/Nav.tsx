@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { revokeToken } from "../../tokenHelper/tokenHelper";
-import { IHeaderProps } from "../../Interfaces/Props/IHeaderProps";
 import appStrings from "../../constants/app.strings";
 
-function Nav(props: IHeaderProps): JSX.Element {
+export interface INavProps {
+  isTransactionsPage: boolean;
+}
+
+function Nav(props: INavProps): JSX.Element {
   const [isTransactionsPage] = useState<boolean>(props.isTransactionsPage);
 
   const navigate = useNavigate();
