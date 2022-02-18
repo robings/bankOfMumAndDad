@@ -1,10 +1,7 @@
-import React from 'react';
-import './loader.css';
+import "./loader.css";
 
 function Loader(): JSX.Element {
-    return (
-        <div className="loader"></div>
-    );
+  return <div className="loader"></div>;
 }
 
 export default Loader;

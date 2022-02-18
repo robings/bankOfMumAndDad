@@ -10,6 +10,7 @@ import userEvent from "@testing-library/user-event";
 import fetch from "jest-fetch-mock";
 import { IResponse } from "./Interfaces/Entities/IResponse";
 import { IAccount } from "./Interfaces/Entities/IAccount";
+import { TransactionType } from "./Interfaces/Entities/ITransaction";
 
 jest.mock("./api/apiUser");
 jest.mock("./api/apiAccounts");
@@ -134,14 +135,45 @@ describe("app", () => {
   });
 
   test("calls transactions api with id on clicking view transactions on accounts page", async () => {
+    const id = "10033";
+
+    const testTransactions = {
+      accountId: parseInt(id),
+      firstName: "Colin",
+      lastName: "Caterpillar",
+      openingBalance: 0,
+      currentBalance: 100,
+      transactions: [
+        {
+          amount: 150,
+          balance: 150,
+          date: "2022-02-16",
+          type: TransactionType.deposit,
+          comments: "Deposit 1",
+        },
+        {
+          amount: 50,
+          balance: 200,
+          date: "2022-02-17",
+          type: TransactionType.deposit,
+          comments: "Deposit 2",
+        },
+        {
+          amount: 100,
+          balance: 100,
+          date: "2022-02-18",
+          type: TransactionType.withdrawal,
+          comments: "Withdrawal",
+        },
+      ],
+    };
+
     const getTransactionsByAccountIdMock =
       apiTransactions.getTransactionsByAccountId as jest.MockedFunction<
         typeof apiTransactions.getTransactionsByAccountId
       >;
 
-    getTransactionsByAccountIdMock.mockResolvedValue(
-      new Response(JSON.stringify({}))
-    );
+    getTransactionsByAccountIdMock.mockResolvedValue(testTransactions);
 
     await loginToApp();
 
