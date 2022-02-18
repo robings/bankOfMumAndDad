@@ -11,11 +11,10 @@ import * as yup from "yup";
 import apiUser from "../../api/apiUser";
 import appStrings from "../../constants/app.strings";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
-import { IMessage, MessageStatus } from "../../Interfaces/IMessage";
 import { revokeToken } from "../../tokenHelper/tokenHelper";
 
 export interface ILoginProps {
-  setLoginMessage(message: IMessage): void;
+  onSuccess: () => void;
 }
 
 const loginSchema = yup.object().shape({
@@ -39,11 +38,12 @@ const showErrorBox = (
 
 function LoginForm(props: ILoginProps): JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const { onSuccess } = props;
 
   async function submitLogin(loginFormInput: ILoginDto) {
     try {
       await apiUser.login(loginFormInput);
-      props.setLoginMessage({ status: MessageStatus.success, message: "" });
+      onSuccess();
     } catch {
       revokeToken();
     }
