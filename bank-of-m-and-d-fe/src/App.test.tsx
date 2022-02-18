@@ -31,6 +31,10 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+afterAll(() => {
+  jest.resetAllMocks();
+});
+
 describe("app", () => {
   const token = "myToken";
 
