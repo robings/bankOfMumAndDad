@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import apiStrings from "../constants/api.strings";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
 import { setToken } from "../tokenHelper/tokenHelper";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 
 async function login(data: ILoginDto): Promise<void> {
   const loginResponse = await toast.promise(

@@ -3,7 +3,7 @@ import apiStrings from "../constants/api.strings";
 import appStrings from "../constants/app.strings";
 import { IResponse } from "../Interfaces/Entities/IResponse";
 import apiTransactions from "./apiTransactions";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 import {
   IListOfTransactionsForAccount,
   ITransaction,

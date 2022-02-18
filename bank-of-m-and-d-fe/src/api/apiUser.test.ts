@@ -1,7 +1,7 @@
 import fetch from "jest-fetch-mock";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
 import apiUser from "./apiUser";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 import apiStrings from "../constants/api.strings";
 import appStrings from "../constants/app.strings";
 

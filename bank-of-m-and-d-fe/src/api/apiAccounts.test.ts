@@ -5,7 +5,7 @@ import { IAccount } from "../Interfaces/Entities/IAccount";
 import { IAccountDto } from "../Interfaces/Entities/IAccountDto";
 import { IResponse } from "../Interfaces/Entities/IResponse";
 import apiAccounts from "./apiAccounts";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 
 beforeEach(() => {
   fetch.enableMocks();

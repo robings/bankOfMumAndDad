@@ -6,7 +6,7 @@ import { IAccountDto } from "../Interfaces/Entities/IAccountDto";
 import { IIdOnlyRequest } from "../Interfaces/Entities/IIdOnlyRequest";
 import { IResponse } from "../Interfaces/Entities/IResponse";
 import { getToken } from "../tokenHelper/tokenHelper";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 
 const emptyAuthErrorCallback = async () => {
   Promise.resolve();
