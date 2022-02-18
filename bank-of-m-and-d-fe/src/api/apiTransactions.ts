@@ -1,4 +1,6 @@
 import { toast } from "react-toastify";
+import apiStrings from "../constants/api.strings";
+import appStrings from "../constants/app.strings";
 import {
   IListOfTransactionsForAccount,
   ITransaction,
@@ -49,15 +51,41 @@ async function getTransactionsByAccountId(
 
       const url = `${APIBaseUrl}/api/Transaction/${acId.toString()}`;
 
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-      });
+      let response: Response;
+
+      try {
+        response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: token,
+          },
+        });
+      } catch {
+        throw new Error(apiStrings.transactions.error);
+      }
 
       if (response.status === 401) {
         authErrorCallback();
+        throw new Error(appStrings.loggedOut);
+      }
+
+      if (response.status === 404) {
+        const responseJson: {
+          data: any;
+          success: boolean;
+          message: string;
+        } = await response.json();
+        if (responseJson.message === "Account not found.") {
+          throw new Error(apiStrings.transactions.noAccount);
+        }
+      }
+
+      if (response.status >= 400 && response.status < 500) {
+        throw new Error(apiStrings.transactions.noTransactions);
+      }
+
+      if (response.status === 500) {
+        throw new Error(apiStrings.transactions.error);
       }
 
       return response.json();
@@ -81,17 +109,45 @@ async function getTransactionsByAccountId(
   return convertedTransactions;
 }
 
-async function saveNewTransaction(data: ITransactionDto) {
-  const token = getToken();
+async function saveNewTransaction(data: ITransactionDto): Promise<void> {
+  await toast.promise(
+    async () => {
+      const token = getToken();
 
-  return await fetch(`${APIBaseUrl}/api/Transaction`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
+      let response: Response;
+
+      try {
+        response = await fetch(`${APIBaseUrl}/api/Transaction`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
+        throw new Error(apiStrings.transactions.saveError);
+      }
+
+      if (response.status === 401) {
+        authErrorCallback();
+        throw new Error(appStrings.loggedOut);
+      }
+
+      if (response.status >= 400 && response.status < 501) {
+        throw new Error(apiStrings.transactions.saveError);
+      }
     },
-    body: JSON.stringify(data),
-  });
+    {
+      pending: undefined,
+      success: apiStrings.transactions.saved,
+      error: {
+        render({ data }: any) {
+          return `${data.message}`;
+        },
+      },
+    }
+  );
 }
 
 const apiTransactions = {

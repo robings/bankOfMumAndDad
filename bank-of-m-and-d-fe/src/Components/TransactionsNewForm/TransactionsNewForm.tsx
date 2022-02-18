@@ -59,28 +59,21 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
       accountId: props.accountId,
     };
 
-    const response: Response = await apiTransactions.saveNewTransaction(data);
+    try {
+      await apiTransactions.saveNewTransaction(data);
 
-    if (response.status === 401) {
+      props.setTransactionsMessage({
+        status: MessageStatus.success,
+        message: appStrings.transactions.newForm.success,
+      });
+      props.closeModal();
+    } catch {
       props.setTransactionsMessage({
         status: MessageStatus.error,
         message: appStrings.notLoggedIn,
       });
       revokeToken();
       props.closeModal();
-      return;
-    }
-
-    const json = await response.json();
-
-    if (json.success === true) {
-      props.setTransactionsMessage({
-        status: MessageStatus.success,
-        message: appStrings.transactions.newForm.success,
-      });
-      props.closeModal();
-    } else {
-      toast.error(json.message);
     }
   }
 
