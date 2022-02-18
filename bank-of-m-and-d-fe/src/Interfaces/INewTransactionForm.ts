@@ -7,8 +7,8 @@ export interface INewTransactionFormProps {
 }
 
 export interface INewTransactionFormInput {
-    amount: number | null;
-    dateOfTransaction: Date | null;
-    type: 'DEPOSIT' | 'WITHDRAWAL';
-    comments: string;
+  amount: string;
+  dateOfTransaction: string;
+  type: "DEPOSIT" | "WITHDRAWAL";
+  comments: string;
 }

@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 import appStrings from "../../constants/app.strings";
 import {
   IListOfTransactionsForAccount,
@@ -237,5 +238,61 @@ describe("transactions page", () => {
       }`
     );
     expect(cellsInEndBalanceRow[3]).toHaveClass(appliedClasses.negativeAmount);
+  });
+
+  test("opens new transaction form when new transaction button clicked", async () => {
+    renderTransactionsPage();
+
+    userEvent.click(
+      await screen.findByRole("button", {
+        name: appStrings.transactions.navButtons.newTransaction,
+      })
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: appStrings.transactions.newForm.title,
+      })
+    ).toBeInTheDocument();
+  });
+
+  describe("new transaction form", () => {
+    const renderTransactionsPageWithNewFormOpen = async () => {
+      renderTransactionsPage();
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.transactions.navButtons.newTransaction,
+        })
+      );
+    };
+
+    test("displays submit button, which is disabled", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      expect(
+        screen.getByRole("button", { name: appStrings.submit })
+      ).toBeDisabled();
+    });
+
+    test("enables submit button, with valid values", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.amount),
+        "100"
+      );
+      userEvent.clear(
+        screen.getByLabelText(appStrings.transactions.newForm.date)
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.date),
+        "2022-02-18"
+      );
+
+      expect(
+        await screen.findByRole("button", { name: appStrings.submit })
+      ).toBeEnabled();
+    });
   });
 });
