@@ -83,6 +83,8 @@ const appStrings = {
         withdrawal: "Withdrawal",
       },
       comments: "Comments",
+      noCommentsWarning:
+        "You may wish to include a comment to identify the transaction.",
     },
     error: "No transactions found for account.",
     accountError: "Account information not found",

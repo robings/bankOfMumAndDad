@@ -553,7 +553,7 @@ describe("transactions page", () => {
       expect(dateInput).toHaveClass(appliedClasses.errorBorder);
     });
 
-    test("shows an borders indicating fields are valid", async () => {
+    test("shows borders indicating fields are valid", async () => {
       await renderTransactionsPageWithNewFormOpen();
 
       const amountInput = screen.getByLabelText(
@@ -586,6 +586,24 @@ describe("transactions page", () => {
       await waitFor(() => {
         expect(commentsInput).toHaveClass(appliedClasses.validBorder);
       });
+    });
+
+    test("shows an warning message if comments field is blank", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const commentsInput = screen.getByLabelText(
+        appStrings.transactions.newForm.comments
+      );
+
+      userEvent.click(commentsInput);
+      userEvent.tab();
+
+      expect(
+        await screen.findByText(
+          appStrings.transactions.newForm.noCommentsWarning
+        )
+      ).toBeInTheDocument();
+      expect(commentsInput).toHaveClass(appliedClasses.warningBorder);
     });
   });
 });

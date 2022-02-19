@@ -112,6 +112,11 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                   </ul>
                 </div>
               )}
+              {(dirty || touched.comments) && !values.comments && (
+                <div className="warningBox">
+                  {appStrings.transactions.newForm.noCommentsWarning}
+                </div>
+              )}
               <fieldset disabled={isSubmitting}>
                 <div>
                   <label htmlFor="amount">

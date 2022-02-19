@@ -382,6 +382,12 @@ button[type=submit]:disabled {
   border-color: var(--exclamation-colour);
 }
 
+.warningBox {
+  border: 1px solid var(--warning-colour);
+  border-radius: 4px;
+  padding: 10px;
+}
+
 .warningBorder {
   border-color: var(--warning-colour);
 }
