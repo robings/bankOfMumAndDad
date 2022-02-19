@@ -13,6 +13,7 @@
   --default-colour: #0063B1;
   --default-dark-colour: #111111;
   --exclamation-colour: #E81123;
+  --warning-colour: #FF8C00;
   --all-go-colour: #107C10;
   --border-colour: #69797E;
   --modal-overlay-bg-colour: rgba(0, 0, 0, 0.25);
@@ -373,6 +374,10 @@ button[type=submit]:disabled {
 
 .errorBorder {
   border-color: var(--exclamation-colour);
+}
+
+.warningBorder {
+  border-color: var(--warning-colour);
 }
 
 .validBorder {

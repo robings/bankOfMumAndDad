@@ -49,6 +49,22 @@ const determineInputBorderClass = (
   return "";
 };
 
+const determineInputBorderClassWithWarning = (
+  dirty: boolean,
+  touched: boolean,
+  value: string
+) => {
+  if ((dirty || touched) && value) {
+    return appliedClasses.validBorder;
+  }
+
+  if ((dirty || touched) && !value) {
+    return "warningBorder";
+  }
+
+  return "";
+};
+
 const showErrorBox = (
   errors: FormikErrors<INewTransactionFormInput>,
   touched: FormikTouched<INewTransactionFormInput>
@@ -85,7 +101,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
           onSubmit={(values) => onSave(values)}
           validationSchema={NewTransactionSchema}
         >
-          {({ isValid, dirty, touched, errors }) => (
+          {({ isValid, dirty, touched, errors, values }) => (
             <Form>
               {showErrorBox(errors, touched) && (
                 <div className="errorBox">
@@ -136,7 +152,9 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                   as="select"
                   name="type"
                   id="type"
-                  className={dirty && isValid && appliedClasses.validBorder}
+                  className={
+                    (dirty || touched.type) && appliedClasses.validBorder
+                  }
                 >
                   <option value="deposit">
                     {appStrings.transactions.newForm.typeOptions.deposit}
@@ -154,7 +172,11 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                   type="text"
                   name="comments"
                   id="comments"
-                  className={dirty && isValid && appliedClasses.validBorder}
+                  className={determineInputBorderClassWithWarning(
+                    dirty,
+                    touched.comments ?? false,
+                    values.comments
+                  )}
                 />
               </div>
               <button

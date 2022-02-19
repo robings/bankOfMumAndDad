@@ -10,6 +10,7 @@ import TransactionsPage from "./TransactionsPage";
 import apiTransactions from "../../api/apiTransactions";
 import appliedClasses from "../../constants/appliedClasses";
 import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
+import { comment } from "postcss";
 
 jest.mock("../../api/apiTransactions");
 
@@ -518,9 +519,16 @@ describe("transactions page", () => {
       expect(
         screen.getByLabelText(appStrings.transactions.newForm.type)
       ).toHaveClass(appliedClasses.validBorder);
-      expect(
-        screen.getByLabelText(appStrings.transactions.newForm.comments)
-      ).toHaveClass(appliedClasses.validBorder);
+
+      const commentsInput = screen.getByLabelText(
+        appStrings.transactions.newForm.comments
+      );
+      expect(commentsInput).toHaveClass(appliedClasses.warningBorder);
+
+      userEvent.type(commentsInput, "A comment");
+      await waitFor(() => {
+        expect(commentsInput).toHaveClass(appliedClasses.validBorder);
+      });
     });
   });
 });
