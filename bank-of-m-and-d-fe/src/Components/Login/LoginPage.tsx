@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Header from "../Header/Header";
 import LoginForm from "./LoginForm";
 
 function LoginPage(): JSX.Element {
@@ -9,9 +10,12 @@ function LoginPage(): JSX.Element {
   };
 
   return (
-    <div className="App">
-      <LoginForm onSuccess={onSuccess} />
-    </div>
+    <>
+      <Header displayPageHeader={false} />
+      <div className="App">
+        <LoginForm onSuccess={onSuccess} />
+      </div>
+    </>
   );
 }
 
