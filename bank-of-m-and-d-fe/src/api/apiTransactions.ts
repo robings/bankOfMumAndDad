@@ -8,6 +8,7 @@ import {
 import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
 import { getToken } from "../tokenHelper/tokenHelper";
 import { APIBaseUrl } from "../constants/api.settings";
+import { IResponse } from "../Interfaces/Entities/IResponse";
 
 const emptyAuthErrorCallback = async () => {
   Promise.resolve();
@@ -88,7 +89,13 @@ async function getTransactionsByAccountId(
         throw new Error(apiStrings.transactions.error);
       }
 
-      return response.json();
+      const responseJson: IResponse<IListOfTransactionsForAccount> =
+        await response.json();
+      if (responseJson.data.accountId?.toString() !== acId) {
+        throw new Error(apiStrings.transactions.nonMatchingIdsError);
+      }
+
+      return responseJson;
     },
     {
       pending: undefined,

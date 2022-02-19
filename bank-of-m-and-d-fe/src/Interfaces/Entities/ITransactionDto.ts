@@ -1,5 +1,5 @@
 export interface ITransactionDto {
-  amount: number;
+  amount: string;
   date: Date;
   type: "0" | "1";
   comments: string;

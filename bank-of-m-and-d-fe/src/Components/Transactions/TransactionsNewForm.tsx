@@ -1,12 +1,16 @@
 import { Field, Form, Formik } from "formik";
 import * as yup from "yup";
 import appStrings from "../../constants/app.strings";
-import {
-  INewTransactionFormInput,
-  INewTransactionFormProps,
-} from "../../Interfaces/INewTransactionForm";
+import { INewTransactionFormInput } from "../../Interfaces/INewTransactionForm";
+
+interface INewTransactionFormProps {
+  closeModal: () => void;
+  onSave: (transaction: INewTransactionFormInput) => void;
+}
 
 function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
+  const { closeModal, onSave } = props;
+
   const initialValues: INewTransactionFormInput = {
     amount: "",
     dateOfTransaction: "",
@@ -21,57 +25,16 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
     comments: yup.string(),
   });
 
-  // function handleSubmit(e: FormEvent) {
-  //   e.preventDefault();
-  //   if (
-  //     !newTransactionFormInput.amount ||
-  //     !newTransactionFormInput.dateOfTransaction
-  //   ) {
-  //     toast.error(appStrings.missingInfoError);
-  //   } else {
-  //     submitNewTransaction(newTransactionFormInput);
-  //   }
-  // }
-
-  // async function submitNewTransaction(
-  //   newTransactionFormInput: INewTransactionFormInput
-  // ): Promise<void> {
-  //   const data: ITransactionDto = {
-  //     amount: newTransactionFormInput.amount!,
-  //     date: newTransactionFormInput.dateOfTransaction!,
-  //     type: newTransactionFormInput.type === "DEPOSIT" ? "0" : "1",
-  //     comments: newTransactionFormInput.comments,
-  //     accountId: props.accountId,
-  //   };
-
-  //   try {
-  //     await apiTransactions.saveNewTransaction(data);
-
-  //     props.setTransactionsMessage({
-  //       status: MessageStatus.success,
-  //       message: appStrings.transactions.newForm.success,
-  //     });
-  //     props.closeModal();
-  //   } catch {
-  //     props.setTransactionsMessage({
-  //       status: MessageStatus.error,
-  //       message: appStrings.notLoggedIn,
-  //     });
-  //     revokeToken();
-  //     props.closeModal();
-  //   }
-  // }
-
   return (
     <div className="overlay">
       <div className="modal">
-        <button className="appButton closeButton" onClick={props.closeModal}>
+        <button className="appButton closeButton" onClick={closeModal}>
           {appStrings.closeButton}
         </button>
         <h1>{appStrings.transactions.newForm.title}</h1>
         <Formik
           initialValues={initialValues}
-          onSubmit={() => {}}
+          onSubmit={(values) => onSave(values)}
           validationSchema={NewTransactionSchema}
         >
           {({ isValid, dirty }) => (
@@ -80,7 +43,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                 <label htmlFor="amount">
                   {appStrings.transactions.newForm.amount}
                 </label>
-                <Field type="number" name="amount" id="amount" />
+                <Field type="text" name="amount" id="amount" />
               </div>
               <div>
                 <label htmlFor="dateOfTransaction">

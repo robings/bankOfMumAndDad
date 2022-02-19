@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import appStrings from "../../constants/app.strings";
@@ -9,6 +9,7 @@ import {
 import TransactionsPage from "./TransactionsPage";
 import apiTransactions from "../../api/apiTransactions";
 import appliedClasses from "../../constants/appliedClasses";
+import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
 
 jest.mock("../../api/apiTransactions");
 
@@ -293,6 +294,121 @@ describe("transactions page", () => {
       expect(
         await screen.findByRole("button", { name: appStrings.submit })
       ).toBeEnabled();
+    });
+
+    test("calls save api with expected values", async () => {
+      const mockSaveTransaction =
+        apiTransactions.saveNewTransaction as jest.MockedFunction<
+          typeof apiTransactions.saveNewTransaction
+        >;
+      mockSaveTransaction.mockResolvedValue();
+
+      await renderTransactionsPageWithNewFormOpen();
+
+      const amount = "100";
+      const date = "2022-02-18";
+      const comment = "a test comment";
+
+      const expectedData: ITransactionDto = {
+        accountId: id,
+        amount: amount,
+        date: new Date(date),
+        type: "0",
+        comments: comment,
+      };
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.amount),
+        amount
+      );
+      userEvent.clear(
+        screen.getByLabelText(appStrings.transactions.newForm.date)
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.date),
+        date
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.comments),
+        comment
+      );
+
+      const submitButton = await screen.findByRole("button", {
+        name: appStrings.submit,
+      });
+      expect(submitButton).toBeEnabled();
+
+      userEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockSaveTransaction).toHaveBeenCalledWith(expectedData);
+      });
+    });
+
+    test("calls getTransactions after saving", async () => {
+      const mockSaveTransaction =
+        apiTransactions.saveNewTransaction as jest.MockedFunction<
+          typeof apiTransactions.saveNewTransaction
+        >;
+      mockSaveTransaction.mockResolvedValue();
+
+      localStorage.setItem(appStrings.localStorageKeys.bearerToken, "myToken");
+
+      const mockGetTransactionsByAccountId =
+        apiTransactions.getTransactionsByAccountId as jest.MockedFunction<
+          typeof apiTransactions.getTransactionsByAccountId
+        >;
+      mockGetTransactionsByAccountId.mockResolvedValue(
+        testTransactionsResponse
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/transactions/${id}`]}>
+          <Routes>
+            <Route
+              path="/transactions/:accountId"
+              element={<TransactionsPage />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.transactions.navButtons.newTransaction,
+        })
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.amount),
+        "100"
+      );
+      userEvent.clear(
+        screen.getByLabelText(appStrings.transactions.newForm.date)
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.date),
+        "2022-02-18"
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.comments),
+        "test comment"
+      );
+
+      const submitButton = await screen.findByRole("button", {
+        name: appStrings.submit,
+      });
+      expect(submitButton).toBeEnabled();
+
+      userEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockSaveTransaction).toHaveBeenCalled();
+      });
+
+      await waitFor(() => {
+        expect(mockGetTransactionsByAccountId).toHaveBeenCalledTimes(2);
+      });
     });
   });
 });

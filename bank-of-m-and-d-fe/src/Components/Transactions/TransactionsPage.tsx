@@ -7,6 +7,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "../../tokenHelper/tokenHelper";
 import apiTransactions from "../../api/apiTransactions";
 import { IListOfTransactionsForAccount } from "../../Interfaces/Entities/ITransaction";
+import { INewTransactionFormInput } from "../../Interfaces/INewTransactionForm";
+import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
 
 function TransactionsPage(): JSX.Element {
   const { accountId } = useParams();
@@ -46,6 +48,27 @@ function TransactionsPage(): JSX.Element {
     setNewTransactionModalVisiblity(false);
   };
 
+  const handleSaveTransaction = async (
+    transaction: INewTransactionFormInput
+  ): Promise<void> => {
+    const data: ITransactionDto = {
+      amount: transaction.amount,
+      date: new Date(transaction.dateOfTransaction),
+      type: transaction.type === "DEPOSIT" ? "0" : "1",
+      comments: transaction.comments,
+      accountId: accountId,
+    };
+
+    try {
+      await apiTransactions.saveNewTransaction(data);
+      await loadTransactions(accountId!);
+    } catch {
+      revokeToken();
+    } finally {
+      handleCloseModal();
+    }
+  };
+
   useEffect(() => {
     const redirectToLoginPage = (): void => {
       navigate("/");
@@ -82,9 +105,8 @@ function TransactionsPage(): JSX.Element {
       <Transactions data={transactionsData} error={error} loading={loading} />
       {newTransactionModalVisiblity && (
         <TransactionsNewForm
-          setTransactionsMessage={() => {}}
-          closeModal={() => handleCloseModal()}
-          accountId={accountId}
+          onSave={handleSaveTransaction}
+          closeModal={handleCloseModal}
         />
       )}
     </div>
