@@ -14,7 +14,6 @@ function Transactions(props: ITransactionProps): JSX.Element {
 
   return (
     <main>
-      <h2>{appStrings.transactions.title}</h2>
       {loading && !error ? (
         <Loader />
       ) : (

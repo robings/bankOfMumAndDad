@@ -78,6 +78,18 @@ header, nav {
   overflow: auto;
 }
 
+nav {
+  padding: 0 10px;
+  margin: 0 5px;
+}
+
+h2 {
+  color: var(--default-colour);
+  margin: 0;
+  padding-top: 40px;
+  float: left;
+}
+
 img {
   width: 50px;
   border-radius: 50%;
@@ -85,6 +97,17 @@ img {
   border: 1px solid var(--border-colour);
   float: left;
   margin-right: 10px;
+}
+
+.loginTime {
+  font-size: 0.75rem;
+  padding-top: 18px;
+}
+
+.headerGroup {
+  float: left;
+  overflow: auto;
+  width: 250px;
 }
 
 h1 {
@@ -207,11 +230,6 @@ h1 {
 
 main {
   padding: 10px;
-}
-
-h2 {
-  color: var(--default-colour);
-  border-bottom: 1px solid var(--border-colour);
 }
 
 /* table */

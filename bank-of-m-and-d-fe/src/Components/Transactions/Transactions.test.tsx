@@ -10,9 +10,14 @@ import TransactionsPage from "./TransactionsPage";
 import apiTransactions from "../../api/apiTransactions";
 import appliedClasses from "../../constants/appliedClasses";
 import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
-import { comment } from "postcss";
 
 jest.mock("../../api/apiTransactions");
+const mockedUseNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...(jest.requireActual("react-router-dom") as any),
+  useNavigate: () => mockedUseNavigate,
+}));
 
 beforeAll(() => {
   localStorage.clear();
@@ -91,6 +96,32 @@ describe("transactions page", () => {
         name: appStrings.transactions.title,
       })
     ).toBeInTheDocument();
+  });
+
+  test("displays button to navigate to accounts page", async () => {
+    renderTransactionsPage();
+
+    expect(
+      await screen.findByRole("button", {
+        name: appStrings.navButtons.accounts,
+      })
+    ).toBeInTheDocument();
+  });
+
+  test("calls useNavigate with accounts url when accounts button is clicked", async () => {
+    renderTransactionsPage();
+
+    userEvent.click(
+      await screen.findByRole("button", {
+        name: appStrings.navButtons.accounts,
+      })
+    );
+
+    await waitFor(() => {
+      expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    expect(mockedUseNavigate).toHaveBeenCalledWith("/accounts");
   });
 
   test("displays new transaction button", async () => {
@@ -317,9 +348,12 @@ describe("transactions page", () => {
       );
 
       userEvent.selectOptions(typeSelector, TransactionType.deposit.toString());
-      expect(typeSelector).toHaveDisplayValue(
-        appStrings.transactions.newForm.typeOptions.deposit
-      );
+
+      await waitFor(() => {
+        expect(typeSelector).toHaveDisplayValue(
+          appStrings.transactions.newForm.typeOptions.deposit
+        );
+      });
     });
 
     test("displays submit button, which is disabled", async () => {
@@ -609,7 +643,7 @@ describe("transactions page", () => {
       });
     });
 
-    test("shows an warning message if comments field is blank", async () => {
+    test("shows a warning message if comments field is blank", async () => {
       await renderTransactionsPageWithNewFormOpen();
 
       const commentsInput = screen.getByLabelText(

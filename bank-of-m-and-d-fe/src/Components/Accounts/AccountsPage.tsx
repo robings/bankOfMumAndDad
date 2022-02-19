@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "../Nav/Nav";
 import AccountsList from "./AccountsList";
-import AccountsNav from "./AccountsNav";
 import AccountsNewForm from "./AccountsNewForm";
 import { revokeToken, loggedIn } from "../../tokenHelper/tokenHelper";
 import apiAccounts from "../../api/apiAccounts";
@@ -11,6 +9,7 @@ import { IAccount } from "../../Interfaces/Entities/IAccount";
 import appStrings from "../../constants/app.strings";
 import { IAccountDto } from "../../Interfaces/Entities/IAccountDto";
 import { INewAccountFormInput } from "../../Interfaces/INewAccountForm";
+import Header from "../Header/Header";
 
 function AccountsPage(): JSX.Element {
   const [newAccountModalVisibility, setNewAccountModalVisibility] =
@@ -84,28 +83,33 @@ function AccountsPage(): JSX.Element {
   }, [navigate, loadAccounts]);
 
   return (
-    <div className="App">
-      <Nav isTransactionsPage={false} />
-      <AccountsNav
-        openNewAccountModal={() => setNewAccountModalVisibility(true)}
-      />
-      <main>
-        <h2>{appStrings.accounts.title}</h2>
-        <AccountsList
-          accountsData={accountsData}
-          accountsError={error}
-          accountsLoading={loading}
-          onDelete={onDelete}
-          onViewTransactions={onViewTransactions}
-        />
-      </main>
-      {loggedIn() && newAccountModalVisibility && (
-        <AccountsNewForm
-          closeModal={() => handleCloseModal()}
-          onSave={onSaveNew}
-        />
-      )}
-    </div>
+    <>
+      <Header title={appStrings.accounts.title} displayPageHeader>
+        <button
+          className="appButton subNavButton"
+          onClick={() => setNewAccountModalVisibility(true)}
+        >
+          {appStrings.accounts.navButtons.newAccount}
+        </button>
+      </Header>
+      <div className="App">
+        <main>
+          <AccountsList
+            accountsData={accountsData}
+            accountsError={error}
+            accountsLoading={loading}
+            onDelete={onDelete}
+            onViewTransactions={onViewTransactions}
+          />
+        </main>
+        {loggedIn() && newAccountModalVisibility && (
+          <AccountsNewForm
+            closeModal={() => handleCloseModal()}
+            onSave={onSaveNew}
+          />
+        )}
+      </div>
+    </>
   );
 }
 
