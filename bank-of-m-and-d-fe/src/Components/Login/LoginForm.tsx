@@ -8,13 +8,11 @@ import {
 } from "formik";
 import { useState } from "react";
 import * as yup from "yup";
-import apiUser from "../../api/apiUser";
 import appStrings from "../../constants/app.strings";
 import { ILoginDto } from "../../Interfaces/Entities/ILoginDto";
-import { revokeToken } from "../../tokenHelper/tokenHelper";
 
 export interface ILoginProps {
-  onSuccess: () => void;
+  onSubmit: (data: ILoginDto) => void;
 }
 
 const loginSchema = yup.object().shape({
@@ -38,16 +36,7 @@ const showErrorBox = (
 
 function LoginForm(props: ILoginProps): JSX.Element {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { onSuccess } = props;
-
-  async function submitLogin(loginFormInput: ILoginDto) {
-    try {
-      await apiUser.login(loginFormInput);
-      onSuccess();
-    } catch {
-      revokeToken();
-    }
-  }
+  const { onSubmit } = props;
 
   const initialValues: ILoginDto = {
     username: "",
@@ -60,7 +49,7 @@ function LoginForm(props: ILoginProps): JSX.Element {
         <h1>{appStrings.loginForm.title}</h1>
         <Formik
           initialValues={initialValues}
-          onSubmit={(values) => submitLogin(values)}
+          onSubmit={(values) => onSubmit(values)}
           validationSchema={loginSchema}
         >
           {({ isValid, dirty, errors, touched, isSubmitting }) => (
