@@ -444,6 +444,63 @@ describe("transactions page", () => {
       });
     });
 
+    test("disables form when submitting", async () => {
+      localStorage.setItem(appStrings.localStorageKeys.bearerToken, "myToken");
+
+      const mockGetTransactionsByAccountId =
+        apiTransactions.getTransactionsByAccountId as jest.MockedFunction<
+          typeof apiTransactions.getTransactionsByAccountId
+        >;
+      mockGetTransactionsByAccountId.mockResolvedValue(
+        testTransactionsResponse
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/transactions/${id}`]}>
+          <Routes>
+            <Route
+              path="/transactions/:accountId"
+              element={<TransactionsPage />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.transactions.navButtons.newTransaction,
+        })
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.amount),
+        "100"
+      );
+      userEvent.clear(
+        screen.getByLabelText(appStrings.transactions.newForm.date)
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.date),
+        "2022-02-18"
+      );
+      userEvent.type(
+        screen.getByLabelText(appStrings.transactions.newForm.comments),
+        "test comment"
+      );
+
+      const submitButton = await screen.findByRole("button", {
+        name: appStrings.submit,
+      });
+      expect(submitButton).toBeEnabled();
+
+      userEvent.click(submitButton);
+
+      // avoiding console warning due to Formik changes using waitFor
+      await waitFor(() => {
+        expect(screen.getByRole("group")).toBeDisabled();
+      });
+    });
+
     test("shows an error message indicating amount is required if amount is empty", async () => {
       await renderTransactionsPageWithNewFormOpen();
 

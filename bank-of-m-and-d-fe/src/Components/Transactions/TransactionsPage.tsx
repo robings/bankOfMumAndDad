@@ -61,12 +61,9 @@ function TransactionsPage(): JSX.Element {
 
     try {
       await apiTransactions.saveNewTransaction(data);
-      await loadTransactions(accountId!);
-    } catch {
-      revokeToken();
-    } finally {
       handleCloseModal();
-    }
+      await loadTransactions(accountId!);
+    } catch {}
   };
 
   useEffect(() => {

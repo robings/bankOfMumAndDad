@@ -122,6 +122,36 @@ describe("login form", () => {
     });
   });
 
+  test("disables form on clicking submit", async () => {
+    renderLoginForm();
+
+    const username = "Username";
+    const password = "Password";
+
+    userEvent.type(
+      await screen.findByLabelText(appStrings.loginForm.usernameLabel),
+      username
+    );
+    userEvent.type(
+      screen.getByLabelText(appStrings.loginForm.passwordLabel),
+      password
+    );
+
+    const submitButton = await screen.findByRole("button", {
+      name: appStrings.submit,
+    });
+
+    expect(submitButton).toBeEnabled();
+
+    userEvent.click(submitButton);
+
+    // avoiding console warning due to Formik changes using waitFor
+    await waitFor(() => {
+      expect(screen.getByRole("group")).toBeDisabled();
+    });
+  });
+
+
   test("shows error if no username is entered", async () => {
     renderLoginForm();
 

@@ -82,7 +82,7 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
           validationSchema={newAccountSchema}
           onSubmit={(values) => onSave(values)}
         >
-          {({ isValid, dirty, touched, errors }) => (
+          {({ isValid, dirty, touched, errors, isSubmitting }) => (
             <Form>
               {showErrorBox(errors, touched) && (
                 <div className="errorBox">
@@ -94,61 +94,63 @@ function AccountsNewForm(props: NewAccountFormProps): JSX.Element {
                   </ul>
                 </div>
               )}
-              <div>
-                <label htmlFor="firstName">
-                  {appStrings.accounts.newForm.firstName}
-                </label>
-                <Field
-                  type="text"
-                  name="firstName"
-                  id="firstName"
-                  className={determineInputBorderClass(
-                    errors.firstName ? true : false,
-                    touched.firstName ?? false,
-                    dirty,
-                    isValid
-                  )}
-                />
-              </div>
-              <div>
-                <label htmlFor="lastName">
-                  {appStrings.accounts.newForm.lastName}
-                </label>
-                <Field
-                  type="text"
-                  name="lastName"
-                  id="lastName"
-                  className={determineInputBorderClass(
-                    errors.lastName ? true : false,
-                    touched.lastName ?? false,
-                    dirty,
-                    isValid
-                  )}
-                />
-              </div>
-              <div>
-                <label htmlFor="openingBalance">
-                  {appStrings.accounts.newForm.openingBalance}
-                </label>
-                <Field
-                  type="text"
-                  name="openingBalance"
-                  id="openingBalance"
-                  className={`numberField ${determineInputBorderClass(
-                    errors.openingBalance ? true : false,
-                    touched.openingBalance ?? false,
-                    dirty,
-                    isValid
-                  )}`}
-                />
-              </div>
-              <button
-                className="appButton"
-                type="submit"
-                disabled={!dirty || !isValid}
-              >
-                {appStrings.submit}
-              </button>
+              <fieldset disabled={isSubmitting}>
+                <div>
+                  <label htmlFor="firstName">
+                    {appStrings.accounts.newForm.firstName}
+                  </label>
+                  <Field
+                    type="text"
+                    name="firstName"
+                    id="firstName"
+                    className={determineInputBorderClass(
+                      errors.firstName ? true : false,
+                      touched.firstName ?? false,
+                      dirty,
+                      isValid
+                    )}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lastName">
+                    {appStrings.accounts.newForm.lastName}
+                  </label>
+                  <Field
+                    type="text"
+                    name="lastName"
+                    id="lastName"
+                    className={determineInputBorderClass(
+                      errors.lastName ? true : false,
+                      touched.lastName ?? false,
+                      dirty,
+                      isValid
+                    )}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="openingBalance">
+                    {appStrings.accounts.newForm.openingBalance}
+                  </label>
+                  <Field
+                    type="text"
+                    name="openingBalance"
+                    id="openingBalance"
+                    className={`numberField ${determineInputBorderClass(
+                      errors.openingBalance ? true : false,
+                      touched.openingBalance ?? false,
+                      dirty,
+                      isValid
+                    )}`}
+                  />
+                </div>
+                <button
+                  className="appButton"
+                  type="submit"
+                  disabled={!dirty || !isValid}
+                >
+                  {appStrings.submit}
+                </button>
+              </fieldset>
             </Form>
           )}
         </Formik>
