@@ -1,12 +1,67 @@
-import { Field, Form, Formik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FormikErrors,
+  FormikTouched,
+} from "formik";
 import * as yup from "yup";
 import appStrings from "../../constants/app.strings";
+import appliedClasses from "../../constants/appliedClasses";
 import { INewTransactionFormInput } from "../../Interfaces/INewTransactionForm";
 
 interface INewTransactionFormProps {
   closeModal: () => void;
   onSave: (transaction: INewTransactionFormInput) => void;
 }
+
+const NewTransactionSchema = yup.object().shape({
+  amount: yup
+    .number()
+    .typeError(appStrings.transactions.newForm.amountError)
+    .required(appStrings.transactions.newForm.amountRequired),
+  dateOfTransaction: yup
+    .date()
+    .required(appStrings.transactions.newForm.dateRequired),
+  type: yup.string().required(),
+  comments: yup.string(),
+});
+
+const determineInputBorderClass = (
+  error: boolean,
+  touched: boolean,
+  dirty: boolean,
+  isValid: boolean
+) => {
+  if (touched && error) {
+    return appliedClasses.errorBorder;
+  }
+
+  if (touched && !error) {
+    return appliedClasses.validBorder;
+  }
+
+  if (dirty && isValid) {
+    return appliedClasses.validBorder;
+  }
+
+  return "";
+};
+
+const showErrorBox = (
+  errors: FormikErrors<INewTransactionFormInput>,
+  touched: FormikTouched<INewTransactionFormInput>
+): boolean => {
+  if (
+    (errors.amount && touched.amount) ||
+    (errors.dateOfTransaction && touched.dateOfTransaction)
+  ) {
+    return true;
+  }
+
+  return false;
+};
 
 function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   const { closeModal, onSave } = props;
@@ -17,13 +72,6 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
     type: "DEPOSIT",
     comments: "",
   };
-
-  const NewTransactionSchema = yup.object().shape({
-    amount: yup.number().required(),
-    dateOfTransaction: yup.date().required(),
-    type: yup.string().required(),
-    comments: yup.string(),
-  });
 
   return (
     <div className="overlay">
@@ -37,13 +85,32 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
           onSubmit={(values) => onSave(values)}
           validationSchema={NewTransactionSchema}
         >
-          {({ isValid, dirty }) => (
+          {({ isValid, dirty, touched, errors }) => (
             <Form>
+              {showErrorBox(errors, touched) && (
+                <div className="errorBox">
+                  <h4>{appStrings.errorBoxTitle}</h4>
+                  <ul>
+                    <ErrorMessage name="amount" component="li" />
+                    <ErrorMessage name="dateOfTransaction" component="li" />
+                  </ul>
+                </div>
+              )}
               <div>
                 <label htmlFor="amount">
                   {appStrings.transactions.newForm.amount}
                 </label>
-                <Field type="text" name="amount" id="amount" />
+                <Field
+                  type="text"
+                  name="amount"
+                  id="amount"
+                  className={determineInputBorderClass(
+                    errors.amount ? true : false,
+                    touched.amount ?? false,
+                    dirty,
+                    isValid
+                  )}
+                />
               </div>
               <div>
                 <label htmlFor="dateOfTransaction">
@@ -53,13 +120,24 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                   type="date"
                   name="dateOfTransaction"
                   id="dateOfTransaction"
+                  className={determineInputBorderClass(
+                    errors.dateOfTransaction ? true : false,
+                    touched.dateOfTransaction ?? false,
+                    dirty,
+                    isValid
+                  )}
                 />
               </div>
               <div>
                 <label htmlFor="type">
                   {appStrings.transactions.newForm.type}
                 </label>
-                <Field as="select" name="type" id="type">
+                <Field
+                  as="select"
+                  name="type"
+                  id="type"
+                  className={dirty && isValid && appliedClasses.validBorder}
+                >
                   <option value="deposit">
                     {appStrings.transactions.newForm.typeOptions.deposit}
                   </option>
@@ -72,7 +150,12 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                 <label htmlFor="comments">
                   {appStrings.transactions.newForm.comments}
                 </label>
-                <Field type="text" name="comments" id="comments" />
+                <Field
+                  type="text"
+                  name="comments"
+                  id="comments"
+                  className={dirty && isValid && appliedClasses.validBorder}
+                />
               </div>
               <button
                 className="appButton"

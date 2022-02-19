@@ -268,6 +268,38 @@ describe("transactions page", () => {
       );
     };
 
+    test("shows expected inputs with default styling", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const amountInput = screen.getByLabelText(
+        appStrings.transactions.newForm.amount
+      );
+      expect(amountInput).toBeInTheDocument();
+      expect(amountInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(amountInput).not.toHaveClass(appliedClasses.validBorder);
+
+      const dateInput = screen.getByLabelText(
+        appStrings.transactions.newForm.date
+      );
+      expect(dateInput).toBeInTheDocument();
+      expect(dateInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(dateInput).not.toHaveClass(appliedClasses.validBorder);
+
+      const typeInput = screen.getByLabelText(
+        appStrings.transactions.newForm.type
+      );
+      expect(typeInput).toBeInTheDocument();
+      expect(typeInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(typeInput).not.toHaveClass(appliedClasses.validBorder);
+
+      const commentsInput = screen.getByLabelText(
+        appStrings.transactions.newForm.comments
+      );
+      expect(commentsInput).toBeInTheDocument();
+      expect(commentsInput).not.toHaveClass(appliedClasses.errorBorder);
+      expect(commentsInput).not.toHaveClass(appliedClasses.validBorder);
+    });
+
     test("displays submit button, which is disabled", async () => {
       await renderTransactionsPageWithNewFormOpen();
 
@@ -409,6 +441,86 @@ describe("transactions page", () => {
       await waitFor(() => {
         expect(mockGetTransactionsByAccountId).toHaveBeenCalledTimes(2);
       });
+    });
+
+    test("shows an error message indicating amount is required if amount is empty", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const amountInput = screen.getByLabelText(
+        appStrings.transactions.newForm.amount
+      );
+
+      userEvent.click(amountInput);
+      userEvent.tab();
+
+      expect(await screen.findByRole("listitem")).toHaveTextContent(
+        appStrings.transactions.newForm.amountRequired
+      );
+      expect(amountInput).toHaveClass(appliedClasses.errorBorder);
+    });
+
+    const dodgyNumbers = ["word", "3word", "word3", "w0rd"];
+    test.each(dodgyNumbers)(
+      "displays error if value is not a number for opening balance: %p",
+      async (dodgyNumber) => {
+        await renderTransactionsPageWithNewFormOpen();
+
+        const amountInput = screen.getByLabelText(
+          appStrings.transactions.newForm.amount
+        );
+
+        userEvent.type(amountInput, dodgyNumber);
+        userEvent.tab();
+
+        expect(await screen.findByRole("listitem")).toHaveTextContent(
+          appStrings.transactions.newForm.amountError
+        );
+        expect(amountInput).toHaveClass(appliedClasses.errorBorder);
+      }
+    );
+
+    test("shows an error message indicating date is required if date is not set", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const dateInput = screen.getByLabelText(
+        appStrings.transactions.newForm.date
+      );
+
+      userEvent.click(dateInput);
+      userEvent.tab();
+
+      expect(await screen.findByRole("listitem")).toHaveTextContent(
+        appStrings.transactions.newForm.dateRequired
+      );
+      expect(dateInput).toHaveClass(appliedClasses.errorBorder);
+    });
+
+    test("shows an borders indicating fields are valid", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const amountInput = screen.getByLabelText(
+        appStrings.transactions.newForm.amount
+      );
+
+      userEvent.type(amountInput, "300");
+
+      const dateInput = screen.getByLabelText(
+        appStrings.transactions.newForm.date
+      );
+
+      userEvent.type(dateInput, "2022-02-14");
+      userEvent.tab();
+
+      await waitFor(() => {
+        expect(amountInput).toHaveClass(appliedClasses.validBorder);
+      });
+      expect(dateInput).toHaveClass(appliedClasses.validBorder);
+      expect(
+        screen.getByLabelText(appStrings.transactions.newForm.type)
+      ).toHaveClass(appliedClasses.validBorder);
+      expect(
+        screen.getByLabelText(appStrings.transactions.newForm.comments)
+      ).toHaveClass(appliedClasses.validBorder);
     });
   });
 });

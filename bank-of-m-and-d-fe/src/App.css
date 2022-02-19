@@ -308,6 +308,7 @@ input, select {
   border: 1px solid var(--border-colour);
   border-radius: 4px;
   outline: none;
+  min-height: 35px;
 }
 
 input[type=text], input[type=password] {
@@ -322,6 +323,7 @@ input[type=submit], button[type=submit] {
 input[type=checkbox] {
   width: 20px;
   height: 20px;
+  min-height:auto;
 }
 
 input.numberField {
@@ -333,7 +335,7 @@ input.numberField {
 }
 
 label {
-  padding-top: 9px;
+  padding-top: 12px;
   float: left;
 }
 

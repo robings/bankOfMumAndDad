@@ -73,7 +73,10 @@ const appStrings = {
       title: "New Transaction",
       success: "Transaction recorded",
       amount: "Amount £",
+      amountRequired: "Please enter an amount",
+      amountError: "Amount must be a number",
       date: "Date of transaction",
+      dateRequired: "Please enter a valid date",
       type: "Type",
       typeOptions: {
         deposit: "Deposit",
