@@ -286,12 +286,12 @@ describe("transactions page", () => {
       expect(dateInput).not.toHaveClass(appliedClasses.errorBorder);
       expect(dateInput).not.toHaveClass(appliedClasses.validBorder);
 
-      const typeInput = screen.getByLabelText(
+      const typeSelector = screen.getByLabelText(
         appStrings.transactions.newForm.type
       );
-      expect(typeInput).toBeInTheDocument();
-      expect(typeInput).not.toHaveClass(appliedClasses.errorBorder);
-      expect(typeInput).not.toHaveClass(appliedClasses.validBorder);
+      expect(typeSelector).toBeInTheDocument();
+      expect(typeSelector).not.toHaveClass(appliedClasses.errorBorder);
+      expect(typeSelector).not.toHaveClass(appliedClasses.validBorder);
 
       const commentsInput = screen.getByLabelText(
         appStrings.transactions.newForm.comments
@@ -299,6 +299,27 @@ describe("transactions page", () => {
       expect(commentsInput).toBeInTheDocument();
       expect(commentsInput).not.toHaveClass(appliedClasses.errorBorder);
       expect(commentsInput).not.toHaveClass(appliedClasses.validBorder);
+    });
+
+    test("includes expected options in the type selector", async () => {
+      await renderTransactionsPageWithNewFormOpen();
+
+      const typeSelector = screen.getByLabelText(
+        appStrings.transactions.newForm.type
+      );
+
+      userEvent.selectOptions(
+        typeSelector,
+        TransactionType.withdrawal.toString()
+      );
+      expect(typeSelector).toHaveDisplayValue(
+        appStrings.transactions.newForm.typeOptions.withdrawal
+      );
+
+      userEvent.selectOptions(typeSelector, TransactionType.deposit.toString());
+      expect(typeSelector).toHaveDisplayValue(
+        appStrings.transactions.newForm.typeOptions.deposit
+      );
     });
 
     test("displays submit button, which is disabled", async () => {

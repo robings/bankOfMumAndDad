@@ -9,7 +9,10 @@ import {
   ITransaction,
   TransactionType,
 } from "../Interfaces/Entities/ITransaction";
-import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
+import {
+  ITransactionDto,
+  TransactionTypeAsString,
+} from "../Interfaces/Entities/ITransactionDto";
 
 beforeEach(() => {
   fetch.enableMocks();
@@ -244,7 +247,7 @@ describe("transactions api", () => {
   describe("saveNewTransaction", () => {
     const data: ITransactionDto = {
       amount: "100",
-      type: "0",
+      type: TransactionType.deposit.toString() as TransactionTypeAsString,
       date: new Date("2022-02-18"),
       comments: "test transaction",
       accountId: "10055",

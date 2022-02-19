@@ -9,6 +9,7 @@ import {
 import * as yup from "yup";
 import appStrings from "../../constants/app.strings";
 import appliedClasses from "../../constants/appliedClasses";
+import { TransactionType } from "../../Interfaces/Entities/ITransaction";
 import { INewTransactionFormInput } from "../../Interfaces/INewTransactionForm";
 
 interface INewTransactionFormProps {
@@ -85,7 +86,7 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
   const initialValues: INewTransactionFormInput = {
     amount: "",
     dateOfTransaction: "",
-    type: "DEPOSIT",
+    type: TransactionType.deposit,
     comments: "",
   };
 
@@ -162,10 +163,10 @@ function TransactionsNewForm(props: INewTransactionFormProps): JSX.Element {
                       (dirty || touched.type) && appliedClasses.validBorder
                     }
                   >
-                    <option value="deposit">
+                    <option value={TransactionType.deposit}>
                       {appStrings.transactions.newForm.typeOptions.deposit}
                     </option>
-                    <option value="withdrawal">
+                    <option value={TransactionType.withdrawal}>
                       {appStrings.transactions.newForm.typeOptions.withdrawal}
                     </option>
                   </Field>

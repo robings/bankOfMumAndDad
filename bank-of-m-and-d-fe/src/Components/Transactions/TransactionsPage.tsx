@@ -6,9 +6,15 @@ import TransactionsNewForm from "./TransactionsNewForm";
 import { useParams, useNavigate } from "react-router-dom";
 import { revokeToken, loggedIn } from "../../tokenHelper/tokenHelper";
 import apiTransactions from "../../api/apiTransactions";
-import { IListOfTransactionsForAccount } from "../../Interfaces/Entities/ITransaction";
+import {
+  IListOfTransactionsForAccount,
+  TransactionType,
+} from "../../Interfaces/Entities/ITransaction";
 import { INewTransactionFormInput } from "../../Interfaces/INewTransactionForm";
-import { ITransactionDto } from "../../Interfaces/Entities/ITransactionDto";
+import {
+  ITransactionDto,
+  TransactionTypeAsString,
+} from "../../Interfaces/Entities/ITransactionDto";
 
 function TransactionsPage(): JSX.Element {
   const { accountId } = useParams();
@@ -54,7 +60,7 @@ function TransactionsPage(): JSX.Element {
     const data: ITransactionDto = {
       amount: transaction.amount,
       date: new Date(transaction.dateOfTransaction),
-      type: transaction.type === "DEPOSIT" ? "0" : "1",
+      type: transaction.type.toString() as TransactionTypeAsString,
       comments: transaction.comments,
       accountId: accountId,
     };
