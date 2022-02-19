@@ -9,7 +9,10 @@ import {
   ITransaction,
   TransactionType,
 } from "../Interfaces/Entities/ITransaction";
-import { ITransactionDto } from "../Interfaces/Entities/ITransactionDto";
+import {
+  ITransactionDto,
+  TransactionTypeAsString,
+} from "../Interfaces/Entities/ITransactionDto";
 
 beforeEach(() => {
   fetch.enableMocks();
@@ -224,12 +227,27 @@ describe("transactions api", () => {
         apiTransactions.getTransactionsByAccountId(id)
       ).rejects.toThrow(apiStrings.transactions.error);
     });
+
+    test("throws if a response is received that has a different account id", async () => {
+      fetch.mockResponseOnce(JSON.stringify(transactionsResponse));
+
+      const notTheIdReturned = "10050";
+      let error: string = "";
+
+      try {
+        await apiTransactions.getTransactionsByAccountId(notTheIdReturned);
+      } catch (e: any) {
+        error = e.message;
+      }
+
+      expect(error).toBe(apiStrings.transactions.nonMatchingIdsError);
+    });
   });
 
   describe("saveNewTransaction", () => {
     const data: ITransactionDto = {
-      amount: 100,
-      type: "0",
+      amount: "100",
+      type: TransactionType.deposit.toString() as TransactionTypeAsString,
       date: new Date("2022-02-18"),
       comments: "test transaction",
       accountId: "10055",

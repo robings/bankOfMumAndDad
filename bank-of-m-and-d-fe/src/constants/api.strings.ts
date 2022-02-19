@@ -19,6 +19,8 @@ const apiStrings = {
     error: "An error occured whilst attempting to retrieve transactions.",
     noTransactions: "No transactions retrieved for this account.",
     noAccount: "Account information not found.",
+    nonMatchingIdsError:
+      "Account Id in returned data does not match request account id.",
     saveError: "An error occured whilst attempting to save the transaction.",
     saved: "Transaction saved successfully.",
   },

@@ -84,23 +84,17 @@ describe("accounts page", () => {
   test("displays table headings", async () => {
     renderAccountsPage();
 
-    const tableHeaders = await screen.findAllByRole("row");
+    const rows = await screen.findAllByRole("row");
 
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.currentBalance,
-      })
-    ).toBeInTheDocument();
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.firstName,
-      })
-    ).toBeInTheDocument();
-    expect(
-      within(tableHeaders[0]).getByRole("columnheader", {
-        name: appStrings.accounts.listTableHeaders.lastName,
-      })
-    ).toBeInTheDocument();
+    Object.keys(appStrings.accounts.listTableHeaders).forEach((key) => {
+      expect(
+        within(rows[0]).getByRole("columnheader", {
+          name: appStrings.accounts.listTableHeaders[
+            key as keyof typeof appStrings.accounts.listTableHeaders
+          ],
+        })
+      ).toBeInTheDocument();
+    });
   });
 
   test("displays accounts data retrieved", async () => {
@@ -539,6 +533,51 @@ describe("accounts page", () => {
       expect(saveNewAccountMock).toHaveBeenCalledWith(expectedData);
     });
 
+    test("disables form on save", async () => {
+      localStorage.setItem(appStrings.localStorageKeys.bearerToken, "myToken");
+
+      const getAllAccountsMock =
+        apiAccounts.getAllAccounts as jest.MockedFunction<
+          typeof apiAccounts.getAllAccounts
+        >;
+      getAllAccountsMock.mockResolvedValue(accountsResponse);
+
+      render(
+        <MemoryRouter initialEntries={["/accounts"]}>
+          <AccountsPage />
+        </MemoryRouter>
+      );
+
+      userEvent.click(
+        await screen.findByRole("button", {
+          name: appStrings.accounts.navButtons.newAccount,
+        })
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.firstName),
+        "Bob"
+      );
+
+      userEvent.type(
+        screen.getByLabelText(appStrings.accounts.newForm.lastName),
+        "Dennis"
+      );
+
+      const openingBalanceInput = screen.getByLabelText(
+        appStrings.accounts.newForm.openingBalance
+      );
+      userEvent.clear(openingBalanceInput);
+      userEvent.type(openingBalanceInput, "100");
+
+      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+
+      // avoiding console warning due to Formik changes using waitFor
+      await waitFor(() => {
+        expect(screen.getByRole("group")).toBeDisabled();
+      });
+    });
+
     test("calls getAllAccounts api endpoint after saving", async () => {
       const saveNewAccountMock =
         apiAccounts.saveNewAccount as jest.MockedFunction<
@@ -566,25 +605,21 @@ describe("accounts page", () => {
         })
       );
 
-      const firstName = "Bob";
-      const lastName = "Dennis";
-      const openingBalance = "100";
-
       userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
-        firstName
+        "Bob"
       );
 
       userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
-        lastName
+        "Dennis"
       );
 
       const openingBalanceInput = screen.getByLabelText(
         appStrings.accounts.newForm.openingBalance
       );
       userEvent.clear(openingBalanceInput);
-      userEvent.type(openingBalanceInput, openingBalance);
+      userEvent.type(openingBalanceInput, "100");
 
       userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
 

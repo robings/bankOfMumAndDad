@@ -63,7 +63,7 @@ function LoginForm(props: ILoginProps): JSX.Element {
           onSubmit={(values) => submitLogin(values)}
           validationSchema={loginSchema}
         >
-          {({ isValid, dirty, errors, touched }) => (
+          {({ isValid, dirty, errors, touched, isSubmitting }) => (
             <Form>
               {showErrorBox(errors, touched) && (
                 <div className="errorBox">
@@ -74,41 +74,43 @@ function LoginForm(props: ILoginProps): JSX.Element {
                   </ul>
                 </div>
               )}
-              <div>
-                <label htmlFor="username">
-                  {appStrings.loginForm.usernameLabel}
-                </label>
-                <Field type="text" name="username" id="username" />
-              </div>
-              <div>
-                <label htmlFor="password">
-                  {appStrings.loginForm.passwordLabel}
-                </label>
-                <Field
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  id="password"
-                />
-              </div>
-              <div className="checkboxGroup">
-                <input
-                  type="checkbox"
-                  id="showPassword"
-                  onChange={() => setShowPassword(!showPassword)}
-                />
-                <label htmlFor="showPassword">
-                  {appStrings.loginForm.showPassword}
-                </label>
-              </div>
-              <div className="buttonContainer">
-                <button
-                  className="appButton"
-                  type="submit"
-                  disabled={!dirty || !isValid}
-                >
-                  {appStrings.submit}
-                </button>
-              </div>
+              <fieldset disabled={isSubmitting}>
+                <div>
+                  <label htmlFor="username">
+                    {appStrings.loginForm.usernameLabel}
+                  </label>
+                  <Field type="text" name="username" id="username" />
+                </div>
+                <div>
+                  <label htmlFor="password">
+                    {appStrings.loginForm.passwordLabel}
+                  </label>
+                  <Field
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    id="password"
+                  />
+                </div>
+                <div className="checkboxGroup">
+                  <input
+                    type="checkbox"
+                    id="showPassword"
+                    onChange={() => setShowPassword(!showPassword)}
+                  />
+                  <label htmlFor="showPassword">
+                    {appStrings.loginForm.showPassword}
+                  </label>
+                </div>
+                <div className="buttonContainer">
+                  <button
+                    className="appButton"
+                    type="submit"
+                    disabled={!dirty || !isValid}
+                  >
+                    {appStrings.submit}
+                  </button>
+                </div>
+              </fieldset>
             </Form>
           )}
         </Formik>

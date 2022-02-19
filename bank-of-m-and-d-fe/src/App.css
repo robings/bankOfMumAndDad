@@ -13,12 +13,15 @@
   --default-colour: #0063B1;
   --default-dark-colour: #111111;
   --exclamation-colour: #E81123;
+  --warning-colour: #FF8C00;
   --all-go-colour: #107C10;
   --border-colour: #69797E;
   --modal-overlay-bg-colour: rgba(0, 0, 0, 0.25);
   --table-accent-colour: #F2F2F2;
   --table-hover-colour: #BDC3C7;
   --dark-header-colour: #4C4A48;
+  --positive-amount-colour: #009900;
+  --negative-amount-colour: #FF0000;
 }
 
 * {
@@ -243,12 +246,39 @@ th {
   text-align: left;
 }
 
+th.currencyHeader {
+  width: 150px;
+  text-align: center;
+}
+
 td {
   color: var(--default-dark-colour);
 }
 
 td:last-child {
   text-align: right;
+}
+
+td.date {
+  width: 15%;
+}
+
+td.currency {
+  width: 150px;
+}
+
+td.positiveAmount {
+  text-align: right;
+  color: var(--positive-amount-colour);
+}
+
+td.negativeAmount {
+  text-align: right;
+  color: var(--negative-amount-colour);
+}
+
+td.comments {
+  text-align: left;
 }
 
 /* form */
@@ -267,6 +297,12 @@ form div:last-child {
   margin-bottom: 0;
 }
 
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
 .checkboxGroup {
   float: right;
   margin: 0;
@@ -279,6 +315,7 @@ input, select {
   border: 1px solid var(--border-colour);
   border-radius: 4px;
   outline: none;
+  min-height: 35px;
 }
 
 input[type=text], input[type=password] {
@@ -293,6 +330,7 @@ input[type=submit], button[type=submit] {
 input[type=checkbox] {
   width: 20px;
   height: 20px;
+  min-height:auto;
 }
 
 input.numberField {
@@ -304,7 +342,7 @@ input.numberField {
 }
 
 label {
-  padding-top: 9px;
+  padding-top: 12px;
   float: left;
 }
 
@@ -342,6 +380,16 @@ button[type=submit]:disabled {
 
 .errorBorder {
   border-color: var(--exclamation-colour);
+}
+
+.warningBox {
+  border: 1px solid var(--warning-colour);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.warningBorder {
+  border-color: var(--warning-colour);
 }
 
 .validBorder {

@@ -8,6 +8,7 @@ const appStrings = {
   loggedInAt: "Logged in at:",
   submit: "Submit",
   closeButton: "X",
+  currencySymbol: "£",
   localStorageKeys: {
     bearerToken: "bearerToken",
     loginTime: "loginTime",
@@ -72,13 +73,18 @@ const appStrings = {
       title: "New Transaction",
       success: "Transaction recorded",
       amount: "Amount £",
+      amountRequired: "Please enter an amount",
+      amountError: "Amount must be a number",
       date: "Date of transaction",
+      dateRequired: "Please enter a valid date",
       type: "Type",
       typeOptions: {
         deposit: "Deposit",
         withdrawal: "Withdrawal",
       },
       comments: "Comments",
+      noCommentsWarning:
+        "You may wish to include a comment to identify the transaction.",
     },
     error: "No transactions found for account.",
     accountError: "Account information not found",
