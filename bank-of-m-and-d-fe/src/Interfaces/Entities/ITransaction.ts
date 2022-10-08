@@ -4,7 +4,7 @@ export interface ITransaction {
     date: string;
     type: number;
     comments: string;
-}
+};
 
 export interface IListOfTransactionsForAccount {
     accountId: number | null;
@@ -13,4 +13,9 @@ export interface IListOfTransactionsForAccount {
     openingBalance: number;
     currentBalance: number;
     transactions: ITransaction[];
-}
+};
+
+export enum TransactionType {
+    deposit,
+    withdrawal,
+};

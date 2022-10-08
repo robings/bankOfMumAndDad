@@ -1,23 +1,25 @@
-import "./transactions.css";
-import { ITransactionProps } from "../../Interfaces/Props/ITransactionsProps";
 import Loader from "../Loader/Loader";
 import appStrings from "../../constants/app.strings";
+import appliedClasses from "../../constants/appliedClasses";
+import { IListOfTransactionsForAccount } from "../../Interfaces/Entities/ITransaction";
+
+export interface ITransactionProps {
+  data: IListOfTransactionsForAccount;
+  error: boolean;
+  loading: boolean;
+}
 
 function Transactions(props: ITransactionProps): JSX.Element {
-  const dataToDisplay = props.transactionsData;
-  const error = props.transactionsError;
-  const loading = props.transactionsLoading;
-  const noTransactions = props.noTransactions;
+  const { data, error, loading } = props;
 
   return (
     <main>
-      <h2>{appStrings.transactions.title}</h2>
       {loading && !error ? (
         <Loader />
       ) : (
         <div>
           <h3>
-            Name: {dataToDisplay.firstName} {dataToDisplay.lastName}
+            Name: {data.firstName} {data.lastName}
           </h3>
 
           <table>
@@ -41,66 +43,50 @@ function Transactions(props: ITransactionProps): JSX.Element {
                 <td>{appStrings.transactions.startBalance}</td>
                 <td></td>
                 <td></td>
-                {dataToDisplay.openingBalance < 0 ? (
-                  <td style={{ textAlign: "right", color: "#FF0000" }}>
-                    -£{(dataToDisplay.openingBalance * -1).toFixed(2)}
+                {data.openingBalance < 0 ? (
+                  <td className={appliedClasses.negativeAmount}>
+                    -£{(data.openingBalance * -1).toFixed(2)}
                   </td>
                 ) : (
-                  <td style={{ textAlign: "right", color: "#009900" }}>
-                    £{dataToDisplay.openingBalance.toFixed(2)}
+                  <td className={appliedClasses.positiveAmount}>
+                    £{data.openingBalance.toFixed(2)}
                   </td>
                 )}
                 <td></td>
               </tr>
-              {noTransactions ? (
+              {data.transactions.length === 0 ? (
                 <tr>
                   <td colSpan={5}>{appStrings.transactions.noTransactions}</td>
                 </tr>
               ) : (
-                dataToDisplay.transactions.map(
+                data.transactions.map(
                   ({ amount, date, type, comments, balance }, index) => (
                     <tr key={index}>
-                      <td style={{ width: "15%" }}>{date}</td>
+                      <td className="date">{date}</td>
                       <td
-                        style={{
-                          textAlign: "right",
-                          color: "#009900",
-                          width: "150px",
-                        }}
+                        className={`currency ${appliedClasses.positiveAmount}`}
                       >
                         {type === 0 ? `£${amount.toFixed(2)}` : ""}
                       </td>
                       <td
-                        style={{
-                          textAlign: "right",
-                          color: "#FF0000",
-                          width: "150px",
-                        }}
+                        className={`currency ${appliedClasses.negativeAmount}`}
                       >
                         {type === 0 ? "" : `£${amount.toFixed(2)}`}
                       </td>
                       {balance < 0 ? (
                         <td
-                          style={{
-                            textAlign: "right",
-                            color: "#FF0000",
-                            width: "150px",
-                          }}
+                          className={`currency ${appliedClasses.negativeAmount}`}
                         >
                           -£{(balance * -1).toFixed(2)}
                         </td>
                       ) : (
                         <td
-                          style={{
-                            textAlign: "right",
-                            color: "#009900",
-                            width: "150px",
-                          }}
+                          className={`currency ${appliedClasses.positiveAmount}`}
                         >
                           £{balance.toFixed(2)}
                         </td>
                       )}
-                      <td style={{ textAlign: "left" }}>{comments}</td>
+                      <td className="comments">{comments}</td>
                     </tr>
                   )
                 )
@@ -109,13 +95,13 @@ function Transactions(props: ITransactionProps): JSX.Element {
                 <td>{appStrings.transactions.endBalance}</td>
                 <td></td>
                 <td></td>
-                {dataToDisplay.currentBalance < 0 ? (
-                  <td style={{ textAlign: "right", color: "#FF0000" }}>
-                    -£{(dataToDisplay.currentBalance * -1).toFixed(2)}
+                {data.currentBalance < 0 ? (
+                  <td className={appliedClasses.negativeAmount}>
+                    -£{(data.currentBalance * -1).toFixed(2)}
                   </td>
                 ) : (
-                  <td style={{ textAlign: "right", color: "#009900" }}>
-                    £{dataToDisplay.currentBalance.toFixed(2)}
+                  <td className={appliedClasses.positiveAmount}>
+                    £{data.currentBalance.toFixed(2)}
                   </td>
                 )}
                 <td></td>

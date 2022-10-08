@@ -1,12 +1,21 @@
 import fetch from "jest-fetch-mock";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
 import apiUser from "./apiUser";
-import { APIBaseUrl } from "./apiSettings";
+import { APIBaseUrl } from "../constants/api.settings";
 import apiStrings from "../constants/api.strings";
+import appStrings from "../constants/app.strings";
 
 beforeEach(() => {
   fetch.enableMocks();
   fetch.resetMocks();
+});
+
+beforeAll(() => {
+  localStorage.clear();
+});
+
+afterEach(() => {
+  localStorage.clear();
 });
 
 describe("login api call", () => {
@@ -30,16 +39,19 @@ describe("login api call", () => {
       "Content-Type": "application/json",
     });
     expect(fetch.mock.calls[0][1]?.method).toBe("POST");
+    expect(fetch.mock.calls[0][1]?.body).toBe(JSON.stringify(data));
   });
 
-  test("returns expected data on successful call", async () => {
+  test("sets token on successful call", async () => {
     const responseData = { token: "myToken" };
 
     fetch.mockResponseOnce(JSON.stringify(responseData));
 
-    const response = await apiUser.login(data);
+    await apiUser.login(data);
 
-    expect(response).toEqual(responseData);
+    expect(localStorage.getItem(appStrings.localStorageKeys.bearerToken)).toBe(
+      responseData.token
+    );
   });
 
   test("throws if API unavailable", async () => {

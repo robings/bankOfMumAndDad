@@ -1,20 +1,25 @@
 import { toast } from 'react-toastify';
 import apiStrings from "../constants/api.strings";
 import { ILoginDto } from "../Interfaces/Entities/ILoginDto";
-import { APIBaseUrl } from "./apiSettings";
+import { setToken } from "../tokenHelper/tokenHelper";
+import { APIBaseUrl } from "../constants/api.settings";
 
-async function login(data: ILoginDto): Promise<{ token: string }> {
+async function login(data: ILoginDto): Promise<void> {
   const loginResponse = await toast.promise(
     async () => {
-      const response = await fetch(`${APIBaseUrl}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }).catch(() => {
+      let response;
+
+      try {
+        response = await fetch(`${APIBaseUrl}/api/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+      } catch {
         throw new Error(apiStrings.user.error);
-      });
+      }
 
       if (response.status >= 400 && response.status < 500) {
         throw new Error(apiStrings.user.incorrectCredentials);
@@ -37,7 +42,9 @@ async function login(data: ILoginDto): Promise<{ token: string }> {
     }
   );
 
-  return loginResponse.json();
+  const returnedResponse: { token: string } = await loginResponse.json();
+
+  setToken(returnedResponse.token);
 }
 
 const apiUser = {
