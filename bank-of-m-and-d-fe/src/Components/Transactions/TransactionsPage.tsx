@@ -97,9 +97,9 @@ function TransactionsPage(): JSX.Element {
     navigate("/accounts");
   };
 
-  const handleSaveTransaction = async (
+  async function handleSaveTransaction(
     transaction: INewTransactionFormInput
-  ): Promise<void> => {
+  ): Promise<void> {
     const data: ITransactionDto = {
       amount: transaction.amount,
       date: new Date(transaction.dateOfTransaction),
@@ -113,7 +113,7 @@ function TransactionsPage(): JSX.Element {
       handleCloseModal();
       await loadTransactions(accountId!);
     } catch {}
-  };
+  }
 
   useEffect(() => {
     const redirectToLoginPage = (): void => {
@@ -161,7 +161,7 @@ function TransactionsPage(): JSX.Element {
       </Header>
       <div className="App">
         <Transactions data={transactionsData} error={error} loading={loading} />
-        {newTransactionModalVisiblity && (
+        {loggedIn() && newTransactionModalVisiblity && (
           <TransactionsNewForm
             onSave={handleSaveTransaction}
             closeModal={handleCloseModal}
