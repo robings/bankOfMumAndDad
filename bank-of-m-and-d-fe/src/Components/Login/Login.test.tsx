@@ -53,10 +53,12 @@ describe("login form", () => {
     ).toHaveAttribute("type", "password");
   });
 
-  test("displays password input as text type when show password is checked", () => {
+  test("displays password input as text type when show password is checked", async () => {
     renderLoginForm();
 
-    userEvent.click(screen.getByLabelText(appStrings.loginForm.showPassword));
+    await userEvent.click(
+      screen.getByLabelText(appStrings.loginForm.showPassword)
+    );
 
     expect(
       screen.getByLabelText(appStrings.loginForm.passwordLabel)
@@ -77,11 +79,11 @@ describe("login form", () => {
     const username = "Username";
     const password = "Password";
 
-    userEvent.type(
+    await userEvent.type(
       await screen.findByLabelText(appStrings.loginForm.usernameLabel),
       username
     );
-    userEvent.type(
+    await userEvent.type(
       screen.getByLabelText(appStrings.loginForm.passwordLabel),
       password
     );
@@ -101,11 +103,11 @@ describe("login form", () => {
     const username = "Username";
     const password = "Password";
 
-    userEvent.type(
+    await userEvent.type(
       await screen.findByLabelText(appStrings.loginForm.usernameLabel),
       username
     );
-    userEvent.type(
+    await userEvent.type(
       screen.getByLabelText(appStrings.loginForm.passwordLabel),
       password
     );
@@ -114,7 +116,9 @@ describe("login form", () => {
       await screen.findByRole("button", { name: appStrings.submit })
     ).toBeEnabled();
 
-    userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+    await userEvent.click(
+      screen.getByRole("button", { name: appStrings.submit })
+    );
 
     // avoiding console warning due to Formik changes using waitFor
     await waitFor(() => {
@@ -128,11 +132,11 @@ describe("login form", () => {
     const username = "Username";
     const password = "Password";
 
-    userEvent.type(
+    await userEvent.type(
       await screen.findByLabelText(appStrings.loginForm.usernameLabel),
       username
     );
-    userEvent.type(
+    await userEvent.type(
       screen.getByLabelText(appStrings.loginForm.passwordLabel),
       password
     );
@@ -143,7 +147,7 @@ describe("login form", () => {
 
     expect(submitButton).toBeEnabled();
 
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
 
     // avoiding console warning due to Formik changes using waitFor
     await waitFor(() => {
@@ -155,8 +159,10 @@ describe("login form", () => {
   test("shows error if no username is entered", async () => {
     renderLoginForm();
 
-    userEvent.click(screen.getByLabelText(appStrings.loginForm.usernameLabel));
-    userEvent.tab();
+    await userEvent.click(
+      screen.getByLabelText(appStrings.loginForm.usernameLabel)
+    );
+    await userEvent.tab();
 
     expect(await screen.findByRole("listitem")).toHaveTextContent(
       appStrings.loginForm.usernameRequired
@@ -166,8 +172,10 @@ describe("login form", () => {
   test("shows error if no password is entered", async () => {
     renderLoginForm();
 
-    userEvent.click(screen.getByLabelText(appStrings.loginForm.passwordLabel));
-    userEvent.tab();
+    await userEvent.click(
+      screen.getByLabelText(appStrings.loginForm.passwordLabel)
+    );
+    await userEvent.tab();
 
     expect(await screen.findByRole("listitem")).toHaveTextContent(
       appStrings.loginForm.passwordRequired

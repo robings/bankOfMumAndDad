@@ -233,7 +233,7 @@ describe("accounts page", () => {
   test("opens new account form on clicking new account button", async () => {
     renderAccountsPage();
 
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole("button", {
         name: appStrings.accounts.navButtons.newAccount,
       })
@@ -248,7 +248,7 @@ describe("accounts page", () => {
     const renderAccountsPageWithNewFormOpen = async () => {
       renderAccountsPage();
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.accounts.navButtons.newAccount,
         })
@@ -295,7 +295,7 @@ describe("accounts page", () => {
         appStrings.accounts.newForm.firstName
       );
 
-      userEvent.click(firstNameInput);
+      await userEvent.click(firstNameInput);
       // tab out of field to trigger error
       userEvent.tab();
 
@@ -309,7 +309,7 @@ describe("accounts page", () => {
     test("displays error heading if there is an error", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.click(
+      await userEvent.click(
         screen.getByLabelText(appStrings.accounts.newForm.firstName)
       );
       // tab out of field to trigger error
@@ -323,7 +323,7 @@ describe("accounts page", () => {
     test("displays error if no last name entered", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "name"
       );
@@ -332,9 +332,9 @@ describe("accounts page", () => {
         appStrings.accounts.newForm.lastName
       );
       // click in last name field
-      userEvent.click(lastNameInput);
+      await userEvent.click(lastNameInput);
       // tab out of field to trigger error
-      userEvent.tab();
+      await userEvent.tab();
 
       expect(await screen.findByRole("listitem")).toHaveTextContent(
         appStrings.accounts.newForm.lastNameError
@@ -346,7 +346,7 @@ describe("accounts page", () => {
       await renderAccountsPageWithNewFormOpen();
 
       // click in first name field
-      userEvent.click(
+      await userEvent.click(
         screen.getByLabelText(appStrings.accounts.newForm.firstName)
       );
 
@@ -354,7 +354,7 @@ describe("accounts page", () => {
         appStrings.accounts.newForm.lastName
       );
       // click in last name field so there is an error in the first name field
-      userEvent.click(lastNameInput);
+      await userEvent.click(lastNameInput);
 
       // wait for the error text to appear
       expect(
@@ -367,11 +367,11 @@ describe("accounts page", () => {
     test("displays error if there is no value for opening balance", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "name"
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         "surname"
       );
@@ -380,9 +380,9 @@ describe("accounts page", () => {
         appStrings.accounts.newForm.openingBalance
       );
       // clear balance field
-      userEvent.clear(openingBalanceInput);
+      await userEvent.clear(openingBalanceInput);
       // tab out of field to trigger error
-      userEvent.tab();
+      await userEvent.tab();
 
       expect(await screen.findByRole("listitem")).toHaveTextContent(
         appStrings.accounts.newForm.openingBalanceRequired
@@ -396,11 +396,11 @@ describe("accounts page", () => {
       async (dodgyNumber) => {
         await renderAccountsPageWithNewFormOpen();
 
-        userEvent.type(
+        await userEvent.type(
           screen.getByLabelText(appStrings.accounts.newForm.firstName),
           "name"
         );
-        userEvent.type(
+        await userEvent.type(
           screen.getByLabelText(appStrings.accounts.newForm.lastName),
           "surname"
         );
@@ -409,12 +409,12 @@ describe("accounts page", () => {
           appStrings.accounts.newForm.openingBalance
         );
         // clear balance field
-        userEvent.clear(openingBalanceField);
+        await userEvent.clear(openingBalanceField);
         // type in field
-        userEvent.type(openingBalanceField, dodgyNumber);
+        await userEvent.type(openingBalanceField, dodgyNumber);
 
         // tab out of field to trigger error
-        userEvent.tab();
+        await userEvent.tab();
 
         expect(await screen.findByRole("listitem")).toHaveTextContent(
           appStrings.accounts.newForm.openingBalanceError
@@ -425,7 +425,7 @@ describe("accounts page", () => {
     test("displays borders indicating valid inputs with valid inputs", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "person"
       );
@@ -434,9 +434,9 @@ describe("accounts page", () => {
         appStrings.accounts.newForm.lastName
       );
 
-      userEvent.type(lastNameInput, "name");
+      await userEvent.type(lastNameInput, "name");
       // trigger validation
-      userEvent.tab();
+      await userEvent.tab();
 
       // await to avoid console warning due to Formik updates
       expect(
@@ -451,11 +451,11 @@ describe("accounts page", () => {
     test("enables submit button with valid inputs", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "person"
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         "name"
       );
@@ -469,7 +469,7 @@ describe("accounts page", () => {
     test("closes when close button clicked", async () => {
       await renderAccountsPageWithNewFormOpen();
 
-      userEvent.click(
+      await userEvent.click(
         screen.getByRole("button", { name: appStrings.closeButton })
       );
 
@@ -500,25 +500,27 @@ describe("accounts page", () => {
         currentBalance: openingBalance,
       };
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         firstName
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         lastName
       );
 
-      userEvent.clear(
+      await userEvent.clear(
         screen.getByLabelText(appStrings.accounts.newForm.openingBalance)
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.openingBalance),
         openingBalance
       );
 
-      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+      await userEvent.click(
+        screen.getByRole("button", { name: appStrings.submit })
+      );
 
       // test needed this to be a wait for to work, and avoid console warnings
       // due to Formik updates
@@ -548,18 +550,18 @@ describe("accounts page", () => {
         </MemoryRouter>
       );
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.accounts.navButtons.newAccount,
         })
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "Bob"
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         "Dennis"
       );
@@ -567,10 +569,12 @@ describe("accounts page", () => {
       const openingBalanceInput = screen.getByLabelText(
         appStrings.accounts.newForm.openingBalance
       );
-      userEvent.clear(openingBalanceInput);
-      userEvent.type(openingBalanceInput, "100");
+      await userEvent.clear(openingBalanceInput);
+      await userEvent.type(openingBalanceInput, "100");
 
-      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+      await userEvent.click(
+        screen.getByRole("button", { name: appStrings.submit })
+      );
 
       // avoiding console warning due to Formik changes using waitFor
       await waitFor(() => {
@@ -599,18 +603,18 @@ describe("accounts page", () => {
         </MemoryRouter>
       );
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.accounts.navButtons.newAccount,
         })
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.firstName),
         "Bob"
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.accounts.newForm.lastName),
         "Dennis"
       );
@@ -618,10 +622,12 @@ describe("accounts page", () => {
       const openingBalanceInput = screen.getByLabelText(
         appStrings.accounts.newForm.openingBalance
       );
-      userEvent.clear(openingBalanceInput);
-      userEvent.type(openingBalanceInput, "100");
+      await userEvent.clear(openingBalanceInput);
+      await userEvent.type(openingBalanceInput, "100");
 
-      userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+      await userEvent.click(
+        screen.getByRole("button", { name: appStrings.submit })
+      );
 
       // test needed this to be a wait for to work, and avoid console warnings
       // due to Formik updates
