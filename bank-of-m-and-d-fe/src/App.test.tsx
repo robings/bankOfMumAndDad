@@ -87,15 +87,17 @@ describe("app", () => {
 
     renderApp();
 
-    userEvent.type(
+    await userEvent.type(
       await screen.findByLabelText(appStrings.loginForm.usernameLabel),
       "username"
     );
-    userEvent.type(
+    await userEvent.type(
       screen.getByLabelText(appStrings.loginForm.passwordLabel),
       "password"
     );
-    userEvent.click(screen.getByRole("button", { name: appStrings.submit }));
+    await userEvent.click(
+      screen.getByRole("button", { name: appStrings.submit })
+    );
 
     await waitFor(() =>
       screen.getByRole("heading", { name: appStrings.accounts.title })
@@ -182,13 +184,18 @@ describe("app", () => {
     await loginToApp();
 
     // click the second view transactions button
+    await waitFor(() => {
+      expect(
+        screen.getByText(accountsResponse.data[0].lastName)
+      ).toBeInTheDocument();
+    });
     const rows = await screen.findAllByRole("row");
     const buttonsCellRow2 = within(rows[2]).getAllByRole("cell")[3];
     const transactionsButton = within(buttonsCellRow2).getByRole("button", {
       name: appStrings.accounts.listButtons.viewTransactions,
     });
 
-    userEvent.click(transactionsButton);
+    await userEvent.click(transactionsButton);
 
     expect(
       await screen.findByRole("heading", {

@@ -103,10 +103,7 @@ function AccountsPage(): JSX.Element {
           />
         </main>
         {loggedIn() && newAccountModalVisibility && (
-          <AccountsNewForm
-            closeModal={() => handleCloseModal()}
-            onSave={onSaveNew}
-          />
+          <AccountsNewForm closeModal={handleCloseModal} onSave={onSaveNew} />
         )}
       </div>
     </>

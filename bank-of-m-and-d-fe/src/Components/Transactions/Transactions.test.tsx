@@ -276,7 +276,7 @@ describe("transactions page", () => {
   test("opens new transaction form when new transaction button clicked", async () => {
     renderTransactionsPage();
 
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole("button", {
         name: appStrings.transactions.navButtons.newTransaction,
       })
@@ -293,7 +293,7 @@ describe("transactions page", () => {
     const renderTransactionsPageWithNewFormOpen = async () => {
       renderTransactionsPage();
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.transactions.navButtons.newTransaction,
         })
@@ -339,7 +339,7 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.type
       );
 
-      userEvent.selectOptions(
+      await userEvent.selectOptions(
         typeSelector,
         TransactionType.withdrawal.toString()
       );
@@ -347,7 +347,10 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.typeOptions.withdrawal
       );
 
-      userEvent.selectOptions(typeSelector, TransactionType.deposit.toString());
+      await userEvent.selectOptions(
+        typeSelector,
+        TransactionType.deposit.toString()
+      );
 
       await waitFor(() => {
         expect(typeSelector).toHaveDisplayValue(
@@ -367,21 +370,23 @@ describe("transactions page", () => {
     test("enables submit button, with valid values", async () => {
       await renderTransactionsPageWithNewFormOpen();
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.amount),
         "100"
       );
-      userEvent.clear(
+      await userEvent.clear(
         screen.getByLabelText(appStrings.transactions.newForm.date)
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.date),
         "2022-02-18"
       );
 
-      expect(
-        await screen.findByRole("button", { name: appStrings.submit })
-      ).toBeEnabled();
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: appStrings.submit })
+        ).toBeEnabled();
+      });
     });
 
     test("calls save api with expected values", async () => {
@@ -405,18 +410,18 @@ describe("transactions page", () => {
         comments: comment,
       };
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.amount),
         amount
       );
-      userEvent.clear(
+      await userEvent.clear(
         screen.getByLabelText(appStrings.transactions.newForm.date)
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.date),
         date
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.comments),
         comment
       );
@@ -426,7 +431,7 @@ describe("transactions page", () => {
       });
       expect(submitButton).toBeEnabled();
 
-      userEvent.click(submitButton);
+      await userEvent.click(submitButton);
 
       await waitFor(() => {
         expect(mockSaveTransaction).toHaveBeenCalledWith(expectedData);
@@ -461,24 +466,24 @@ describe("transactions page", () => {
         </MemoryRouter>
       );
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.transactions.navButtons.newTransaction,
         })
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.amount),
         "100"
       );
-      userEvent.clear(
+      await userEvent.clear(
         screen.getByLabelText(appStrings.transactions.newForm.date)
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.date),
         "2022-02-18"
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.comments),
         "test comment"
       );
@@ -521,24 +526,24 @@ describe("transactions page", () => {
         </MemoryRouter>
       );
 
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole("button", {
           name: appStrings.transactions.navButtons.newTransaction,
         })
       );
 
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.amount),
         "100"
       );
-      userEvent.clear(
+      await userEvent.clear(
         screen.getByLabelText(appStrings.transactions.newForm.date)
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.date),
         "2022-02-18"
       );
-      userEvent.type(
+      await userEvent.type(
         screen.getByLabelText(appStrings.transactions.newForm.comments),
         "test comment"
       );
@@ -548,7 +553,7 @@ describe("transactions page", () => {
       });
       expect(submitButton).toBeEnabled();
 
-      userEvent.click(submitButton);
+      await userEvent.click(submitButton);
 
       // avoiding console warning due to Formik changes using waitFor
       await waitFor(() => {
@@ -563,8 +568,8 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.amount
       );
 
-      userEvent.click(amountInput);
-      userEvent.tab();
+      await userEvent.click(amountInput);
+      await userEvent.tab();
 
       expect(await screen.findByRole("listitem")).toHaveTextContent(
         appStrings.transactions.newForm.amountRequired
@@ -582,8 +587,8 @@ describe("transactions page", () => {
           appStrings.transactions.newForm.amount
         );
 
-        userEvent.type(amountInput, dodgyNumber);
-        userEvent.tab();
+        await userEvent.type(amountInput, dodgyNumber);
+        await userEvent.tab();
 
         expect(await screen.findByRole("listitem")).toHaveTextContent(
           appStrings.transactions.newForm.amountError
@@ -599,8 +604,8 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.date
       );
 
-      userEvent.click(dateInput);
-      userEvent.tab();
+      await userEvent.click(dateInput);
+      await userEvent.tab();
 
       expect(await screen.findByRole("listitem")).toHaveTextContent(
         appStrings.transactions.newForm.dateRequired
@@ -615,14 +620,14 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.amount
       );
 
-      userEvent.type(amountInput, "300");
+      await userEvent.type(amountInput, "300");
 
       const dateInput = screen.getByLabelText(
         appStrings.transactions.newForm.date
       );
 
-      userEvent.type(dateInput, "2022-02-14");
-      userEvent.tab();
+      await userEvent.type(dateInput, "2022-02-14");
+      await userEvent.tab();
 
       await waitFor(() => {
         expect(amountInput).toHaveClass(appliedClasses.validBorder);
@@ -637,7 +642,7 @@ describe("transactions page", () => {
       );
       expect(commentsInput).toHaveClass(appliedClasses.warningBorder);
 
-      userEvent.type(commentsInput, "A comment");
+      await userEvent.type(commentsInput, "A comment");
       await waitFor(() => {
         expect(commentsInput).toHaveClass(appliedClasses.validBorder);
       });
@@ -650,8 +655,8 @@ describe("transactions page", () => {
         appStrings.transactions.newForm.comments
       );
 
-      userEvent.click(commentsInput);
-      userEvent.tab();
+      await userEvent.click(commentsInput);
+      await userEvent.tab();
 
       expect(
         await screen.findByText(
