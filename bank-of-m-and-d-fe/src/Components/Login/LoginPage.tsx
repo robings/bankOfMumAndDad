@@ -11,7 +11,7 @@ function LoginPage(): JSX.Element {
   async function onSubmit(loginFormInput: ILoginDto) {
     try {
       await apiUser.login(loginFormInput);
-      setTimeout(() => navigate("/accounts"), 1000);
+      navigate("/accounts");
     } catch {
       revokeToken();
     }
