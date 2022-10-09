@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using bankOfMumAndDad.Source;
+using EventStore.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +43,8 @@ namespace bankOfMumAndDad
 
             services.AddDbContext<DataContext>(opt =>
             opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddEventStoreClient(Configuration["EventStoreConnectionString"]);
             services.AddControllers();
         }
 

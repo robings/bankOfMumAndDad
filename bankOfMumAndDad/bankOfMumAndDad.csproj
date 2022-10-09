@@ -22,6 +22,7 @@
     </PackageReference>
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
+    <PackageReference Include="EventStore.Client.Grpc.Streams" Version="22.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -33,5 +34,8 @@
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
     <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="EventStore.Client.Grpc.Streams" />
   </ItemGroup>
 </Project>
