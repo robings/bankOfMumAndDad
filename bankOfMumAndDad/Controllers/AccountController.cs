@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Events;
+using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
@@ -16,10 +18,12 @@ namespace bankOfMumAndDad.Controllers
     public class AccountController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IEventWriter _eventWriter;
 
-        public AccountController(DataContext context)
+        public AccountController(DataContext context, IEventWriter eventWriter)
         {
             _context = context;
+            _eventWriter = eventWriter;
         }
 
         // GET: api/Account
@@ -164,12 +168,25 @@ namespace bankOfMumAndDad.Controllers
                 OpeningBalance = Convert.ToDecimal(postedAccount.OpeningBalance),
                 CurrentBalance = Convert.ToDecimal(postedAccount.CurrentBalance),
             };
-            
+
             try
             {
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
-                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account).Value;
+
+                var accountCreated = new AccountCreated
+                {
+                    Id = account.Id,
+                    TimeStamp = DateTime.UtcNow,
+                    FirstName = account.FirstName,
+                    LastName = account.LastName,
+                    OpeningBalance = account.OpeningBalance,
+                };
+                await _eventWriter.WriteEvent(
+                    $"account-{account.Id}",
+                    accountCreated,
+                    nameof(AccountCreated));
+                var result = CreatedAtAction(nameof(PostAccount), new { id = account.Id }, account).Value;
                 return Ok(new ApiResponse(true, "Successfully created account.", result));
             }
             catch (Exception ex)
@@ -210,6 +227,18 @@ namespace bankOfMumAndDad.Controllers
                 account.Deleted = true;
 
                 await _context.SaveChangesAsync();
+
+                var accountDeleted = new AccountDeleted
+                {
+                    Id = accountId,
+                    TimeStamp = DateTime.UtcNow,
+                };
+
+                await _eventWriter.WriteEvent(
+                    $"account-{account.Id}",
+                    accountDeleted,
+                    nameof(AccountDeleted));
+
                 return Ok(new ApiResponse(true, "Account successfully deleted.", new List<Object>()));
             }
             catch (Exception ex)

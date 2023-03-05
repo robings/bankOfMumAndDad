@@ -31,6 +31,8 @@
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
     <Folder Include="TokenService\" />
+    <Folder Include="EventStore\" />
+    <Folder Include="Events\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
@@ -38,5 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="EventStore.Client.Grpc.Streams" />
+    <None Remove="EventStore\" />
+    <None Remove="Events\" />
   </ItemGroup>
 </Project>

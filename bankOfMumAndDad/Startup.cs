@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Source;
 using EventStore.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,6 +46,7 @@ namespace bankOfMumAndDad
             opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddEventStoreClient(Configuration["EventStoreConnectionString"]);
+            services.AddSingleton<IEventWriter, EventStoreWriter>();
             services.AddControllers();
             services.AddCors();
         }
