@@ -47,6 +47,7 @@ namespace bankOfMumAndDad
 
             services.AddEventStoreClient(Configuration["EventStoreConnectionString"]);
             services.AddSingleton<IEventWriter, EventStoreWriter>();
+            services.AddSingleton<IEventReader, EventStoreReader>();
             services.AddControllers();
             services.AddCors();
         }

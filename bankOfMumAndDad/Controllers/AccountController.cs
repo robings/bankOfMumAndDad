@@ -8,6 +8,7 @@ using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
+using EventStore.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,11 +20,13 @@ namespace bankOfMumAndDad.Controllers
     {
         private readonly DataContext _context;
         private readonly IEventWriter _eventWriter;
+        private readonly IEventReader _eventReader;
 
-        public AccountController(DataContext context, IEventWriter eventWriter)
+        public AccountController(DataContext context, IEventWriter eventWriter, IEventReader eventReader)
         {
             _context = context;
             _eventWriter = eventWriter;
+            _eventReader = eventReader;
         }
 
         // GET: api/Account
@@ -63,6 +66,32 @@ namespace bankOfMumAndDad.Controllers
                 }
                 else
                 {
+                    return Ok(new ApiResponse(true, "Account details returned.", account));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+        }
+
+        // GET: api/Account/es
+        [HttpGet("es/{id}")]
+        public async Task<ActionResult<ApiResponse>> GetAccountFromEs(int id)
+        {
+            try
+            {
+                var events = await _eventReader.ReadFromStream($"account-{id}");
+
+                if (!events.Any())
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+                else
+                {
+                    var account = AccountEventProcessor.ProcessEvents(events);
+
                     return Ok(new ApiResponse(true, "Account details returned.", account));
                 }
             }
