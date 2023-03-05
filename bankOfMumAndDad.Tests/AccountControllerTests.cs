@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Controllers;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Events;
+using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 
 namespace bankOfMumAndDad.Tests
@@ -17,6 +20,7 @@ namespace bankOfMumAndDad.Tests
     {
         #region Variables
         DataContext _dataContext;
+        Mock<IEventWriter> _mockEventWriter;
         AccountController _accountController;
 
         List<Account> _seedDatabaseAccounts => new List<Account>
@@ -86,7 +90,9 @@ namespace bankOfMumAndDad.Tests
             var factory = new SqliteInMemoryConnectionFactory();
 
             _dataContext = factory.CreateSqliteContext();
-            _accountController = new AccountController(_dataContext);
+
+            _mockEventWriter = new Mock<IEventWriter>();
+            _accountController = new AccountController(_dataContext, _mockEventWriter.Object);
         }
 
         [TearDown]
@@ -256,6 +262,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(apiResponse.Message, Is.EqualTo("No account data received."));
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
 
@@ -265,6 +272,8 @@ namespace bankOfMumAndDad.Tests
             var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            _mockEventWriter.VerifyNoOtherCalls();
+
         }
 
         [Test]
@@ -276,6 +285,7 @@ namespace bankOfMumAndDad.Tests
             var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -293,6 +303,9 @@ namespace bankOfMumAndDad.Tests
             Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Account successfully deleted."));
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
+
+            _mockEventWriter.Verify(m => m.WriteEvent($"account-2", It.Is<AccountDeleted>(a => a.Id == 2), nameof(AccountDeleted)), Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -342,6 +355,9 @@ namespace bankOfMumAndDad.Tests
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
             Assert.That(deletedTransactions.Count, Is.EqualTo(2));
             deletedTransactions.ForEach(dT => Assert.That(dT.Deleted, Is.EqualTo(true)));
+
+            _mockEventWriter.Verify(m => m.WriteEvent($"account-2", It.Is<AccountDeleted>(a => a.Id == 2), nameof(AccountDeleted)), Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
         #endregion
 
@@ -372,6 +388,17 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
                 Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
             });
+
+            _mockEventWriter.Verify(
+                m => m.WriteEvent(
+                    $"account-{createdAccount.Id}",
+                    It.Is<AccountCreated>(a => a.Id == createdAccount.Id &&
+                        a.FirstName == createdAccount.FirstName &&
+                        a.LastName == createdAccount.LastName &&
+                        a.OpeningBalance == createdAccount.OpeningBalance),
+                    nameof(AccountCreated)),
+                Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -401,12 +428,23 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
                 Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
             });
+
+            _mockEventWriter.Verify(
+                m => m.WriteEvent(
+                    $"account-{createdAccount.Id}",
+                    It.Is<AccountCreated>(a => a.Id == createdAccount.Id &&
+                        a.FirstName == createdAccount.FirstName &&
+                        a.LastName == createdAccount.LastName &&
+                        a.OpeningBalance == createdAccount.OpeningBalance),
+                    nameof(AccountCreated)),
+                Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [TestCase("Cuthbert<")]
         [TestCase("   /n /t  ")]
         [TestCase("")]
-        public async Task PostAccountGivenInValidData_ReturnsBadRequest(string invalidData)
+        public async Task PostAccountGivenInvalidData_ReturnsBadRequest(string invalidData)
         {
             var accountToPost = new AccountDTO
             {
@@ -421,6 +459,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -432,6 +471,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+            _mockEventWriter.VerifyNoOtherCalls();
         }
         #endregion
 
