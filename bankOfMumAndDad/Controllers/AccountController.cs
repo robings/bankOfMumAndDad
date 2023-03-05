@@ -73,18 +73,17 @@ namespace bankOfMumAndDad.Controllers
             }
         }
 
-        // PUT: api/Account/
+        // PATCH: api/Account/
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut]
-        public async Task<ActionResult<ApiResponse>> PutAccount([FromBody] PutRequest putRequest)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ApiResponse>> PatchAccount([FromRoute] long id, [FromBody] PutRequest putRequest)
         {
             if (putRequest is null)
             {
                 return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
             }
 
-            var id = putRequest.Id;
             Account account;
 
             try
@@ -95,6 +94,8 @@ namespace bankOfMumAndDad.Controllers
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
+                var stream = $"account-{id}";
+
                 if (putRequest.FirstName != null)
                 {
                     if (!putRequest.FirstName.ValidateString())
@@ -103,6 +104,18 @@ namespace bankOfMumAndDad.Controllers
                     }
 
                     account.FirstName = putRequest.FirstName;
+
+                    var accountFirstNameChanged = new AccountFirstNameChanged
+                    {
+                        Id = id,
+                        TimeStamp = DateTime.UtcNow,
+                        FirstName = putRequest.FirstName,
+                    };
+
+                    await _eventWriter.WriteEvent(
+                        stream,
+                        accountFirstNameChanged,
+                        nameof(AccountFirstNameChanged));
                 }
 
                 if (putRequest.LastName != null)
@@ -113,6 +126,18 @@ namespace bankOfMumAndDad.Controllers
                     }
 
                     account.LastName = putRequest.LastName;
+
+                    var accountLastNameChanged = new AccountLastNameChanged
+                    {
+                        Id = id,
+                        TimeStamp = DateTime.UtcNow,
+                        LastName = putRequest.LastName,
+                    };
+
+                    await _eventWriter.WriteEvent(
+                        stream,
+                        accountLastNameChanged,
+                        nameof(AccountLastNameChanged));
                 }
 
                 account.CurrentBalance = putRequest.CurrentBalance ?? account.CurrentBalance;

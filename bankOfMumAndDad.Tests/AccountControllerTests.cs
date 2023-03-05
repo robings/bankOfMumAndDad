@@ -479,12 +479,13 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task PutAccountGivenNoData_ReturnsBadRequest()
         {
-            var result = await _accountController.PutAccount(null);
+            var result = await _accountController.PatchAccount(1, null);
 
             var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -497,9 +498,10 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [TestCase("Cuthbert<")]
@@ -517,12 +519,13 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -539,12 +542,12 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
             Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
-            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(3));
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(putRequest.Id));
             Assert.Multiple(() =>
             {
                 Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
@@ -552,6 +555,14 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
             });
+
+            _mockEventWriter.Verify(
+                m => m.WriteEvent(
+                    $"account-{putRequest.Id}",
+                    It.Is<AccountFirstNameChanged>(a => a.Id == preEditedAccount.Id && a.FirstName == putRequest.FirstName),
+                    nameof(AccountFirstNameChanged)),
+                Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -568,7 +579,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -580,8 +591,17 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
             });
+
+            _mockEventWriter.Verify(
+                m => m.WriteEvent(
+                    $"account-{putRequest.Id}",
+                    It.Is<AccountLastNameChanged>(a => a.Id == preEditedAccount.Id && a.LastName == putRequest.LastName),
+                    nameof(AccountLastNameChanged)),
+                Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
+        // this is a daft one really, don't have it in a real system
         [Test]
         public async Task PutAccountGivenValidRequestToChangeCurrentBalance_UpdatesAccount_WithChangedDataOnly()
         {
@@ -596,7 +616,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -609,6 +629,8 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
             });
+
+            _mockEventWriter.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -626,7 +648,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -639,6 +661,14 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
             });
+
+            _mockEventWriter.Verify(
+                m => m.WriteEvent(
+                    $"account-{putRequest.Id}",
+                    It.Is<AccountFirstNameChanged>(a => a.Id == preEditedAccount.Id && a.FirstName == putRequest.FirstName),
+                    nameof(AccountFirstNameChanged)),
+                Times.Once);
+            _mockEventWriter.VerifyNoOtherCalls();
         }
         #endregion
     }
