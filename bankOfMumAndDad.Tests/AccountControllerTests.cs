@@ -21,6 +21,7 @@ namespace bankOfMumAndDad.Tests
         #region Variables
         DataContext _dataContext;
         Mock<IEventWriter> _mockEventWriter;
+        Mock<IEventReader> _mockEventReader;
         AccountController _accountController;
 
         List<Account> _seedDatabaseAccounts => new List<Account>
@@ -92,7 +93,11 @@ namespace bankOfMumAndDad.Tests
             _dataContext = factory.CreateSqliteContext();
 
             _mockEventWriter = new Mock<IEventWriter>();
-            _accountController = new AccountController(_dataContext, _mockEventWriter.Object);
+            _mockEventReader = new Mock<IEventReader>();
+            _accountController = new AccountController(
+                _dataContext,
+                _mockEventWriter.Object,
+                _mockEventReader.Object);
         }
 
         [TearDown]
@@ -671,5 +676,24 @@ namespace bankOfMumAndDad.Tests
             _mockEventWriter.VerifyNoOtherCalls();
         }
         #endregion
+
+        #region GetAccountFromEs Tests
+        [Test]
+        public async Task GetAccountFromEsGivenNonExistingIdReturnsNotFound()
+        {
+            var result = await _accountController.GetAccountFromEs(3);
+
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public async Task GetAccountFromEsGivenExistingAccountReturnsAccount()
+        {
+            var result = await _accountController.GetAccountFromEs(2);
+            _mockEventReader.Verify(m => m.ReadFromStream("account-2"), Times.Once);
+        }
+
+        #endregion
+
     }
 }
