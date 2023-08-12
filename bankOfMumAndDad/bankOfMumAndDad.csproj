@@ -20,8 +20,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
+    <PackageReference Include="EventStore.Client.Grpc.Streams" Version="22.0.0" />
+    <PackageReference Include="EventStore.Client.Grpc" Version="22.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
@@ -29,9 +31,16 @@
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
     <Folder Include="TokenService\" />
+    <Folder Include="EventStore\" />
+    <Folder Include="Events\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
     <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="EventStore.Client.Grpc.Streams" />
+    <None Remove="EventStore\" />
+    <None Remove="Events\" />
   </ItemGroup>
 </Project>

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Events;
+using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
+using EventStore.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,10 +19,14 @@ namespace bankOfMumAndDad.Controllers
     public class AccountController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IEventWriter _eventWriter;
+        private readonly IEventReader _eventReader;
 
-        public AccountController(DataContext context)
+        public AccountController(DataContext context, IEventWriter eventWriter, IEventReader eventReader)
         {
             _context = context;
+            _eventWriter = eventWriter;
+            _eventReader = eventReader;
         }
 
         // GET: api/Account
@@ -69,18 +76,43 @@ namespace bankOfMumAndDad.Controllers
             }
         }
 
-        // PUT: api/Account/
+        // GET: api/Account/es
+        [HttpGet("es/{id}")]
+        public async Task<ActionResult<ApiResponse>> GetAccountFromEs(int id)
+        {
+            try
+            {
+                var events = await _eventReader.ReadFromStream($"account-{id}");
+
+                if (!events.Any())
+                {
+                    return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
+                }
+                else
+                {
+                    var account = AccountEventProcessor.ProcessEvents(events);
+
+                    return Ok(new ApiResponse(true, "Account details returned.", account));
+                }
+            }
+            catch (Exception ex)
+            {
+                this.HttpContext.Response.StatusCode = 500;
+                return new ApiResponse(false, ex.Message, new List<Object>());
+            }
+        }
+
+        // PATCH: api/Account/
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut]
-        public async Task<ActionResult<ApiResponse>> PutAccount([FromBody] PutRequest putRequest)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ApiResponse>> PatchAccount([FromRoute] long id, [FromBody] PutRequest putRequest)
         {
             if (putRequest is null)
             {
                 return BadRequest(new ApiResponse(false, "No account data received.", new List<Object>()));
             }
 
-            var id = putRequest.Id;
             Account account;
 
             try
@@ -91,6 +123,8 @@ namespace bankOfMumAndDad.Controllers
                     return NotFound(new ApiResponse(false, "Account not found.", new List<Object>()));
                 }
 
+                var stream = $"account-{id}";
+
                 if (putRequest.FirstName != null)
                 {
                     if (!putRequest.FirstName.ValidateString())
@@ -99,6 +133,18 @@ namespace bankOfMumAndDad.Controllers
                     }
 
                     account.FirstName = putRequest.FirstName;
+
+                    var accountFirstNameChanged = new AccountFirstNameChanged
+                    {
+                        Id = id,
+                        TimeStamp = DateTime.UtcNow,
+                        FirstName = putRequest.FirstName,
+                    };
+
+                    await _eventWriter.WriteEvent(
+                        stream,
+                        accountFirstNameChanged,
+                        nameof(AccountFirstNameChanged));
                 }
 
                 if (putRequest.LastName != null)
@@ -109,6 +155,18 @@ namespace bankOfMumAndDad.Controllers
                     }
 
                     account.LastName = putRequest.LastName;
+
+                    var accountLastNameChanged = new AccountLastNameChanged
+                    {
+                        Id = id,
+                        TimeStamp = DateTime.UtcNow,
+                        LastName = putRequest.LastName,
+                    };
+
+                    await _eventWriter.WriteEvent(
+                        stream,
+                        accountLastNameChanged,
+                        nameof(AccountLastNameChanged));
                 }
 
                 account.CurrentBalance = putRequest.CurrentBalance ?? account.CurrentBalance;
@@ -164,12 +222,25 @@ namespace bankOfMumAndDad.Controllers
                 OpeningBalance = Convert.ToDecimal(postedAccount.OpeningBalance),
                 CurrentBalance = Convert.ToDecimal(postedAccount.CurrentBalance),
             };
-            
+
             try
             {
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
-                var result = CreatedAtAction(nameof(GetAccount), new { id = account.Id }, account).Value;
+
+                var accountCreated = new AccountCreated
+                {
+                    Id = account.Id,
+                    TimeStamp = DateTime.UtcNow,
+                    FirstName = account.FirstName,
+                    LastName = account.LastName,
+                    OpeningBalance = account.OpeningBalance,
+                };
+                await _eventWriter.WriteEvent(
+                    $"account-{account.Id}",
+                    accountCreated,
+                    nameof(AccountCreated));
+                var result = CreatedAtAction(nameof(PostAccount), new { id = account.Id }, account).Value;
                 return Ok(new ApiResponse(true, "Successfully created account.", result));
             }
             catch (Exception ex)
@@ -210,6 +281,18 @@ namespace bankOfMumAndDad.Controllers
                 account.Deleted = true;
 
                 await _context.SaveChangesAsync();
+
+                var accountDeleted = new AccountDeleted
+                {
+                    Id = accountId,
+                    TimeStamp = DateTime.UtcNow,
+                };
+
+                await _eventWriter.WriteEvent(
+                    $"account-{account.Id}",
+                    accountDeleted,
+                    nameof(AccountDeleted));
+
                 return Ok(new ApiResponse(true, "Account successfully deleted.", new List<Object>()));
             }
             catch (Exception ex)

@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using bankOfMumAndDad.Controllers;
 using bankOfMumAndDad.Entities;
+using bankOfMumAndDad.Events;
+using bankOfMumAndDad.EventStore;
 using bankOfMumAndDad.Requests;
 using bankOfMumAndDad.Responses;
 using bankOfMumAndDad.Source;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace bankOfMumAndDad.Tests
@@ -17,6 +20,8 @@ namespace bankOfMumAndDad.Tests
     {
         #region Variables
         DataContext _dataContext;
+        IEventWriter _mockEventWriter;
+        IEventReader _mockEventReader;
         AccountController _accountController;
 
         List<Account> _seedDatabaseAccounts => new List<Account>
@@ -86,7 +91,13 @@ namespace bankOfMumAndDad.Tests
             var factory = new SqliteInMemoryConnectionFactory();
 
             _dataContext = factory.CreateSqliteContext();
-            _accountController = new AccountController(_dataContext);
+
+            _mockEventWriter = Substitute.For<IEventWriter>();
+            _mockEventReader = Substitute.For<IEventReader>();
+            _accountController = new AccountController(
+                _dataContext,
+                _mockEventWriter,
+                _mockEventReader);
         }
 
         [TearDown]
@@ -256,6 +267,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(apiResponse.Message, Is.EqualTo("No account data received."));
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
 
@@ -265,6 +277,7 @@ namespace bankOfMumAndDad.Tests
             var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -276,6 +289,7 @@ namespace bankOfMumAndDad.Tests
             var result = await _accountController.DeleteAccount(new IdOnlyRequest { Id = "3" });
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -293,6 +307,9 @@ namespace bankOfMumAndDad.Tests
             Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Account successfully deleted."));
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received(1).WriteEvent($"account-2", Arg.Is<AccountDeleted>(a => a.Id == 2), nameof(AccountDeleted));
         }
 
         [Test]
@@ -342,6 +359,9 @@ namespace bankOfMumAndDad.Tests
             Assert.That(deletedAccount.Deleted, Is.EqualTo(true));
             Assert.That(deletedTransactions.Count, Is.EqualTo(2));
             deletedTransactions.ForEach(dT => Assert.That(dT.Deleted, Is.EqualTo(true)));
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received(1).WriteEvent($"account-2", Arg.Is<AccountDeleted>(a => a.Id == 2), nameof(AccountDeleted));
         }
         #endregion
 
@@ -372,6 +392,15 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
                 Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
             });
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received(1).WriteEvent(
+                    $"account-{createdAccount.Id}",
+                    Arg.Is<AccountCreated>(a => a.Id == createdAccount.Id &&
+                        a.FirstName == createdAccount.FirstName &&
+                        a.LastName == createdAccount.LastName &&
+                        a.OpeningBalance == createdAccount.OpeningBalance),
+                    nameof(AccountCreated));
         }
 
         [Test]
@@ -401,12 +430,21 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(createdAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.OpeningBalance)));
                 Assert.That(createdAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(accountToPost.CurrentBalance)));
             });
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received(1).WriteEvent(
+                    $"account-{createdAccount.Id}",
+                    Arg.Is<AccountCreated>(a => a.Id == createdAccount.Id &&
+                        a.FirstName == createdAccount.FirstName &&
+                        a.LastName == createdAccount.LastName &&
+                        a.OpeningBalance == createdAccount.OpeningBalance),
+                    nameof(AccountCreated));
         }
 
         [TestCase("Cuthbert<")]
         [TestCase("   /n /t  ")]
         [TestCase("")]
-        public async Task PostAccountGivenInValidData_ReturnsBadRequest(string invalidData)
+        public async Task PostAccountGivenInvalidData_ReturnsBadRequest(string invalidData)
         {
             var accountToPost = new AccountDTO
             {
@@ -421,6 +459,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -432,6 +471,7 @@ namespace bankOfMumAndDad.Tests
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
         #endregion
 
@@ -439,12 +479,13 @@ namespace bankOfMumAndDad.Tests
         [Test]
         public async Task PutAccountGivenNoData_ReturnsBadRequest()
         {
-            var result = await _accountController.PutAccount(null);
+            var result = await _accountController.PatchAccount(1, null);
 
             var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("No account data received."));
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -457,9 +498,10 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [TestCase("Cuthbert<")]
@@ -477,12 +519,13 @@ namespace bankOfMumAndDad.Tests
                 LastName = "McGrew",
             };
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var responseValue = (ApiResponse)((BadRequestObjectResult)result.Result).Value;
 
             Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
             Assert.That(responseValue.Message, Is.EqualTo("Validation Error."));
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -499,12 +542,12 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
             Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
-            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(3));
+            Assert.That(_dataContext.Accounts.Count(), Is.EqualTo(putRequest.Id));
             Assert.Multiple(() =>
             {
                 Assert.That(editedAccount.FirstName, Is.EqualTo(putRequest.FirstName));
@@ -512,6 +555,12 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
             });
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received(1).WriteEvent(
+                    $"account-{putRequest.Id}",
+                    Arg.Is<AccountFirstNameChanged>(a => a.Id == preEditedAccount.Id && a.FirstName == putRequest.FirstName),
+                    nameof(AccountFirstNameChanged));
         }
 
         [Test]
@@ -528,7 +577,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -540,8 +589,15 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.CurrentBalance)));
             });
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received().WriteEvent(
+                    $"account-{putRequest.Id}",
+                    Arg.Is<AccountLastNameChanged>(a => a.Id == preEditedAccount.Id && a.LastName == putRequest.LastName),
+                    nameof(AccountLastNameChanged));
         }
 
+        // this is a daft one really, don't have it in a real system
         [Test]
         public async Task PutAccountGivenValidRequestToChangeCurrentBalance_UpdatesAccount_WithChangedDataOnly()
         {
@@ -556,7 +612,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -569,6 +625,8 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
             });
+
+            await _mockEventWriter.DidNotReceiveWithAnyArgs().WriteEvent(default, default, default);
         }
 
         [Test]
@@ -586,7 +644,7 @@ namespace bankOfMumAndDad.Tests
 
             var preEditedAccount = _seedDatabaseAccounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
-            var result = await _accountController.PutAccount(putRequest);
+            var result = await _accountController.PatchAccount(putRequest.Id, putRequest);
 
             var editedAccount = _dataContext.Accounts.Where(a => a.Id == putRequest.Id).FirstOrDefault();
 
@@ -599,7 +657,32 @@ namespace bankOfMumAndDad.Tests
                 Assert.That(editedAccount.OpeningBalance, Is.EqualTo(Convert.ToDecimal(preEditedAccount.OpeningBalance)));
                 Assert.That(editedAccount.CurrentBalance, Is.EqualTo(Convert.ToDecimal(putRequest.CurrentBalance)));
             });
+
+            await _mockEventWriter.ReceivedWithAnyArgs(1).WriteEvent(default, default, default);
+            await _mockEventWriter.Received().WriteEvent(
+                    $"account-{putRequest.Id}",
+                    Arg.Is<AccountFirstNameChanged>(a => a.Id == preEditedAccount.Id && a.FirstName == putRequest.FirstName),
+                    nameof(AccountFirstNameChanged));
         }
         #endregion
+
+        #region GetAccountFromEs Tests
+        [Test]
+        public async Task GetAccountFromEsGivenNonExistingIdReturnsNotFound()
+        {
+            var result = await _accountController.GetAccountFromEs(3);
+
+            Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public async Task GetAccountFromEsGivenExistingAccountReturnsAccount()
+        {
+            await _accountController.GetAccountFromEs(2);
+            await _mockEventReader.Received(1).ReadFromStream("account-2");
+        }
+
+        #endregion
+
     }
 }
